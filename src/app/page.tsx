@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { About } from "@/components/sections/home/About";
 import { Hero } from "@/components/sections/home/Hero";
-import { Principles } from "@/components/sections/home/Principles";
-import { Simulations } from "@/components/sections/home/Simulations";
-import { Systems } from "@/components/sections/home/Systems";
-import { Thinking } from "@/components/sections/home/Thinking";
+import { SystemEvolutionPreview } from "@/components/sections/home/SystemEvolution";
+import { SelectedWorkSection } from "@/components/sections/home/SelectedWork";
+import { OperationalIntelligenceSection } from "@/components/sections/home/OperationalIntelligence";
+import { NotesAndClosureSection } from "@/components/sections/home/NotesAndClosure";
 
 export const metadata: Metadata = {
   title: "Engineer — Systems that survive reality",
@@ -21,11 +20,10 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <Systems />
-      <Simulations />
-      <Thinking />
-      <Principles />
-      <About />
+      <SystemEvolutionPreview />
+      <SelectedWorkSection />
+      <OperationalIntelligenceSection />
+      <NotesAndClosureSection />
     </>
   );
 }
