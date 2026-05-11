@@ -3,8 +3,16 @@
 import { ArrowRight, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { useConsoleEasterEgg } from "@/hooks/use-console-easter-egg";
 
 export function Hero() {
+  useConsoleEasterEgg();
+
   return (
     <section data-header-theme="dark" className="relative overflow-hidden bg-[#0B0D10] px-6 pt-24 pb-20 md:px-12">
       {/* Subtle Structural Rules */}
@@ -16,17 +24,47 @@ export function Hero() {
         {/* Main Statement */}
         <div className="max-w-3xl space-y-12">
           <h1 className="text-pretty text-[2.5rem] font-normal leading-[1.15] tracking-tight text-white/90 md:text-[3.5rem]">
-            I am fundamentally a <span className="font-medium text-white">data person.</span>
+            Systems are just{" "}
+            <HoverCard openDelay={200}>
+              <HoverCardTrigger asChild>
+                <span className="cursor-help border-b border-dotted border-white/20 transition-all hover:border-white/40 hover:opacity-100 opacity-70">
+                  stories
+                </span>
+              </HoverCardTrigger>
+              <HoverCardContent
+                side="top"
+                align="start"
+                sideOffset={8}
+                className="w-64 border-white/10 bg-[#0B0D10]/80 p-4 text-white/90 backdrop-blur-md"
+              >
+                <div className="space-y-3">
+                  <p className="text-sm font-light leading-relaxed text-white/80 italic">
+                    “Not all stories compile into systems.”
+                  </p>
+                  <Link
+                    href="https://www.fanfiction.net/u/12959962/The-Dragonstaff-and-Technomage"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group/link flex items-center gap-1 text-[10px] font-medium uppercase tracking-[0.2em] text-white/40 transition-colors hover:text-white/80"
+                  >
+                    View archive{" "}
+                    <ChevronRight className="h-3 w-3 transition-transform group-hover/link:translate-x-0.5" />
+                  </Link>
+                </div>
+              </HoverCardContent>
+            </HoverCard>{" "}
+            <span className="font-medium text-white">told in silicon.</span>
           </h1>
 
           <div className="space-y-8">
             <p className="text-xl font-light leading-relaxed text-white/70 md:text-2xl">
-              Because I understand data: its structure, movement, constraints, and operational behavior, I understand the systems built around it.
+              I work on the layer where data, workflows, automation, and operational reality collide.
             </p>
 
             <p className="max-w-2xl text-base leading-relaxed text-white/40">
-              I am not inherently a backend engineer or infrastructure specialist. I operate in those domains because I understand the underlying information flow, and therefore where systems eventually fracture under scale and coordination.
+              My background in analytics taught me that most systems do not fail because of technology alone. They fail because information moves poorly between people, teams, and processes. <br /> That perspective shaped how I approach backend systems, product architecture, and platform design today.
             </p>
+
           </div>
 
           {/* Primary Actions */}

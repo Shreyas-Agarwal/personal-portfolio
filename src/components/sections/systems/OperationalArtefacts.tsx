@@ -5,14 +5,18 @@ import { ArrowUpRight } from "lucide-react";
 
 const artefacts = [
     {
-        category: "WORKFLOW_SYSTEMS",
-        title: "Pulse Coordination Architecture",
+        category: "DISTRIBUTED_SEMANTICS",
+        title: "Pulse Semantic Execution Model",
+
         description:
-            "A coordination-first operational system focused on workflow orchestration, event sequencing, auditability, and distributed execution boundaries.",
+            "A distributed data interaction architecture exploring whether analytical semantics should execute centrally on the backend or locally within the client runtime.",
+
         pressure:
-            "As workflow complexity expanded, state consistency and operational visibility became architectural constraints rather than implementation details.",
+            "As interaction density increased, repeated backend queries introduced growing latency, orchestration overhead, and synchronization complexity across highly dynamic dashboard workflows.",
+
         response:
-            "The system evolved toward isolated execution layers, orchestration services, centralized workflow coordination, and traceable operational state transitions.",
+            "The final model shifted semantic execution toward the frontend using IndexedDB-backed local datasets, DSL-driven filtering, and client-side aggregation pipelines. This approach traded centralized scalability for highly responsive interaction patterns within intentionally constrained dataset boundaries.",
+
         href: "/systems/pulse-architecture",
     },
     {
@@ -41,19 +45,19 @@ const artefacts = [
 
 const adrs = [
     {
+        id: "ADR_001",
+        title: "Primary Database Selection",
+        href: "/systems/adr/001-database-selection",
+    },
+    {
+        id: "ADR_002",
+        title: "Monorepo Strategy & Connector",
+        href: "/systems/adr/002-repo-strategy",
+    },
+    {
         id: "ADR_003",
-        title: "Monorepo & Connector Architecture",
-        href: "/adr/003-monorepo-connector-architecture",
-    },
-    {
-        id: "ADR_006",
-        title: "Distributed Worker Coordination",
-        href: "/adr/006-distributed-worker-coordination",
-    },
-    {
-        id: "ADR_011",
-        title: "Workflow State Orchestration",
-        href: "/adr/011-workflow-state-orchestration",
+        title: "Hook Provider Semantics",
+        href: "/systems/adr/003-hook-provider-semantics",
     },
 ];
 

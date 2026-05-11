@@ -25,21 +25,6 @@ export function AboutHero() {
 
             <div className="relative mx-auto max-w-7xl">
 
-                {/* Metadata Layer */}
-                <div className="mb-20 flex items-center justify-between border-b border-black/[0.08] pb-5">
-                    <div className="flex items-center gap-3">
-                        <div className="h-2 w-2 rounded-full bg-[#6E7FA3]" />
-
-                        <span className="font-mono text-[10px] tracking-[0.22em] text-black/35">
-                            HUMAN_LAYER
-                        </span>
-                    </div>
-
-                    <span className="font-mono text-[10px] tracking-[0.18em] text-black/22">
-                        INDEX / ABOUT
-                    </span>
-                </div>
-
                 {/* Main Layout */}
                 <div className="grid gap-20 md:grid-cols-[1.1fr_0.9fr]">
 

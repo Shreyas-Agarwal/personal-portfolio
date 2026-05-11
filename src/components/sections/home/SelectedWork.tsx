@@ -13,19 +13,19 @@ const work = [
         size: "large",
     },
     {
-        category: "RESEARCH",
-        title: "ISO 19650 As Information Infrastructure",
+        category: "SYSTEMS MODELLING",
+        title: "Plant-Pollinator Network Dynamics",
         description:
-            "Reframing BIM standards as operational information systems rather than compliance documentation.",
-        href: "/research/iso-19650",
+            "Research into stochastic ecological interaction networks using graph modelling, large-scale data processing, and computational simulation pipelines.",
+        href: "/research/network-dynamics",
         size: "small",
     },
     {
-        category: "OBSERVATIONS",
-        title: "Designing Around State Fracture",
+        category: "DISTRIBUTED SYSTEMS",
+        title: "Contextual Multi-Agent Analysis",
         description:
-            "Notes on coordination failure, memory boundaries, and the architectural pressure introduced by scale.",
-        href: "/notes/state-fracture",
+            "Built experimental agent-based analytical workflows for interpreting dynamic football data through coordinated reasoning and state-aware processing.",
+        href: "/research/context-systems",
         size: "small",
     },
 ];
