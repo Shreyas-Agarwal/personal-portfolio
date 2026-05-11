@@ -65,7 +65,7 @@ export function OperationalIntelligenceSection() {
                     <div className="absolute left-[14px] top-0 h-full w-px bg-white/[0.06]" />
 
                     <div className="space-y-24">
-                        {evolution.map((item, index) => (
+                        {evolution.map((item) => (
                             <div
                                 key={item.title}
                                 className="relative grid gap-8 pl-12 md:grid-cols-[120px_1fr_320px]"

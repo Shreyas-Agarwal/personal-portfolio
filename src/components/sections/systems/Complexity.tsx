@@ -97,7 +97,7 @@ export function ComplexityCoordinationSection() {
                     <div className="absolute left-[140px] top-0 hidden h-full w-px bg-white/[0.05] md:block" />
 
                     <div className="space-y-24">
-                        {evolution.map((item, index) => (
+                        {evolution.map((item, _index) => (
                             <div
                                 key={item.phase}
                                 className="grid gap-10 md:grid-cols-[120px_1fr_260px]"

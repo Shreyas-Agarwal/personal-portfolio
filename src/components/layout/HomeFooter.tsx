@@ -33,7 +33,7 @@ export function HomeFooter() {
                     {/* Brand column */}
                     <div className="max-w-xs">
                         <p className="mb-2 font-mono text-[10px] tracking-[0.2em] text-black/30">
-                            SHREYAS_AGARWAL //
+                            SHREYAS_AGARWAL {"//"}
                         </p>
                         <p className="text-sm leading-relaxed text-black/50">
                             Data &amp; systems engineer building decision engines,

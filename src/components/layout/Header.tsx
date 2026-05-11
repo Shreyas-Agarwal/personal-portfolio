@@ -31,6 +31,7 @@ export function Header() {
   // We use rootMargin to create a thin horizontal "sensor" strip at the
   // top of the viewport (just below the header). Whichever section
   // intersects that strip is the one currently behind the header.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is needed to re-initialize observer on route changes
   useEffect(() => {
     const sections = Array.from(
       document.querySelectorAll<HTMLElement>("[data-header-theme]")
@@ -103,7 +104,7 @@ export function Header() {
                   : "text-white/90 hover:text-primary"
               )}
             >
-              SHREYAS_AGARWAL //
+              SHREYAS_AGARWAL {"//"}
             </Link>
           </div>
           <motion.div

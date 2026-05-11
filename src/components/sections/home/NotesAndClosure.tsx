@@ -58,7 +58,7 @@ export function NotesAndClosureSection() {
 
                 {/* Notes List */}
                 <div className="border-t border-black/[0.08]">
-                    {notes.map((note, index) => (
+                    {notes.map((note, _index) => (
                         <Link
                             key={note.title}
                             href={note.href}
