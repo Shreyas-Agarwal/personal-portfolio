@@ -9,9 +9,9 @@ const navLinks = [
 ];
 
 const socialLinks = [
-    { label: "GitHub", href: "https://github.com" },
-    { label: "LinkedIn", href: "https://linkedin.com" },
-    { label: "Email", href: "mailto:hello@example.com" },
+    { label: "GitHub", href: "https://github.com/Shreyas-Agarwal" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/shreyasagarwal01/" },
+    { label: "Email", href: "mailto:shreyas.agarwal31@gmail.com" },
 ];
 
 export function HomeFooter() {
