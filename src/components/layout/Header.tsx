@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { Menu, X } from "lucide-react";
 
 const nav = [
   { to: "/systems", label: "01. SYSTEMS", subtitle: "architectures" },
@@ -20,6 +21,7 @@ export function Header() {
   const { scrollY } = useScroll();
   const headerRef = useRef<HTMLElement>(null);
   const [theme, setTheme] = useState<HeaderTheme>("dark");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Compressed state for when the user is deep in the "data"
   const headerHeight = useTransform(scrollY, [0, 100], ["120px", "72px"]);
@@ -69,6 +71,12 @@ export function Header() {
     return () => observer.disconnect();
   }, [pathname]); // Re-run when the route changes (page sections change)
 
+  // Close mobile menu on route change
+  // biome-ignore lint/correctness/useExhaustiveDependencies: we want to close the menu when the route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
   // -------------------------------------------------------
 
   const isLight = theme === "light";
@@ -84,7 +92,7 @@ export function Header() {
           : "bg-[#0B0D10]/70 text-white"
       )}
     >
-      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-8">
+      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 md:px-8">
 
         {/* IDENTITY: SYSTEM PATH */}
         <div className="flex flex-col font-mono uppercase tracking-[0.2em]">
@@ -120,7 +128,7 @@ export function Header() {
         </div>
 
         {/* NAVIGATION: THE WORKBENCH */}
-        <nav className="flex items-center gap-12">
+        <nav className="hidden md:flex items-center gap-12">
           {nav.map((n) => {
             const isActive = pathname.startsWith(n.to);
 
@@ -174,7 +182,76 @@ export function Header() {
             );
           })}
         </nav>
+
+        {/* MOBILE MENU TOGGLE */}
+        <button
+          type="button"
+          className={cn("md:hidden p-2 -mr-2", isLight ? "text-black" : "text-white")}
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle Menu"
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
+
+      {/* MOBILE NAVIGATION OVERLAY */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className={cn(
+              "absolute left-0 top-[100%] w-full overflow-hidden border-t",
+              isLight ? "bg-[#F3F1EC]/95 border-black/10 text-black" : "bg-[#0B0D10]/95 border-white/10 text-white"
+            )}
+            style={{ backdropFilter: "blur(20px)" }}
+          >
+            <nav className="flex flex-col px-6 py-8 gap-8">
+              {nav.map((n) => {
+                const isActive = pathname.startsWith(n.to);
+                return (
+                  <Link
+                    key={n.to}
+                    href={n.to}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="group flex flex-col"
+                  >
+                    <span
+                      className={cn(
+                        "font-mono text-xs tracking-widest transition-colors",
+                        isLight
+                          ? isActive
+                            ? "text-black/70"
+                            : "text-black/40 group-hover:text-black/70"
+                          : isActive
+                            ? "text-primary"
+                            : "text-muted-foreground group-hover:text-foreground"
+                      )}
+                    >
+                      {n.subtitle}
+                    </span>
+                    <span
+                      className={cn(
+                        "text-xl font-medium transition-all mt-1",
+                        isLight
+                          ? isActive
+                            ? "text-black"
+                            : "text-black/60 group-hover:text-black"
+                          : isActive
+                            ? "text-foreground"
+                            : "text-muted-foreground/80 group-hover:text-foreground"
+                      )}
+                    >
+                      {n.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* FRACTURE BORDER */}
       <motion.div
