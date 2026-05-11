@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AboutHero } from "@/components/sections/about/Hero";
+import { PersonalFragmentsSection } from "@/components/sections/about/PersonalFragments";
 
 export const metadata: Metadata = {
     title: "Engineer — Systems that survive reality",
@@ -14,6 +15,9 @@ export const metadata: Metadata = {
 
 export default function Home() {
     return (
-        <AboutHero />
+        <>
+            <AboutHero />
+            <PersonalFragmentsSection />
+        </>
     );
 }
