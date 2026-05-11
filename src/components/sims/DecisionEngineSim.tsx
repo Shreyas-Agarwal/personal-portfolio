@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo, useState } from "react";
 
 type State = "idle" | "pending" | "validating" | "escalated" | "resolved";
