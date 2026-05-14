@@ -1,10 +1,5 @@
-# Pulse Semantic Execution Model
-
-## Frontmatter
-
-```yaml
 ---
-title: "Pulse Semantic Execution Model"
+title: "Analytics Semantic Execution Model"
 description: "Exploring where analytical semantics should execute: centralized backend orchestration or frontend-local execution over constrained datasets."
 date: "2026-05-11"
 category: "Distributed Systems"
@@ -17,13 +12,14 @@ tags:
   - Distributed Computing
 published: true
 ---
-```
+
+# Analytics Semantic Execution Model
 
 # Most dashboards are not visualization problems.
 
 They are semantic execution problems.
 
-As Pulse evolved into a more operationally dense coordination platform, the architecture discussion gradually shifted away from UI concerns and toward a deeper systems question:
+As the anytics product evolved into a more operationally dense coordination platform, the architecture discussion gradually shifted away from UI concerns and toward a deeper systems question:
 
 > Where should semantic computation actually execute?
 
@@ -46,7 +42,7 @@ At operational scale, they become distributed systems decisions.
 
 # The Original Architectural Question
 
-The core debate inside Pulse was deceptively simple:
+The core debate inside the analytics system was deceptively simple:
 
 ## Option 1 — Backend-Centric Semantic Execution
 
@@ -95,7 +91,7 @@ The frontend then becomes responsible for:
 * interaction orchestration
 * view recalculation
 
-Pulse explored this through:
+We explored this through:
 
 * IndexedDB-backed persistence
 * in-memory execution layers
@@ -145,7 +141,7 @@ Instead of discussing APIs and rendering pipelines, the discussion became about:
 * interaction density
 * computational distribution
 
-Pulse stopped being “a dashboard system.”
+The system stopped being “a dashboard system.”
 
 It became a distributed semantic execution problem.
 
@@ -234,7 +230,7 @@ Memory-only approaches collapse under:
 
 IndexedDB introduced a local operational substrate.
 
-Pulse could:
+The system could:
 
 * cache constrained datasets
 * preserve interaction state
@@ -318,7 +314,7 @@ But they are also easier to fracture over time.
 
 The decision was driven by product behavior patterns.
 
-Pulse dashboards were intentionally constrained:
+Dashboards were intentionally constrained:
 
 * limited dataset sizes
 * focused operational contexts
@@ -350,7 +346,7 @@ Only systems optimized for different failure modes.
 
 # The Real Engineering Lesson
 
-The most important insight from Pulse was not about frontend frameworks or database optimization.
+The most important insight from the analytics system was not about frontend frameworks or database optimization.
 
 It was this:
 
@@ -370,7 +366,7 @@ Those decisions shape the system far more deeply than the technology stack itsel
 
 # Distributed Semantics as a Broader Pattern
 
-What Pulse explored is part of a larger architectural movement.
+What we explored is part of a larger architectural movement.
 
 Modern systems increasingly push computation toward the edge:
 
@@ -385,13 +381,13 @@ The browser is no longer just a rendering target.
 
 It is gradually becoming a constrained distributed compute environment.
 
-Pulse represented a small-scale version of that broader shift.
+This system represented a small-scale version of that broader shift.
 
 ---
 
 # Final Reflection
 
-The interesting part of Pulse was never the dashboard.
+The interesting part of the analytics system was never the dashboard.
 
 It was the realization that even simple operational interfaces eventually force deep architectural decisions about:
 

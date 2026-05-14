@@ -1,3 +1,11 @@
+---
+title: "The Context Rot Paradox: MCPs at T-Minus Zero"
+subtitle: "A deep dive into the physics of LLM attention, agentic architectures, and why connecting an AI to everything may quietly make it worse at thinking"
+category: "AI Architecture"
+year: "2026"
+tags: ["LLM", "AI Agents", "MCP", "Attention"]
+---
+
 # The Context Rot Paradox: MCPs at T-Minus Zero
 *A deep dive into the physics of LLM attention, agentic architectures, and why connecting an AI to everything may quietly make it worse at thinking*
 

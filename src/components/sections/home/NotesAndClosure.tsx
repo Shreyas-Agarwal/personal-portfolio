@@ -5,25 +5,25 @@ import { ArrowUpRight } from "lucide-react";
 
 const notes = [
     {
-        type: "OBSERVATION",
-        title: "Architecture is often organizational memory.",
+        type: "AI PHILOSOPHY",
+        title: "The Silicon Ceiling: The Road to AGI",
         excerpt:
-            "Many systems fail not because individual components break, but because operational context disappears between layers of coordination.",
-        href: "/notes/organizational-memory",
+            "Why modern AI may be a historic breakthrough, a civilizational inflection point… and still fundamentally incapable of becoming true Artificial General Intelligence.",
+        href: "/notes/the-silicon-ceiling",
     },
     {
-        type: "RESEARCH",
-        title: "ISO 19650 is fundamentally an information problem.",
+        type: "SYSTEMS ECOLOGY",
+        title: "Ecological Networks and AI Systems",
         excerpt:
-            "Most BIM discussions focus on models and deliverables. The underlying challenge is coordination, ownership, and information state management.",
-        href: "/research/iso-19650-information-systems",
+            "Why ecosystems may already be performing forms of distributed computation",
+        href: "/notes/ecology-and-ai",
     },
     {
-        type: "SYSTEMS",
-        title: "Operational visibility changes architectural decisions.",
+        type: "AI ARCHITECTURE",
+        title: "The Context Rot Paradox: MCPs at T-Minus Zero",
         excerpt:
-            "Once workflows become observable, coordination bottlenecks and hidden state transitions become impossible to ignore.",
-        href: "/notes/operational-visibility",
+            "A deep dive into the physics of LLM attention, agentic architectures, and why connecting an AI to everything may quietly make it worse at thinking",
+        href: "/notes/mcp-context-rot",
     },
 ];
 

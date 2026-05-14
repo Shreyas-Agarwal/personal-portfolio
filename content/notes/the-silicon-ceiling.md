@@ -1,3 +1,11 @@
+---
+title: "The Silicon Ceiling: The Road to AGI"
+subtitle: "Why modern AI may be a historic breakthrough, a civilizational inflection point… and still fundamentally incapable of becoming true Artificial General Intelligence."
+category: "AI Philosophy"
+year: "2026"
+tags: ["AGI", "Transformers", "Philosophy", "Computation"]
+---
+
 # The Silicon Ceiling: The Road to AGI
 
 *Why modern AI may be a historic breakthrough, a civilizational inflection point… and still fundamentally incapable of becoming true Artificial General Intelligence.*

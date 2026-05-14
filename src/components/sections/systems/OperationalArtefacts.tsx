@@ -6,7 +6,7 @@ import { ArrowUpRight } from "lucide-react";
 const artefacts = [
     {
         category: "DISTRIBUTED_SEMANTICS",
-        title: "Pulse Semantic Execution Model",
+        title: "Analytics Semantic Execution Model",
 
         description:
             "A distributed data interaction architecture exploring whether analytical semantics should execute centrally on the backend or locally within the client runtime.",
@@ -17,7 +17,7 @@ const artefacts = [
         response:
             "The final model shifted semantic execution toward the frontend using IndexedDB-backed local datasets, DSL-driven filtering, and client-side aggregation pipelines. This approach traded centralized scalability for highly responsive interaction patterns within intentionally constrained dataset boundaries.",
 
-        href: "/systems/pulse-architecture",
+        href: "/systems/analytics-semantic-layer-architecture",
     },
     {
         category: "FRONTEND_ARCHITECTURE",
@@ -28,7 +28,7 @@ const artefacts = [
             "Increasing coordination complexity introduced ambiguity around execution ownership, synchronization, and operational responsibility boundaries.",
         response:
             "Architectural decisions focused on reducing coupling between interaction state, orchestration logic, and distributed processing workflows.",
-        href: "/systems/frontend-backend-boundaries",
+        href: "/under-review",
     },
     {
         category: "PLATFORM_SYSTEMS",
@@ -39,7 +39,7 @@ const artefacts = [
             "As systems scaled across domains, tightly coupled feature layers introduced deployment friction and operational coordination overhead.",
         response:
             "The architecture evolved toward modular expansion patterns, isolated feature domains, and controlled injection boundaries.",
-        href: "/systems/feature-injection",
+        href: "/under-review",
     },
 ];
 
