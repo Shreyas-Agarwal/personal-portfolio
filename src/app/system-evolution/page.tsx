@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SystemEvolution } from "@/components/sections/system-evolution/SystemEvolution";
 
 export const metadata: Metadata = {
-  title: "System Evolution — Architecture under pressure",
+  title: "System Evolution",
   description:
     "Documenting the major architectural pivots and operational failures that forced the system to evolve from a simple monolith into a distributed workflow platform.",
 };

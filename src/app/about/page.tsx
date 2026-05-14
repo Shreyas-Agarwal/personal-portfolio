@@ -3,13 +3,13 @@ import { AboutHero } from "@/components/sections/about/Hero";
 import { PersonalFragmentsSection } from "@/components/sections/about/PersonalFragments";
 
 export const metadata: Metadata = {
-    title: "Engineer — Systems that survive reality",
+    title: "About",
     description:
-        "Product and Data Engineer building decision engines, automation pipelines, and platforms that keep operating under real-world constraints.",
+        "The human layer behind the systems. Personal fragments, philosophies, and operational context.",
     openGraph: {
-        title: "Engineer — Systems that survive reality",
+        title: "About | Shreyas Agarwal",
         description:
-            "Decision engines, data pipelines, AEC platforms. Case studies, simulations, and research.",
+            "The human layer behind the systems. Personal fragments, philosophies, and operational context.",
     },
 };
 

@@ -6,7 +6,7 @@ import { ArrowRight, Clock, Tag } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Research — Shreyas Agarwal",
+    title: "Research",
     description: "Archive of applied systems research and tangible projects.",
 };
 

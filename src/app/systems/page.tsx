@@ -5,13 +5,13 @@ import { OperationalArtefactsSection } from "@/components/sections/systems/Opera
 import { OperationalObservationsSection } from "@/components/sections/systems/OperationalObservations";
 
 export const metadata: Metadata = {
-    title: "Engineer — Systems that survive reality",
+    title: "Systems Architecture",
     description:
-        "Product and Data Engineer building decision engines, automation pipelines, and platforms that keep operating under real-world constraints.",
+        "Explore technical architectures, complexity coordination, and operational artifacts from real-world deployments.",
     openGraph: {
-        title: "Engineer — Systems that survive reality",
+        title: "Systems Architecture | Shreyas Agarwal",
         description:
-            "Decision engines, data pipelines, AEC platforms. Case studies, simulations, and research.",
+            "Explore technical architectures, complexity coordination, and operational artifacts from real-world deployments.",
     },
 };
 

@@ -38,7 +38,7 @@ export function Hero() {
                 className="w-64 border-white/10 bg-[#0B0D10]/80 p-4 text-white/90 backdrop-blur-md"
               >
                 <div className="space-y-3">
-                  <p className="text-sm font-light leading-relaxed text-white/80 italic">
+                  <p className="text-base font-serif italic leading-relaxed tracking-wide text-white/80">
                     “Not all stories compile into systems.”
                   </p>
                   <Link

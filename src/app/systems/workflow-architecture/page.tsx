@@ -3,7 +3,7 @@ import { ETISTechnicalArchitectureModel } from "@/components/sections/systems/ar
 import { OperationallyRealizedRuntime } from "@/components/sections/systems/architecture-diagrams/workflow/OperationallyRealizedRuntime";
 
 export const metadata: Metadata = {
-    title: "Workflow Architecture — Technical Model",
+    title: "Workflow Architecture",
     description: "Detailed technical architecture of the distributed coordination and workflow ingestion systems.",
 };
 

@@ -3,7 +3,7 @@ import { ArrowLeft, FileSearch } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Under Review — Systems Documentation",
+    title: "Under Review",
     description: "This architectural documentation is currently being formalized.",
 };
 

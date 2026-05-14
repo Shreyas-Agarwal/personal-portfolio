@@ -6,11 +6,11 @@ import { OperationalIntelligenceSection } from "@/components/sections/home/Opera
 import { NotesAndClosureSection } from "@/components/sections/home/NotesAndClosure";
 
 export const metadata: Metadata = {
-  title: "Engineer — Systems that survive reality",
+  title: "Home",
   description:
     "Product and Data Engineer building decision engines, automation pipelines, and platforms that keep operating under real-world constraints.",
   openGraph: {
-    title: "Engineer — Systems that survive reality",
+    title: "Home | Shreyas Agarwal",
     description:
       "Decision engines, data pipelines, AEC platforms. Case studies, simulations, and research.",
   },

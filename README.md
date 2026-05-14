@@ -1,4 +1,14 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio: Systems, Semantics, and Intelligence
+
+A professional portfolio website for a software architect and systems thinker. This site explores the intersection of software engineering, distributed systems, and emergent intelligence—through technical deep dives, architectural essays, and research notes.
+
+## Tech Stack
+
+- **Framework**: [Next.js 15](https://nextjs.org) (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS + Lucide Icons
+- **Content**: Markdown files in `/content`
+- **Deployment**: Vercel (optimized for static generation + serverless functions)
 
 ## Getting Started
 
