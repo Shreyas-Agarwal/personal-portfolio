@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ArrowRight } from "lucide-react";
 
 const work = [
     {
@@ -116,6 +116,20 @@ export function SelectedWorkSection() {
                             </div>
                         </Link>
                     ))}
+                </div>
+
+                {/* CTA: View All Case Studies */}
+                <div className="mt-12 flex items-center justify-between border-t border-black/[0.06] pt-8">
+                    <span className="font-mono text-[10px] tracking-[0.2em] text-black/25">
+                        5 PRODUCTION SYSTEMS
+                    </span>
+                    <Link
+                        href="/projects"
+                        className="group flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] text-black/40 transition-colors hover:text-black"
+                    >
+                        VIEW_ALL_CASE_STUDIES
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </Link>
                 </div>
             </div>
         </section>

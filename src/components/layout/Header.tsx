@@ -12,6 +12,7 @@ const nav = [
   { to: "/research", label: "02. RESEARCH", subtitle: "information-flow" },
   { to: "/notes", label: "03. NOTES", subtitle: "observations" },
   { to: "/about", label: "04. IDENTITY", subtitle: "the-data-person" },
+  { to: "/projects", label: "05. PROJECTS", subtitle: "case-studies" },
 ];
 
 type HeaderTheme = "dark" | "light";
