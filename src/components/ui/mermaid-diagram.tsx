@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface MermaidDiagramProps {
   code: string;
@@ -14,11 +14,11 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
   useEffect(() => {
     const renderDiagram = async () => {
       if (!code) return;
-      
+
       try {
         // Dynamically import mermaid to ensure it's client-side only
         const mermaid = (await import("mermaid")).default;
-        
+
         mermaid.initialize({
           startOnLoad: false,
           theme: "base",
@@ -63,7 +63,7 @@ export function MermaidDiagram({ code }: MermaidDiagramProps) {
   }
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="mermaid-container my-12 flex justify-center overflow-x-auto py-8 bg-white/40 border border-neutral-200/60 rounded-xl backdrop-blur-sm"
     />

@@ -1,13 +1,8 @@
 "use client";
 
-import type { SVGProps, ReactElement } from "react";
+import type { ReactElement, SVGProps } from "react";
 
-type DiagramVariant =
-  | "4d-sim"
-  | "powerbi"
-  | "fsm"
-  | "whatsapp"
-  | "broker";
+type DiagramVariant = "4d-sim" | "powerbi" | "fsm" | "whatsapp" | "broker";
 
 interface SystemMicroDiagramProps extends SVGProps<SVGSVGElement> {
   variant: DiagramVariant;
@@ -55,15 +50,7 @@ function Node({
   );
 }
 
-function Badge({
-  x,
-  y,
-  label,
-}: {
-  x: number;
-  y: number;
-  label: string;
-}) {
+function Badge({ x, y, label }: { x: number; y: number; label: string }) {
   return (
     <g>
       <rect
@@ -144,15 +131,22 @@ function Arrow({
   return (
     <g>
       <line x1={x1} y1={y1} x2={hx} y2={hy} stroke={color} strokeWidth={0.75} />
-      <polygon
-        points={`${x2},${y2} ${hx + px},${hy + py} ${hx - px},${hy - py}`}
-        fill={color}
-      />
+      <polygon points={`${x2},${y2} ${hx + px},${hy + py} ${hx - px},${hy - py}`} fill={color} />
     </g>
   );
 }
 
-function Dot({ x, y, pulse = false, color = "rgba(147,197,253,0.6)" }: { x: number; y: number; pulse?: boolean; color?: string }) {
+function Dot({
+  x,
+  y,
+  pulse = false,
+  color = "rgba(147,197,253,0.6)",
+}: {
+  x: number;
+  y: number;
+  pulse?: boolean;
+  color?: string;
+}) {
   return (
     <circle
       cx={x}
@@ -201,16 +195,33 @@ function Diagram4DSim() {
 
       {/* Web Worker box */}
       <rect
-        x={16} y={76} width={68} height={22}
+        x={16}
+        y={76}
+        width={68}
+        height={22}
         rx={2}
         fill="rgba(147,197,253,0.06)"
         stroke="rgba(147,197,253,0.25)"
         strokeWidth={0.75}
       />
-      <text x={50} y={85} textAnchor="middle" fontSize={5} fill="rgba(147,197,253,0.8)" fontFamily="monospace">
+      <text
+        x={50}
+        y={85}
+        textAnchor="middle"
+        fontSize={5}
+        fill="rgba(147,197,253,0.8)"
+        fontFamily="monospace"
+      >
         Web Worker
       </text>
-      <text x={50} y={93} textAnchor="middle" fontSize={4} fill="rgba(147,197,253,0.4)" fontFamily="monospace">
+      <text
+        x={50}
+        y={93}
+        textAnchor="middle"
+        fontSize={4}
+        fill="rgba(147,197,253,0.4)"
+        fontFamily="monospace"
+      >
         date interpolation · off-thread
       </text>
       <Dot x={50} y={88} pulse />
@@ -239,54 +250,64 @@ function Diagram4DSim() {
 function DiagramPowerBI() {
   return (
     <>
-      {/* Top: ADX + 6 source streams hinted */}
-      <Node x={50} y={14} label="Autodesk ADX" w={60} />
-      <Label x={80} y={17} text="6 data streams" />
+      {/* Top: Data Connectors */}
+      <Node x={35} y={16} label="ACC Data Exchange" w={56} />
+      <Node x={105} y={16} label="ACC Data Connector" w={58} />
 
-      {/* Webhook trigger line */}
-      <Arrow x1={50} y1={24} x2={50} y2={38} color="rgba(147,197,253,0.3)" />
-      <Label x={54} y={35} text="webhook" />
+      {/* Flow down to PowerQuery */}
+      <Arrow x1={35} y1={26} x2={55} y2={42} color="rgba(147,197,253,0.3)" />
+      <Arrow x1={105} y1={26} x2={85} y2={42} color="rgba(147,197,253,0.3)" />
 
-      {/* Cloud Function – serverless */}
+      {/* PowerQuery / M */}
       <rect
-        x={14} y={38} width={72} height={20}
+        x={19}
+        y={42}
+        width={102}
+        height={24}
         rx={2}
         fill="rgba(147,197,253,0.07)"
         stroke="rgba(147,197,253,0.3)"
         strokeWidth={0.75}
-        strokeDasharray="4 2"
       />
-      <text x={50} y={47} textAnchor="middle" fontSize={5} fill="rgba(147,197,253,0.8)" fontFamily="monospace">
-        Serverless Fn
+      <text
+        x={70}
+        y={51}
+        textAnchor="middle"
+        fontSize={5}
+        fill="rgba(147,197,253,0.8)"
+        fontFamily="monospace"
+      >
+        PowerQuery (M)
       </text>
-      <text x={50} y={54} textAnchor="middle" fontSize={4} fill="rgba(147,197,253,0.4)" fontFamily="monospace">
-        canonical schema mapping
+      <text
+        x={70}
+        y={58}
+        textAnchor="middle"
+        fontSize={4}
+        fill="rgba(147,197,253,0.4)"
+        fontFamily="monospace"
+      >
+        schema harmonization & join
       </text>
-      <Dot x={50} y={47} pulse />
+      <Dot x={70} y={51} pulse />
 
-      <Arrow x1={50} y1={58} x2={50} y2={72} />
+      <Arrow x1={70} y1={66} x2={70} y2={82} />
 
-      {/* Power Automate */}
-      <Node x={50} y={80} label="Power Automate" w={66} accent />
-      <Label x={79} y={83} text="push API" />
+      {/* DAX Modeling */}
+      <Node x={70} y={90} label="DAX Data Modeling" w={76} accent />
+      <Label x={108} y={93} text="4D logic" />
 
-      <Arrow x1={50} y1={90} x2={50} y2={103} />
+      <Arrow x1={70} y1={100} x2={70} y2={116} />
 
-      {/* MS Cloud Fabric */}
-      <Node x={50} y={111} label="MS Cloud Fabric" w={68} />
-      <Dot x={50} y={111} />
+      {/* PowerBI Dashboard */}
+      <Node x={70} y={124} label="PowerBI Dashboard" w={72} accent />
+      <Dot x={70} y={124} pulse />
 
-      <Arrow x1={50} y1={121} x2={50} y2={133} />
+      {/* Badges */}
+      <Badge x={140} y={54} label="NATIVE" />
+      <Badge x={140} y={90} label="ZERO DB" />
 
-      {/* PowerBI */}
-      <Node x={50} y={141} label="PowerBI Dashboard" w={72} accent />
-      <Dot x={50} y={141} pulse />
-
-      {/* No DB badge */}
-      <Badge x={125} y={80} label="SERVERLESS" />
-      <Badge x={125} y={111} label="ZERO DB" />
-
-      <Label x={6} y={148} text="NEAR REAL-TIME · ZERO INFRA COST" />
+      <Label x={20} y={148} text="NATIVE CONNECTORS · POWERQUERY · DAX" />
     </>
   );
 }
@@ -304,19 +325,35 @@ function DiagramFSM() {
 
       {/* FSM / RBAC engine */}
       <rect
-        x={8} y={37} width={84} height={28}
+        x={8}
+        y={37}
+        width={84}
+        height={28}
         rx={2}
         fill="rgba(147,197,253,0.06)"
         stroke="rgba(147,197,253,0.3)"
         strokeWidth={0.75}
       />
-      <text x={50} y={47} textAnchor="middle" fontSize={5} fill="rgba(147,197,253,0.9)" fontFamily="monospace">
+      <text
+        x={50}
+        y={47}
+        textAnchor="middle"
+        fontSize={5}
+        fill="rgba(147,197,253,0.9)"
+        fontFamily="monospace"
+      >
         RBAC FSM Engine
       </text>
       {/* State flow inside */}
-      <text x={16} y={58} fontSize={4} fill="rgba(255,255,255,0.3)" fontFamily="monospace">REVIEWER →</text>
-      <text x={50} y={58} fontSize={4} fill="rgba(255,255,255,0.3)" fontFamily="monospace">AUTHORITY →</text>
-      <text x={78} y={58} fontSize={4} fill="rgba(147,197,253,0.7)" fontFamily="monospace">STAMPED</text>
+      <text x={16} y={58} fontSize={4} fill="rgba(255,255,255,0.3)" fontFamily="monospace">
+        REVIEWER →
+      </text>
+      <text x={50} y={58} fontSize={4} fill="rgba(255,255,255,0.3)" fontFamily="monospace">
+        AUTHORITY →
+      </text>
+      <text x={78} y={58} fontSize={4} fill="rgba(147,197,253,0.7)" fontFamily="monospace">
+        STAMPED
+      </text>
       <Dot x={50} y={48} pulse />
 
       {/* Rejection dashed */}
@@ -364,13 +401,23 @@ function DiagramWhatsApp() {
 
       {/* 3-Tier Agent block */}
       <rect
-        x={6} y={63} width={88} height={52}
+        x={6}
+        y={63}
+        width={88}
+        height={52}
         rx={2}
         fill="rgba(147,197,253,0.05)"
         stroke="rgba(147,197,253,0.2)"
         strokeWidth={0.75}
       />
-      <text x={50} y={71} textAnchor="middle" fontSize={4.5} fill="rgba(147,197,253,0.5)" fontFamily="monospace">
+      <text
+        x={50}
+        y={71}
+        textAnchor="middle"
+        fontSize={4.5}
+        fill="rgba(147,197,253,0.5)"
+        fontFamily="monospace"
+      >
         3-TIER AGENTIC PIPELINE
       </text>
 
@@ -383,15 +430,36 @@ function DiagramWhatsApp() {
 
       {/* Air gap label */}
       <rect
-        x={100} y={100} width={48} height={14}
+        x={100}
+        y={100}
+        width={48}
+        height={14}
         rx={2}
         fill="rgba(248,113,113,0.08)"
         stroke="rgba(248,113,113,0.3)"
         strokeWidth={0.6}
         strokeDasharray="3 2"
       />
-      <text x={124} y={105} textAnchor="middle" fontSize={4} fill="rgba(248,113,113,0.8)" fontFamily="monospace">AIR-GAP</text>
-      <text x={124} y={111} textAnchor="middle" fontSize={3.8} fill="rgba(248,113,113,0.5)" fontFamily="monospace">LLM ≠ API</text>
+      <text
+        x={124}
+        y={105}
+        textAnchor="middle"
+        fontSize={4}
+        fill="rgba(248,113,113,0.8)"
+        fontFamily="monospace"
+      >
+        AIR-GAP
+      </text>
+      <text
+        x={124}
+        y={111}
+        textAnchor="middle"
+        fontSize={3.8}
+        fill="rgba(248,113,113,0.5)"
+        fontFamily="monospace"
+      >
+        LLM ≠ API
+      </text>
       <Edge x1={94} y1={107} x2={100} y2={107} dashed color="rgba(248,113,113,0.3)" />
 
       {/* Secure server call */}
@@ -429,16 +497,33 @@ function DiagramBroker() {
 
       {/* Compliance audit block */}
       <rect
-        x={10} y={92} width={80} height={20}
+        x={10}
+        y={92}
+        width={80}
+        height={20}
         rx={2}
         fill="rgba(251,191,36,0.07)"
         stroke="rgba(251,191,36,0.3)"
         strokeWidth={0.75}
       />
-      <text x={50} y={101} textAnchor="middle" fontSize={5} fill="rgba(251,191,36,0.9)" fontFamily="monospace">
+      <text
+        x={50}
+        y={101}
+        textAnchor="middle"
+        fontSize={5}
+        fill="rgba(251,191,36,0.9)"
+        fontFamily="monospace"
+      >
         Compliance Audit
       </text>
-      <text x={50} y={108} textAnchor="middle" fontSize={4} fill="rgba(251,191,36,0.45)" fontFamily="monospace">
+      <text
+        x={50}
+        y={108}
+        textAnchor="middle"
+        fontSize={4}
+        fill="rgba(251,191,36,0.45)"
+        fontFamily="monospace"
+      >
         folder permission check
       </text>
       <Dot x={50} y={101} pulse color="rgba(251,191,36,0.7)" />
@@ -453,17 +538,34 @@ function DiagramBroker() {
       {/* DLQ branch */}
       <Edge x1={90} y1={100} x2={130} y2={114} dashed color="rgba(248,113,113,0.25)" />
       <rect
-        x={108} y={114} width={44} height={14}
+        x={108}
+        y={114}
+        width={44}
+        height={14}
         rx={2}
         fill="rgba(255,255,255,0.02)"
         stroke="rgba(255,255,255,0.08)"
         strokeWidth={0.75}
         strokeDasharray="3 2"
       />
-      <text x={130} y={119} textAnchor="middle" fontSize={4.5} fill="rgba(255,255,255,0.3)" fontFamily="monospace">
+      <text
+        x={130}
+        y={119}
+        textAnchor="middle"
+        fontSize={4.5}
+        fill="rgba(255,255,255,0.3)"
+        fontFamily="monospace"
+      >
         Dead Letter
       </text>
-      <text x={130} y={125} textAnchor="middle" fontSize={4} fill="rgba(255,255,255,0.2)" fontFamily="monospace">
+      <text
+        x={130}
+        y={125}
+        textAnchor="middle"
+        fontSize={4}
+        fill="rgba(255,255,255,0.2)"
+        fontFamily="monospace"
+      >
         auto-backoff
       </text>
 

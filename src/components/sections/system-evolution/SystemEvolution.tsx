@@ -241,10 +241,7 @@ function PhasePanel({
           {/* ── RIGHT: diagram + complexity (MOBILE ONLY) ── */}
           {/* On desktop, this is rendered statically over the panels so it doesn't crossfade */}
           <div className="flex flex-col gap-10 lg:hidden">
-            <ArchitectureDiagram
-              nodes={phase.diagram.nodes}
-              edges={phase.diagram.edges}
-            />
+            <ArchitectureDiagram nodes={phase.diagram.nodes} edges={phase.diagram.edges} />
             <ComplexityStack burdens={phase.burden} />
           </div>
         </div>

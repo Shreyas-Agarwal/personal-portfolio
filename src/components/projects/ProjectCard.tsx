@@ -1,15 +1,7 @@
-import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import type { Project } from "@/data/projects";
-import { SystemMicroDiagram } from "./SystemMicroDiagram";
-
-const DIAGRAM_VARIANT_MAP: Record<string, "4d-sim" | "powerbi" | "fsm" | "whatsapp" | "broker"> = {
-  "planned-vs-actual-4d": "4d-sim",
-  "powerbi-4d-viewer": "powerbi",
-  "document-stamping": "fsm",
-  "whatsapp-chatbots": "whatsapp",
-  "notification-broker": "broker",
-};
 
 interface ProjectCardProps {
   project: Project;
@@ -17,8 +9,6 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, index }: ProjectCardProps) {
-  const variant = DIAGRAM_VARIANT_MAP[project.id] ?? "broker";
-
   return (
     <Link
       href={`/projects/${project.id}`}
@@ -31,12 +21,16 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
         </span>
       </div>
 
-      {/* Diagram thumbnail */}
+      {/* Thumbnail */}
       <div className="relative h-44 w-full overflow-hidden border-b border-white/[0.06] bg-[#05070A]">
-        <SystemMicroDiagram
-          variant={variant}
-          className="h-full w-full transition-transform duration-500 group-hover:scale-105"
-        />
+        {project.imagePath && (
+          <Image
+            src={project.imagePath}
+            alt={project.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        )}
         {/* Subtle vignette overlay */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-zinc-900/80 via-transparent to-transparent" />
       </div>
@@ -47,9 +41,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
           <h3 className="text-[15px] font-medium leading-snug tracking-tight text-white/90 transition-colors group-hover:text-white">
             {project.title}
           </h3>
-          <p className="text-sm leading-relaxed text-white/45">
-            {project.subtitle}
-          </p>
+          <p className="text-sm leading-relaxed text-white/45">{project.subtitle}</p>
         </div>
 
         {/* Tech stack pills */}
@@ -67,9 +59,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
 
           {/* CTA row */}
           <div className="flex items-center justify-between border-t border-white/[0.06] pt-4">
-            <span className="font-mono text-[9px] tracking-[0.2em] text-white/20">
-              CASE_STUDY
-            </span>
+            <span className="font-mono text-[9px] tracking-[0.2em] text-white/20">CASE_STUDY</span>
             <div className="flex items-center gap-1.5 text-xs font-medium text-white/35 transition-colors group-hover:text-white/80">
               View
               <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />

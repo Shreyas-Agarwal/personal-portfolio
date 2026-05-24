@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { projects } from "@/data/projects";
 import { ProjectCard } from "@/components/projects/ProjectCard";
+import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
   title: "Projects",
   description:
-    "Five production case studies — 4D simulation engines, enterprise data pipelines, document stamping FSMs, conversational AI gateways, and high-availability notification brokers.",
+    "Seven production case studies — 4D simulation engines, enterprise data pipelines, document stamping FSMs, conversational AI gateways, notification brokers, and enterprise operational rollouts.",
   openGraph: {
     title: "Projects | Shreyas Agarwal",
     description:
-      "Production-grade systems across AEC platforms, data infrastructure, and operational automation.",
+      "Production-grade systems across AEC platforms, data infrastructure, operational automation, and enterprise transformations.",
   },
 };
 
@@ -38,37 +38,15 @@ export default function ProjectsPage() {
           </h1>
 
           <p className="mt-8 max-w-xl text-base leading-relaxed text-white/45">
-            Five production case studies spanning AEC data platforms, enterprise
-            pipelines, automation engines, and distributed infrastructure — each
-            with a deep architectural breakdown.
+            Seven production case studies spanning AEC data platforms, enterprise pipelines,
+            compliance automation, and operational transformation rollouts — each with a deep
+            breakdown.
           </p>
-
-          {/* Metric strip */}
-          <div className="mt-16 grid grid-cols-2 gap-px border border-white/[0.06] bg-white/[0.06] sm:grid-cols-4">
-            {[
-              { value: "5", label: "Case Studies" },
-              { value: "10K+", label: "Records / Day" },
-              { value: "0", label: "Downtime Events" },
-              { value: "~70%", label: "Avg. Cycle Reduction" },
-            ].map((m) => (
-              <div key={m.label} className="bg-[#0B0D10] px-6 py-5">
-                <div className="text-2xl font-semibold tracking-tight text-white/90">
-                  {m.value}
-                </div>
-                <div className="mt-1 font-mono text-[9px] tracking-[0.2em] text-white/25">
-                  {m.label.toUpperCase().replace(/ /g, "_")}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
       {/* ── Projects Grid ────────────────────────────────────────────────── */}
-      <section
-        data-header-theme="dark"
-        className="relative bg-[#0B0D10] px-6 py-20 md:px-12"
-      >
+      <section data-header-theme="dark" className="relative bg-[#0B0D10] px-6 py-20 md:px-12">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute top-0 left-1/3 h-full w-px bg-white/[0.02]" />
           <div className="absolute top-0 left-2/3 h-full w-px bg-white/[0.02]" />

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { AlertCircle, PlayCircle } from "lucide-react";
+import { useCallback, useState } from "react";
 
 interface LinkedInEmbedProps {
   embedId: string;

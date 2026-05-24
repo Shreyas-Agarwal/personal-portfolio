@@ -1,11 +1,11 @@
 "use client";
 
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const nav = [
   { to: "/systems", label: "01. SYSTEMS", subtitle: "architectures" },
@@ -36,9 +36,7 @@ export function Header() {
   // intersects that strip is the one currently behind the header.
   // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is needed to re-initialize observer on route changes
   useEffect(() => {
-    const sections = Array.from(
-      document.querySelectorAll<HTMLElement>("[data-header-theme]")
-    );
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-header-theme]"));
 
     if (sections.length === 0) return;
 
@@ -50,8 +48,7 @@ export function Header() {
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            const sectionTheme = (entry.target as HTMLElement).dataset
-              .headerTheme as HeaderTheme;
+            const sectionTheme = (entry.target as HTMLElement).dataset.headerTheme as HeaderTheme;
             setTheme(sectionTheme ?? "dark");
           }
         }
@@ -62,7 +59,7 @@ export function Header() {
         // passes through that slice — i.e., it's right behind the header.
         rootMargin: "-1px 0px -99% 0px",
         threshold: 0,
-      }
+      },
     );
 
     for (const section of sections) {
@@ -88,29 +85,24 @@ export function Header() {
       style={{ height: headerHeight, backdropFilter: blurAmount }}
       className={cn(
         "sticky top-0 z-50 w-full transition-colors duration-500",
-        isLight
-          ? "bg-[#F3F1EC]/80 text-black"
-          : "bg-[#0B0D10]/70 text-white"
+        isLight ? "bg-[#F3F1EC]/80 text-black" : "bg-[#0B0D10]/70 text-white",
       )}
     >
       <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 md:px-8">
-
         {/* IDENTITY: SYSTEM PATH */}
         <div className="flex flex-col font-mono uppercase tracking-[0.2em]">
           <div className="flex items-center gap-2">
             <span
               className={cn(
                 "h-2 w-2 rounded-full animate-pulse",
-                isLight ? "bg-black/60" : "bg-primary"
+                isLight ? "bg-black/60" : "bg-primary",
               )}
             />
             <Link
               href="/"
               className={cn(
                 "text-sm font-bold transition-colors",
-                isLight
-                  ? "text-black hover:text-black/70"
-                  : "text-white/90 hover:text-primary"
+                isLight ? "text-black hover:text-black/70" : "text-white/90 hover:text-primary",
               )}
             >
               SHREYAS_AGARWAL {"//"}
@@ -121,7 +113,7 @@ export function Header() {
             animate={{ opacity: 1 }}
             className={cn(
               "mt-1 text-[10px] flex items-center gap-4",
-              isLight ? "text-black/40" : "text-muted-foreground"
+              isLight ? "text-black/40" : "text-muted-foreground",
             )}
           >
             <span>DOM: DATA_INFRASTRUCTURE</span>
@@ -134,11 +126,7 @@ export function Header() {
             const isActive = pathname.startsWith(n.to);
 
             return (
-              <Link
-                key={n.to}
-                href={n.to}
-                className="group relative flex flex-col items-end"
-              >
+              <Link key={n.to} href={n.to} className="group relative flex flex-col items-end">
                 <span
                   className={cn(
                     "font-mono text-[10px] tracking-widest transition-colors",
@@ -148,7 +136,7 @@ export function Header() {
                         : "text-black/35 group-hover:text-black/70"
                       : isActive
                         ? "text-primary"
-                        : "text-muted-foreground group-hover:text-foreground"
+                        : "text-muted-foreground group-hover:text-foreground",
                   )}
                 >
                   {n.subtitle}
@@ -162,7 +150,7 @@ export function Header() {
                         : "text-black/50 group-hover:text-black"
                       : isActive
                         ? "text-foreground"
-                        : "text-muted-foreground/60 group-hover:text-foreground"
+                        : "text-muted-foreground/60 group-hover:text-foreground",
                   )}
                 >
                   {n.label}
@@ -173,9 +161,7 @@ export function Header() {
                     layoutId="system-underline"
                     className={cn(
                       "absolute -bottom-4 right-0 h-[2px] w-full",
-                      isLight
-                        ? "bg-black/60"
-                        : "bg-primary shadow-[0_0_10px_var(--color-primary)]"
+                      isLight ? "bg-black/60" : "bg-primary shadow-[0_0_10px_var(--color-primary)]",
                     )}
                   />
                 )}
@@ -204,7 +190,9 @@ export function Header() {
             exit={{ opacity: 0, height: 0 }}
             className={cn(
               "absolute left-0 top-[100%] w-full overflow-hidden border-t",
-              isLight ? "bg-[#F3F1EC]/95 border-black/10 text-black" : "bg-[#0B0D10]/95 border-white/10 text-white"
+              isLight
+                ? "bg-[#F3F1EC]/95 border-black/10 text-black"
+                : "bg-[#0B0D10]/95 border-white/10 text-white",
             )}
             style={{ backdropFilter: "blur(20px)" }}
           >
@@ -227,7 +215,7 @@ export function Header() {
                             : "text-black/40 group-hover:text-black/70"
                           : isActive
                             ? "text-primary"
-                            : "text-muted-foreground group-hover:text-foreground"
+                            : "text-muted-foreground group-hover:text-foreground",
                       )}
                     >
                       {n.subtitle}
@@ -241,7 +229,7 @@ export function Header() {
                             : "text-black/60 group-hover:text-black"
                           : isActive
                             ? "text-foreground"
-                            : "text-muted-foreground/80 group-hover:text-foreground"
+                            : "text-muted-foreground/80 group-hover:text-foreground",
                       )}
                     >
                       {n.label}
@@ -261,7 +249,7 @@ export function Header() {
           "absolute bottom-0 left-0 h-[1px] w-full",
           isLight
             ? "bg-gradient-to-r from-transparent via-black/15 to-transparent"
-            : "bg-gradient-to-r from-transparent via-foreground/20 to-transparent"
+            : "bg-gradient-to-r from-transparent via-foreground/20 to-transparent",
         )}
       />
     </motion.header>

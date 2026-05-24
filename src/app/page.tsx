@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/sections/home/Hero";
-import { SystemEvolutionPreview } from "@/components/sections/home/SystemEvolution";
-import { SelectedWorkSection } from "@/components/sections/home/SelectedWork";
-import { OperationalIntelligenceSection } from "@/components/sections/home/OperationalIntelligence";
 import { NotesAndClosureSection } from "@/components/sections/home/NotesAndClosure";
+import { OperationalIntelligenceSection } from "@/components/sections/home/OperationalIntelligence";
+import { SelectedWorkSection } from "@/components/sections/home/SelectedWork";
+import { SystemEvolutionPreview } from "@/components/sections/home/SystemEvolution";
 
 export const metadata: Metadata = {
   title: "Home",

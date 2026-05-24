@@ -7,6 +7,8 @@ export interface Project {
   id: string;
   title: string;
   subtitle: string;
+  type: "technical" | "implementation";
+  order: number;
   techStack: string[];
   impactMetrics: ImpactMetric[];
   /** External CTA — only set when a live demo exists */
@@ -17,29 +19,37 @@ export interface Project {
   backupVideoPath: string;
   challenge: string;
   /** NDA-compliant pseudocode / architecture block shown on the case study page */
-  solutionCode: string;
+  solutionCode?: string;
   impactNarrative: string;
+  /** Path relative to /public served as a static asset, e.g. /images/foo.png */
+  imagePath?: string;
+  /** Optional URL to a presentation or related document */
+  presentationUrl?: string;
 }
 
-export const projects: Project[] = [
-  {
-    id: "planned-vs-actual-4d",
-    title: "Planned vs. Actual 4D Schedule Simulation Engine",
-    subtitle:
-      "Interactive 4D BIM timeline simulation engine utilizing WebGL/Three.js custom layers to map construction schedule milestones directly against native cloud models.",
-    techStack: ["Autodesk Platform Services (APS)", "Three.js", "WebGL", "Web Workers"],
-    impactMetrics: [
-      { label: "Sync Latency (ACC to View)", value: "Instant" },
-      { label: "Third-party Dependencies", value: "Zero" },
-      { label: "3D Element Matching Uptime", value: "99.8%" },
-      { label: "Render Target frame-rate", value: "60 FPS" },
-    ],
-    liveUrl: "https://buildwithbim.in/planvactual",
-    linkedinEmbedId: "",
-    backupVideoPath: "/videos/planvactual_4d.mp4",
-    challenge:
-      "Integrating 4D construction metadata traditionally requires rigid external middleware to bind project schedules to graphic elements. The challenge was to achieve dynamic schedule-to-model parsing natively within the browser, rendering complex timeline state adjustments at a buttery-smooth 60 FPS without introducing external database integrations or choking the browser's main execution thread.",
-    solutionCode: `// Native ACC 4D Schedule Timeline Core
+export const projects: Project[] = (
+  [
+    {
+      id: "planned-vs-actual-4d",
+      title: "Planned vs. Actual 4D Schedule Simulation Engine",
+      subtitle:
+        "Interactive 4D BIM timeline simulation engine utilizing WebGL/Three.js custom layers to map construction schedule milestones directly against native cloud models.",
+      type: "technical",
+      order: 1,
+      techStack: ["Autodesk Platform Services (APS)", "Three.js", "WebGL", "Web Workers"],
+      impactMetrics: [
+        { label: "Sync Latency (ACC to View)", value: "Instant" },
+        { label: "Third-party Dependencies", value: "Zero" },
+        { label: "3D Element Matching Uptime", value: "99.8%" },
+        { label: "Render Target frame-rate", value: "60 FPS" },
+      ],
+      liveUrl: "https://buildwithbim.in/planvactual",
+      linkedinEmbedId: "",
+      backupVideoPath: "/videos/planvactual_4d.mp4",
+      imagePath: "/images/planvactual_4d.png",
+      challenge:
+        "Integrating 4D construction metadata traditionally requires rigid external middleware to bind project schedules to graphic elements. The challenge was to achieve dynamic schedule-to-model parsing natively within the browser, rendering complex timeline state adjustments at a buttery-smooth 60 FPS without introducing external database integrations or choking the browser's main execution thread.",
+      solutionCode: `// Native ACC 4D Schedule Timeline Core
 // NDA-compliant architectural abstraction
 
 interface ACCScheduleTask {
@@ -90,104 +100,103 @@ class Timeline4DEngine {
     };
   }
 }`,
-    impactNarrative:
-      "Eliminated the dependency on external third-party middleware suites by engineering a direct pipeline reading native parameters within Autodesk Construction Cloud. By offloading heavy date-interpolation calculations to a background Web Worker thread and batching element visibility transformations natively within the Three.js-backed WebGL canvas, the engine supports instantaneous, zero-latency timeline updates as the user interacts with the dashboard.",
-  },
+      impactNarrative:
+        "Eliminated the dependency on external third-party middleware suites by engineering a direct pipeline reading native parameters within Autodesk Construction Cloud. By offloading heavy date-interpolation calculations to a background Web Worker thread and batching element visibility transformations natively within the Three.js-backed WebGL canvas, the engine supports instantaneous, zero-latency timeline updates as the user interacts with the dashboard.",
+    },
 
-  {
-    id: "powerbi-4d-viewer",
-    title: "Serverless PowerBI 4D Analytics Pipeline",
-    subtitle:
-      "High-performance, zero-infrastructure enterprise data pipeline linking Autodesk Data Exchanges natively with Microsoft Cloud servers for instantaneous BI synchronization.",
-    techStack: ["PowerBI Embedded", "Autodesk Data Exchanges (ADX)", "Power Automate", "Azure Cloud Services"],
-    impactMetrics: [
-      { label: "Infrastructure Cost", value: "Zero" },
-      { label: "Server Maintenance", value: "None (Serverless)" },
-      { label: "Data Sources Unified", value: "6" },
-      { label: "Sync Latency", value: "Near Real-Time" },
-    ],
-    liveUrl: "",
-    linkedinEmbedId: "",
-    backupVideoPath: "/videos/powerbi_4d.mp4",
-    challenge:
-      "Traditional BI integrations require provisioning, securing, and maintaining on-prem databases or cloud servers to store intermediate model parameters. The challenge was to completely eliminate this middleware infrastructure layer, orchestrating a direct, high-speed parameter pipeline between Autodesk and Microsoft cloud servers that guarantees enterprise-grade security compliance and instant data availability without hosting overhead.",
-    solutionCode: `// Zero-Infrastructure ADX to PowerBI Stream Orchestrator
-// NDA-compliant cloud architecture abstraction
+    {
+      id: "powerbi-4d-viewer",
+      title: "PowerBI 4D Analytics & Project Progress Tracking Pipeline",
+      subtitle:
+        "High-performance, zero-infrastructure enterprise data pipeline linking Autodesk Data Exchanges natively with Microsoft Cloud servers for instantaneous BI synchronization.",
+      type: "technical",
+      order: 5,
+      techStack: ["PowerBI", "PowerQuery", "DAX", "Autodesk Data Connectors"],
+      impactMetrics: [
+        { label: "Infrastructure Cost", value: "Zero" },
+        { label: "Server Maintenance", value: "None (Serverless)" },
+        { label: "Data Sources Unified", value: "6" },
+        { label: "Sync Latency", value: "Near Real-Time" },
+      ],
+      liveUrl: "https://www.5dvdc.com/Deliverables/custom-dashboards",
+      linkedinEmbedId: "",
+      backupVideoPath: "/videos/powerbi_4d.mp4",
+      imagePath: "/images/powerbi_4d.jpg",
+      challenge:
+        "Traditional BI integrations require provisioning, securing, and maintaining on-prem databases or cloud servers to store intermediate model parameters. The challenge was to completely eliminate this middleware infrastructure layer by leveraging native PowerBI Connectors to stream data directly into the dashboard, requiring advanced PowerQuery and DAX modeling to harmonize complex 4D schedules with architectural parameters dynamically.",
+      solutionCode: `// Advanced PowerQuery & DAX Data Modeling Pipeline
+// NDA-compliant architectural abstraction
 
-interface ADXParameterPayload {
-  exchangeId: string;
-  hubs: string[];
-  updatedParameters: Array<{
-    componentId: string;
-    name: string;
-    value: string | number;
-  }>;
-}
-
-class ServerlessBIPipeline {
-  /**
-   * Cloud-to-Cloud Webhook Receiver.
-   * Triggered automatically by Autodesk Cloud servers when a Data Exchange parameter updates.
-   */
-  public async handleAutodeskExchangeWebhook(request: Request): Promise<Response> {
-    try {
-      const payload: ADXParameterPayload = await request.json();
-      
-      // Step 1: Formulate a highly optimized canonical array directly from the webhook payload
-      const biPayload = payload.updatedParameters.map(param => ({
-        elementId: param.componentId,
-        key: \`ADX_\${param.name.toUpperCase()}\`,
-        val: param.value,
-        processedAt: new Date().toISOString()
-      }));
-
-      // Step 2: Push directly to Microsoft Azure Event Hubs / Power Automate Push API
-      // Bypasses any intermediary database; streams directly into Microsoft's memory fabric
-      const msCloudSuccess = await this.streamToMicrosoftCloudFabric(biPayload);
-      
-      if (!msCloudSuccess) {
-        return new Response("Microsoft endpoint rejection", { status: 502 });
-      }
-
-      return new Response("Pipeline Sync Dispatched", { status: 200 });
-    } catch (error) {
-      return new Response("Internal Pipeline Exception", { status: 500 });
-    }
-  }
-
-  private async streamToMicrosoftCloudFabric(data: any[]): Promise<boolean> {
-    const powerAutomateEndpoint = process.env.MS_POWER_AUTOMATE_WEBHOOK_URL;
+// 1. PowerQuery (M) - Harmonizing Autodesk Data Exchange parameters
+let
+    Source = AutodeskDataExchange.Contents("exchange_urn"),
+    // Extract nested parameters from ACC Revit model
+    ExpandedProperties = Table.ExpandRecordColumn(Source, "Properties", {"ElementId", "Category", "Volume", "Phase"}),
     
-    const response = await fetch(powerAutomateEndpoint!, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ datasetRows: data })
-    });
+    // Clean and transform data types for calculation efficiency
+    TypedData = Table.TransformColumnTypes(ExpandedProperties, {
+        {"Volume", type number}, 
+        {"Phase", type text}
+    }),
+    
+    // Merge with Project Management Data (ACC Data Connector)
+    ScheduleData = AutodeskDataConnector.Contents("project_id", "Schedule"),
+    MergedQueries = Table.NestedJoin(TypedData, {"ElementId"}, ScheduleData, {"LinkedElementId"}, "ScheduleMetrics", JoinKind.LeftOuter)
+in
+    MergedQueries
 
-    return response.ok;
-  }
-}`,
-    impactNarrative:
-      "Architected a zero-middleware pipeline that streams granular variables straight from Autodesk Data Exchanges (ADX) into Microsoft's data ecosystem. By eliminating on-prem hosting and intermediate database serving layers entirely, this design completely slashed server maintenance overhead, satisfied enterprise data-isolation constraints natively, and unlocked lightning-fast, near-real-time dashboard refreshes for corporate stakeholders.",
-  },
-  {
-    id: "document-stamping",
-    title: "State-Driven Architectural Document Stamping Engine",
-    subtitle:
-      "Deterministic engineering compliance engine converting fragile Autodesk markups into server-side burned cryptographic stamps with automated, field-scannable QR version tracking.",
-    techStack: ["Node.js", "TypeScript", "Finite State Machines (FSM)", "PDF-Lib", "Autodesk Cloud Webhooks"],
-    impactMetrics: [
-      { label: "Document Compliance Integrity", value: "100% Immutable" },
-      { label: "Unauthorized Stamp Usage", value: "0% (RBAC Guarded)" },
-      { label: "On-Site Version Verification", value: "Instant via QR" },
-      { label: "Review Cycle Acceleration", value: "~70%" },
-    ],
-    liveUrl: "",
-    linkedinEmbedId: "",
-    backupVideoPath: "/videos/automated_stamping.mp4",
-    challenge:
-      "Native cloud workflows treat drawing approvals as client-side vector markups. This introduces structural compliance risks: stamps can be accidentally edited or maliciously deleted by downstream vendors, stamp access cannot be gated by Roles, and printed field blueprints lack a dynamic mechanism to confirm if they represent the latest approved revision. The challenge lay in intercepting drawing approvals via webhooks, cryptographically flattening multi-party signatures permanently into the PDF binary, and embedding dynamic version-tracking metadata.",
-    solutionCode: `// Server-Side Immutable FSM Drawing Stamper & Dynamic Version Controller
+// 2. DAX - Dynamic 4D Timeline Evaluation Measure
+// Calculates total concrete volume poured up to the currently selected timeline epoch
+CumulativeVolume = 
+CALCULATE(
+    SUM('ModelData'[Volume]),
+    FILTER(
+        ALL('Schedule'),
+        'Schedule'[ActualStartDate] <= MAX('DateDimension'[Date])
+    )
+)
+
+// 3. DAX - Schedule Variance Indicator (Planned vs Actual)
+VarianceStatus = 
+IF(
+    ISBLANK(MAX('Schedule'[ActualStartDate])),
+    "Not Started",
+    IF(
+        MAX('Schedule'[ActualStartDate]) > MAX('Schedule'[PlannedStartDate]),
+        "Delayed",
+        "On Track"
+    )
+)`,
+      impactNarrative:
+        "Architected a zero-middleware pipeline that streams granular variables straight from Autodesk Data Connectors directly into PowerBI. By eliminating custom webhooks and intermediate database serving layers entirely, this design relies on sophisticated PowerQuery M scripts and DAX measures to transform and link native architectural models with project management schedules. This completely slashed server maintenance overhead while ensuring enterprise-grade data security and instant dashboard refreshes.",
+    },
+    {
+      id: "document-stamping",
+      title: "State-Driven Document Stamping Engine",
+      subtitle:
+        "Deterministic engineering compliance engine converting fragile Autodesk markups into server-side burned cryptographic stamps with automated, field-scannable QR version tracking.",
+      type: "technical",
+      order: 3,
+      techStack: [
+        "Node.js",
+        "TypeScript",
+        "Finite State Machines (FSM)",
+        "PDF-Lib",
+        "Autodesk Cloud Webhooks",
+      ],
+      impactMetrics: [
+        { label: "Document Compliance Integrity", value: "100% Immutable" },
+        { label: "Unauthorized Stamp Usage", value: "0% (RBAC Guarded)" },
+        { label: "On-Site Version Verification", value: "Instant via QR" },
+        { label: "Review Cycle Acceleration", value: "~70%" },
+      ],
+      liveUrl: "",
+      linkedinEmbedId: "",
+      backupVideoPath: "/videos/automated_stamping.mp4",
+      imagePath: "/images/automated_stamping.png",
+      challenge:
+        "Native cloud workflows treat drawing approvals as client-side vector markups. This introduces structural compliance risks: stamps can be accidentally edited or maliciously deleted by downstream vendors, stamp access cannot be gated by Roles, and printed field blueprints lack a dynamic mechanism to confirm if they represent the latest approved revision. The challenge lay in intercepting drawing approvals via webhooks, cryptographically flattening multi-party signatures permanently into the PDF binary, and embedding dynamic version-tracking metadata.",
+      solutionCode: `// Server-Side Immutable FSM Drawing Stamper & Dynamic Version Controller
 // NDA-compliant architectural abstraction
 
 type StampState = "PENDING_REVIEWER" | "PENDING_AUTHORITY" | "STAMPED_APPROVED" | "REJECTED";
@@ -268,28 +277,31 @@ class CryptographicStampingEngine {
     return Buffer.from([]); 
   }
 }`,
-    impactNarrative:
-      "Overhauled the insecure, manual Autodesk markup review cycle by designing an automated, server-side PDF manipulation engine. The platform listens for review approval states via webhooks, cryptographically flattens roles-verified stamp profiles directly into the drawing's binary layers to prevent tampering, and appends a dynamic verification QR code. This gives on-site field engineers instant security validation over blueprint recency, completely eliminating out-of-date documentation usage errors on active construction sites.",
-  },
+      impactNarrative:
+        "Overhauled the insecure, manual Autodesk markup review cycle by designing an automated, server-side PDF manipulation engine. The platform listens for review approval states via webhooks, cryptographically flattens roles-verified stamp profiles directly into the drawing's binary layers to prevent tampering, and appends a dynamic verification QR code. This gives on-site field engineers instant security validation over blueprint recency, completely eliminating out-of-date documentation usage errors on active construction sites.",
+    },
 
-  {
-    id: "whatsapp-chatbots",
-    title: "Secure Agentic WhatsApp Conversational Enterprise Gateway",
-    subtitle:
-      "Token-optimized, multi-agent conversational architecture linking field operations to Autodesk APIs via an isolated intent-parsing firewall.",
-    techStack: ["Python", "Meta Cloud API", "Redis", "AutoGen", "Agno", "FastAPI"],
-    impactMetrics: [
-      { label: "LLM Token Cost Reduction", value: "~75%" },
-      { label: "Direct API Data Exposure", value: "0% (Air-Gapped)" },
-      { label: "Field Query Response Time", value: "< 3.5 s" },
-      { label: "Manual Office Interventions", value: "Reduced 60%" },
-    ],
-    liveUrl: "",
-    linkedinEmbedId: "",
-    backupVideoPath: "/videos/whatsapp_chatbot.mp4",
-    challenge:
-      "Field engineers need real-time updates on active site Issues, drawing revisions, and RFIs, but lack access to heavy corporate BIM dashboards. Exposing underlying Autodesk APIs to open-ended LLMs via traditional Model Context Protocol (MCP) or tool-calling layers creates immense compliance vulnerabilities, risks data leaks, and introduces massive context-window token overhead that scales unsustainably with multi-user enterprise traffic.",
-    solutionCode: `# Secure Multi-Agent Conversational Infrastructure Pipeline
+    {
+      id: "whatsapp-chatbots",
+      title: "Secure Agentic WhatsApp Conversational Enterprise Gateway",
+      subtitle:
+        "Token-optimized, multi-agent conversational architecture linking field operations to Autodesk APIs via an isolated intent-parsing firewall.",
+      type: "technical",
+      order: 6,
+      techStack: ["Python", "Meta Cloud API", "Redis", "AutoGen", "Agno", "FastAPI"],
+      impactMetrics: [
+        { label: "LLM Token Cost Reduction", value: "~75%" },
+        { label: "Direct API Data Exposure", value: "0% (Air-Gapped)" },
+        { label: "Field Query Response Time", value: "< 3.5 s" },
+        { label: "Manual Office Interventions", value: "Reduced 60%" },
+      ],
+      liveUrl: "",
+      linkedinEmbedId: "",
+      backupVideoPath: "/videos/whatsapp_chatbot.mp4",
+      imagePath: "/images/whatsapp_chatbot.jpg",
+      challenge:
+        "Field engineers need real-time updates on active site Issues, drawing revisions, and RFIs, but lack access to heavy corporate BIM dashboards. Exposing underlying Autodesk APIs to open-ended LLMs via traditional Model Context Protocol (MCP) or tool-calling layers creates immense compliance vulnerabilities, risks data leaks, and introduces massive context-window token overhead that scales unsustainably with multi-user enterprise traffic.",
+      solutionCode: `# Secure Multi-Agent Conversational Infrastructure Pipeline
 # NDA-compliant architectural abstraction
 
 from pydantic import BaseModel
@@ -349,28 +361,37 @@ class MultiAgentGateway:
             )
             return response.json()
 `,
-    impactNarrative:
-      "Bypassed high-cost, structurally insecure Model Context Protocol (MCP) implementations by engineering a decoupled, three-tier multi-agent conversational engine built on AutoGen and Agno frameworks. By segmenting the system into isolated Intent-Parsing, Query-Construction, and Answer-Formatting agents, the LLM context is strictly limited to metadata formatting, reducing token consumption by 75% and establishing an air-gapped security boundary that prevents raw enterprise cloud data from ever being exposed to the public model provider.",
-  },
+      impactNarrative:
+        "Bypassed high-cost, structurally insecure Model Context Protocol (MCP) implementations by engineering a decoupled, three-tier multi-agent conversational engine built on AutoGen and Agno frameworks. By segmenting the system into isolated Intent-Parsing, Query-Construction, and Answer-Formatting agents, the LLM context is strictly limited to metadata formatting, reducing token consumption by 75% and establishing an air-gapped security boundary that prevents raw enterprise cloud data from ever being exposed to the public model provider.",
+    },
 
-  {
-    id: "notification-broker",
-    title: "High-Availability Event Broker & Adaptive Compliance Guardian",
-    subtitle:
-      "Decoupled, zero-loss asynchronous event processor intercepting Autodesk webhooks to enforce folder-level compliance guardrails and distribute immediate field alerts.",
-    techStack: ["Node.js", "BullMQ", "Redis", "Autodesk Cloud Webhooks", "Circuit Breaker Pattern"],
-    impactMetrics: [
-      { label: "Event Delivery Guarantee", value: "Zero-Loss (At-Least-Once)" },
-      { label: "Out-of-Bounds Folder Flags", value: "Instant (< 800ms)" },
-      { label: "API Blocking Overhead", value: "0% (Fully Decoupled)" },
-      { label: "Failed Channel Recovery", value: "Automatic Backoff" },
-    ],
-    liveUrl: "",
-    linkedinEmbedId: "",
-    backupVideoPath: "/videos/instant_whatsapp_alerts.mp4",
-    challenge:
-      "Autodesk Construction Cloud lacks native folder-to-workflow restrictions, allowing users to accidentally route drawings from restricted directories into formal executive review cycles. Furthermore, legacy alerting mechanisms handled notifications synchronously within the main request execution thread. If a single external communications provider encountered latency, the entire primary API loop froze, resulting in silent message drops and structural compliance blind spots.",
-    solutionCode: `// Decoupled Multi-Channel Notification Broker & Compliance Filter
+    {
+      id: "notification-broker",
+      title: "Adaptive Compliance Guardian",
+      subtitle:
+        "Decoupled, asynchronous event processor intercepting webhooks to enforce compliance guardrails and distribute immediate field alerts.",
+      type: "technical",
+      order: 4,
+      techStack: [
+        "Node.js",
+        "BullMQ",
+        "Redis",
+        "Autodesk Cloud Webhooks",
+        "Circuit Breaker Pattern",
+      ],
+      impactMetrics: [
+        { label: "Event Delivery Guarantee", value: "Zero-Loss (At-Least-Once)" },
+        { label: "Out-of-Bounds Folder Flags", value: "Instant (< 800ms)" },
+        { label: "API Blocking Overhead", value: "0% (Fully Decoupled)" },
+        { label: "Failed Channel Recovery", value: "Automatic Backoff" },
+      ],
+      liveUrl: "",
+      linkedinEmbedId: "",
+      backupVideoPath: "/videos/instant_whatsapp_alerts.mp4",
+      imagePath: "/images/instant_whatsapp_alerts.jpg",
+      challenge:
+        "Autodesk Construction Cloud lacks native folder-to-workflow restrictions, allowing users to accidentally route drawings from restricted directories into formal executive review cycles. Furthermore, legacy alerting mechanisms handled notifications synchronously within the main request execution thread. If a single external communications provider encountered latency, the entire primary API loop froze, resulting in silent message drops and structural compliance blind spots.",
+      solutionCode: `// Decoupled Multi-Channel Notification Broker & Compliance Filter
 // NDA-compliant architectural abstraction
 
 interface AutodeskWebhookEvent {
@@ -438,10 +459,62 @@ class HighAvailabilityNotificationBroker {
     return ruleset.approvedFolders.includes(folderUrn);
   }
 }`,
-    impactNarrative:
-      "Decoupled all communication overhead from the primary platform API request cycle by deploying a resilient, asynchronous event broker using BullMQ and Redis. By extending this broker to serve as an active compliance audit filter, the architecture intercepts Autodesk review creations via webhooks, cross-references folder permissions instantly, and flags out-of-bounds workflow anomalies. This ensures project managers and administrators receive critical, role-gated WhatsApp alerts within 800 milliseconds, ensuring absolute structural data governance.",
-  },
-];
+      impactNarrative:
+        "Decoupled all communication overhead from the primary platform API request cycle by deploying a resilient, asynchronous event broker using BullMQ and Redis. By extending this broker to serve as an active compliance audit filter, the architecture intercepts Autodesk review creations via webhooks, cross-references folder permissions instantly, and flags out-of-bounds workflow anomalies. This ensures project managers and administrators receive critical, role-gated WhatsApp alerts within 800 milliseconds, ensuring absolute structural data governance.",
+    },
+    {
+      id: "experion-implementation",
+      title: "Experion Project & Implementation Monitoring",
+      subtitle:
+        "Comprehensive PowerBI dashboard suite spanning project, labor, and activity productivity with future forecasting and implementation tracking.",
+      type: "implementation",
+      order: 7,
+      techStack: ["PowerBI", "Data Modeling", "DAX", "Implementation Strategy"],
+      impactMetrics: [
+        { label: "Dashboards Deployed", value: "Multiple" },
+        { label: "Productivity Tracking", value: "3-Tiered" },
+        { label: "Forecasting", value: "Enabled" },
+      ],
+      liveUrl: "",
+      linkedinEmbedId: "",
+      backupVideoPath: "",
+      imagePath: "/images/experion_dashboard.png",
+      challenge:
+        "Enterprise construction projects require granular visibility across multiple dimensions of productivity (labor, activity, overall project) along with accurate future forecasting. The challenge was to consolidate these disparate metrics into a unified, actionable PowerBI monitoring suite.",
+      impactNarrative:
+        "Delivered a holistic PowerBI monitoring solution that provides deep insights into productivity and enables proactive future forecasting. This implementation successfully bridged the gap between raw field data and executive decision-making.",
+    },
+    {
+      id: "dlf-acc-implementation",
+      title: "DLF Autodesk Construction Cloud Implementation",
+      subtitle:
+        "Full-scale enterprise rollout of Autodesk Construction Cloud (Forma) with advanced project monitoring across 50+ dashboards developed over 5 months.",
+      type: "implementation",
+      order: 2,
+      techStack: [
+        "Autodesk Construction Cloud",
+        "Autodesk Forma",
+        "PowerBI",
+        "Enterprise Transformation",
+      ],
+      impactMetrics: [
+        { label: "Dashboards Created", value: "50+" },
+        { label: "Implementation Timeline", value: "5 Months" },
+        { label: "Role", value: "Co-Lead" },
+      ],
+      liveUrl: "",
+      linkedinEmbedId: "",
+      backupVideoPath: "",
+      imagePath: "/images/dlf_implementation.png",
+      presentationUrl:
+        "/presentations/CS2833_ClassPresentation-2833-Mittal-AU2025_1756737502392001n65E.pdf",
+      challenge:
+        "Executing a full-scale digital transformation for a major enterprise like DLF involves aligning complex workflows with new platforms. As the second co-lead, the challenge was to directly coordinate with the GM of tech transformation, ensuring a smooth transition to ACC while concurrently building an advanced reporting infrastructure.",
+      impactNarrative:
+        "Successfully co-led the technical transformation and implementation of ACC across DLF's operations. The simultaneous development of over 50 custom dashboards provided unprecedented visibility into the rollout, ultimately validating the effort in an Autodesk University 2025 presentation.",
+    },
+  ] as Project[]
+).sort((a, b) => a.order - b.order);
 
 export const getProjectById = (id: string): Project | undefined =>
   projects.find((p) => p.id === id);

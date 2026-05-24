@@ -1,10 +1,10 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { HomeFooter } from "./HomeFooter";
 import { DefaultFooter } from "./DefaultFooter";
+import { HomeFooter } from "./HomeFooter";
 
 export function FooterRenderer() {
-    const pathname = usePathname();
-    return pathname === "/" ? <HomeFooter /> : <DefaultFooter />;
+  const pathname = usePathname();
+  return pathname === "/" ? <HomeFooter /> : <DefaultFooter />;
 }
