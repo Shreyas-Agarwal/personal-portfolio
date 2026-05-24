@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, ExternalLink, Eye, FileText, Shield } from "lucide-react";
+import { ExternalLink, FileText, Shield } from "lucide-react";
 import type React from "react";
 
 interface PdfViewerProps {
@@ -24,8 +24,8 @@ export function PdfViewer({ url, title }: PdfViewerProps) {
       onContextMenu={handleContextMenu}
       className="group relative flex flex-col overflow-hidden rounded-none border border-white/[0.08] bg-[#05070A] transition-all duration-300 hover:border-white/[0.15]"
     >
-      {/* Secure Header Banner */}
-      <div className="flex flex-col gap-2 border-b border-white/[0.08] bg-white/[0.02] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+      {/* Document Header */}
+      <div className="flex flex-col gap-4 border-b border-white/[0.08] bg-white/[0.02] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="relative flex h-8 w-8 items-center justify-center rounded-sm bg-orange-500/10 text-orange-400">
             <Shield className="h-4.5 w-4.5" />
@@ -37,7 +37,7 @@ export function PdfViewer({ url, title }: PdfViewerProps) {
           <div>
             <div className="flex items-center gap-2">
               <span className="font-mono text-[9px] font-bold tracking-[0.2em] text-orange-400">
-                SECURE_DOCUMENT_WORKSTATION
+                PRESENTATION_DOCUMENT_VIEWER
               </span>
             </div>
             <h4 className="font-mono text-[10px] tracking-wider text-white/70 mt-0.5">
@@ -46,33 +46,13 @@ export function PdfViewer({ url, title }: PdfViewerProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 font-mono text-[8px] tracking-[0.15em] text-white/30">
-          <div className="flex items-center gap-1">
-            <Eye className="h-3 w-3 text-white/40" />
-            READ_ONLY_PREVIEW
-          </div>
-          <div className="h-3 w-px bg-white/[0.08]" />
-          <span className="text-emerald-400/90 font-bold">STATUS: COMPLIANT</span>
-        </div>
-      </div>
-
-      {/* Warning Notice Banner */}
-      <div className="flex flex-col gap-3 border-b border-white/[0.06] bg-orange-500/[0.02] px-5 py-2.5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-2.5">
-          <AlertCircle className="h-3.5 w-3.5 text-orange-400/80 shrink-0 mt-0.5" />
-          <p className="font-mono text-[9px] leading-normal tracking-wide text-orange-400/70">
-            This document is displayed in a secure sandboxed environment. Printing, downloading, and
-            external replication are restricted to protect proprietary VDC implementation
-            methodologies.
-          </p>
-        </div>
         <a
           href="https://www.autodesk.com/autodesk-university/class/DLFs-Journey-Toward-Smarter-Faster-Sharper-Construction-Delivery-Across-a-50-Million-Square-Foot-Portfolio-2025"
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center gap-1 shrink-0 font-mono text-[8px] tracking-[0.15em] text-orange-400/80 hover:text-orange-300 transition-colors uppercase"
+          className="group flex items-center gap-1.5 shrink-0 border border-white/[0.08] bg-white/[0.02] px-3.5 py-2 font-mono text-[9px] tracking-[0.15em] text-white/50 transition-all hover:border-white/20 hover:bg-white/[0.06] hover:text-white/80"
         >
-          AU_2025_Class_Portal
+          AU_2025_CLASS_PORTAL
           <ExternalLink className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </a>
       </div>
