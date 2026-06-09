@@ -6,9 +6,10 @@ import type React from "react";
 interface PdfViewerProps {
   url: string;
   title: string;
+  projectId?: string;
 }
 
-export function PdfViewer({ url, title }: PdfViewerProps) {
+export function PdfViewer({ url, title, projectId }: PdfViewerProps) {
   // Prevent default context menu (right-click) to disable "Save Page As", etc.
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -17,6 +18,11 @@ export function PdfViewer({ url, title }: PdfViewerProps) {
   // Embed the PDF with flags to hide toolbar and nav panes
   // #toolbar=0&navpanes=0&statusbar=0&messages=0
   const secureUrl = `${url}#toolbar=0&navpanes=0&statusbar=0&messages=0`;
+
+  const documentName = url.split("/").pop()?.toUpperCase() || "DOCUMENT.PDF";
+  const isAU = projectId === "dlf-acc-implementation";
+  const badgeLabel = isAU ? "AU2025 Class Contribution Reference" : "Technical System Presentation";
+  const viewerLabel = isAU ? "PRESENTATION_DOCUMENT_VIEWER" : "SYSTEM_ARCHITECTURE_SLIDES";
 
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: Secure context menu interception
@@ -37,24 +43,36 @@ export function PdfViewer({ url, title }: PdfViewerProps) {
           <div>
             <div className="flex items-center gap-2">
               <span className="font-mono text-[9px] font-bold tracking-[0.2em] text-orange-400">
-                PRESENTATION_DOCUMENT_VIEWER
+                {viewerLabel}
               </span>
             </div>
             <h4 className="font-mono text-[10px] tracking-wider text-white/70 mt-0.5">
-              AU2025_CLASS_HANDBOOK.PDF
+              {documentName}
             </h4>
           </div>
         </div>
 
-        <a
-          href="https://www.autodesk.com/autodesk-university/class/DLFs-Journey-Toward-Smarter-Faster-Sharper-Construction-Delivery-Across-a-50-Million-Square-Foot-Portfolio-2025"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group flex items-center gap-1.5 shrink-0 border border-white/[0.08] bg-white/[0.02] px-3.5 py-2 font-mono text-[9px] tracking-[0.15em] text-white/50 transition-all hover:border-white/20 hover:bg-white/[0.06] hover:text-white/80"
-        >
-          AU_2025_CLASS_PORTAL
-          <ExternalLink className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-        </a>
+        {isAU ? (
+          <a
+            href="https://www.autodesk.com/autodesk-university/class/DLFs-Journey-Toward-Smarter-Faster-Sharper-Construction-Delivery-Across-a-50-Million-Square-Foot-Portfolio-2025"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-1.5 shrink-0 border border-white/[0.08] bg-white/[0.02] px-3.5 py-2 font-mono text-[9px] tracking-[0.15em] text-white/50 transition-all hover:border-white/20 hover:bg-white/[0.06] hover:text-white/80"
+          >
+            AU_2025_CLASS_PORTAL
+            <ExternalLink className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </a>
+        ) : (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-1.5 shrink-0 border border-white/[0.08] bg-white/[0.02] px-3.5 py-2 font-mono text-[9px] tracking-[0.15em] text-white/50 transition-all hover:border-white/20 hover:bg-white/[0.06] hover:text-white/80"
+          >
+            OPEN_IN_NEW_TAB
+            <ExternalLink className="h-3 w-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </a>
+        )}
       </div>
 
       {/* PDF Frame Container */}
@@ -69,7 +87,7 @@ export function PdfViewer({ url, title }: PdfViewerProps) {
         <div className="absolute bottom-4 left-4 z-20 flex items-center gap-1.5 rounded-sm bg-black/60 px-2.5 py-1.5 border border-white/[0.05] backdrop-blur-sm pointer-events-none">
           <FileText className="h-3.5 w-3.5 text-white/40" />
           <span className="font-mono text-[9px] tracking-wider text-white/55">
-            AU2025 Class Contribution Reference
+            {badgeLabel}
           </span>
         </div>
       </div>

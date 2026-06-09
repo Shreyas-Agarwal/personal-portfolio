@@ -54,6 +54,7 @@ export const projects: Project[] = (
       linkedinEmbedId: "",
       backupVideoPath: "/videos/planvactual_4d.mp4",
       imagePath: "/images/planvactual_4d.png",
+      presentationUrl: "/videos/planvactual_4d.pdf",
       challenge:
         "Integrating 4D construction metadata traditionally requires rigid external middleware to bind project schedules to graphic elements. The challenge was to achieve dynamic schedule-to-model parsing natively within the browser, rendering complex timeline state adjustments at a buttery-smooth 60 FPS without introducing external database integrations or choking the browser's main execution thread.",
       solutionCode: `// Native ACC 4D Schedule Timeline Core
@@ -408,6 +409,7 @@ class MultiAgentGateway:
       linkedinEmbedId: "",
       backupVideoPath: "/videos/instant_whatsapp_alerts.mp4",
       imagePath: "/images/instant_whatsapp_alerts.jpg",
+      presentationUrl: "/videos/instant_whatsapp_alerts.pdf",
       challenge:
         "Autodesk Construction Cloud lacks native folder-to-workflow restrictions, allowing users to accidentally route drawings from restricted directories into formal executive review cycles. Furthermore, legacy alerting mechanisms handled notifications synchronously within the main request execution thread. If a single external communications provider encountered latency, the entire primary API loop froze, resulting in silent message drops and structural compliance blind spots.",
       solutionCode: `// Decoupled Multi-Channel Notification Broker & Compliance Filter
