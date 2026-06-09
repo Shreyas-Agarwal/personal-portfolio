@@ -12,8 +12,8 @@ export function TenantExecutionClusters() {
       />
 
       <div className="mt-10 space-y-8">
-        {/* Product Cluster Block (Repeatable for Pulse, Nudge, Track, etc.) */}
-        {["Pulse (Analytics)", "Nudge (Notifications)", "Code (Workflow Automation)"].map(
+        {/* Product Cluster Block (Repeatable for various services) */}
+        {["Analytics Module", "Notification Service", "Task Coordination Engine"].map(
           (productName) => (
             <div key={productName} className="space-y-4">
               <div className="flex items-center gap-2 px-2">

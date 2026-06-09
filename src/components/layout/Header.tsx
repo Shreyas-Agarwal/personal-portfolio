@@ -9,10 +9,9 @@ import { cn } from "@/lib/utils";
 
 const nav = [
   { to: "/systems", label: "01. SYSTEMS", subtitle: "architectures" },
-  { to: "/research", label: "02. RESEARCH", subtitle: "information-flow" },
-  { to: "/notes", label: "03. NOTES", subtitle: "observations" },
+  { to: "/projects", label: "02. PROJECTS", subtitle: "case-studies" },
+  { to: "/journal", label: "03. JOURNAL", subtitle: "writing" },
   { to: "/about", label: "04. IDENTITY", subtitle: "the-data-person" },
-  { to: "/projects", label: "05. PROJECTS", subtitle: "case-studies" },
 ];
 
 type HeaderTheme = "dark" | "light";

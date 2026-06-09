@@ -3,6 +3,11 @@ export interface ImpactMetric {
   value: string;
 }
 
+export interface AppliedSystem {
+  label: string;
+  href: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -25,6 +30,8 @@ export interface Project {
   imagePath?: string;
   /** Optional URL to a presentation or related document */
   presentationUrl?: string;
+  /** Systems this project implements or demonstrates */
+  appliedSystems?: AppliedSystem[];
 }
 
 export const projects: Project[] = (
@@ -205,7 +212,7 @@ interface DrawingMetadata {
   documentId: string;
   version: number;
   isLatest: boolean;
-  projectHub: "DLF" | "5DVDC";
+  projectHub: "ENTERPRISE_A" | "ENTERPRISE_B";
 }
 
 class CryptographicStampingEngine {
@@ -257,7 +264,7 @@ class CryptographicStampingEngine {
 
       // 2. Generate and embed dynamic verification QR code payload
       // On-site construction crews scan this token to check 'isLatest' dynamically on mobile
-      const verificationUrl = \`https://verification.etis.suite/verify/\${metadata.documentId}?v=\${metadata.version}\`;
+      const verificationUrl = \`https://verify.platform-systems.example/verify/\${metadata.documentId}?v=\${metadata.version}\`;
       const qrImageBuffer = await this.generateQRBuffer(verificationUrl);
       const embeddedQr = await pdfDoc.embedPng(qrImageBuffer);
       
@@ -289,6 +296,12 @@ class CryptographicStampingEngine {
       type: "technical",
       order: 6,
       techStack: ["Python", "Meta Cloud API", "Redis", "AutoGen", "Agno", "FastAPI"],
+      appliedSystems: [
+        {
+          label: "Frontend–Backend Responsibility Boundaries",
+          href: "/systems/analytics-semantic-layer-architecture",
+        },
+      ],
       impactMetrics: [
         { label: "LLM Token Cost Reduction", value: "~75%" },
         { label: "Direct API Data Exposure", value: "0% (Air-Gapped)" },
@@ -379,6 +392,12 @@ class MultiAgentGateway:
         "Autodesk Cloud Webhooks",
         "Circuit Breaker Pattern",
       ],
+      appliedSystems: [
+        {
+          label: "Analytics Semantic Execution Model",
+          href: "/systems/analytics-semantic-layer-architecture",
+        },
+      ],
       impactMetrics: [
         { label: "Event Delivery Guarantee", value: "Zero-Loss (At-Least-Once)" },
         { label: "Out-of-Bounds Folder Flags", value: "Instant (< 800ms)" },
@@ -453,18 +472,18 @@ class HighAvailabilityNotificationBroker {
   }
 
   private async verifyFolderWorkflowPermissions(folderUrn: string, reviewId: string): Promise<boolean> {
-    // Queries isolated enterprise role matrix (e.g., matching paths for hubs like DLF or 5DVDC)
+    // Queries isolated enterprise role matrix (e.g., matching paths for internal project hubs)
     // Returns false if a drawing from an unapproved folder is routed to a master workflow
     const ruleset = await this.fetchStructuralRuleset(reviewId);
     return ruleset.approvedFolders.includes(folderUrn);
   }
 }`,
       impactNarrative:
-        "Decoupled all communication overhead from the primary platform API request cycle by deploying a resilient, asynchronous event broker using BullMQ and Redis. By extending this broker to serve as an active compliance audit filter, the architecture intercepts Autodesk review creations via webhooks, cross-references folder permissions instantly, and flags out-of-bounds workflow anomalies. This ensures project managers and administrators receive critical, role-gated WhatsApp alerts within 800 milliseconds, ensuring absolute structural data governance.",
+        "Decoupled all communication overhead from the primary platform API request cycle by deploying a resilient, asynchronous event broker using BullMQ and Redis. By extending this broker to serve as an active compliance audit filter, the architecture intercepts external review actions via webhooks, cross-references folder permissions instantly, and flags out-of-bounds workflow anomalies. This ensures project managers and administrators receive critical, role-gated messaging alerts within 800 milliseconds, ensuring absolute structural data governance.",
     },
     {
       id: "experion-implementation",
-      title: "Experion Project & Implementation Monitoring",
+      title: "Enterprise Project & Implementation Monitoring",
       subtitle:
         "Comprehensive PowerBI dashboard suite spanning project, labor, and activity productivity with future forecasting and implementation tracking.",
       type: "implementation",
@@ -486,7 +505,7 @@ class HighAvailabilityNotificationBroker {
     },
     {
       id: "dlf-acc-implementation",
-      title: "DLF Autodesk Construction Cloud Implementation",
+      title: "Enterprise Autodesk Construction Cloud Implementation",
       subtitle:
         "Full-scale enterprise rollout of Autodesk Construction Cloud (Forma) with advanced project monitoring across 50+ dashboards developed over 5 months.",
       type: "implementation",
@@ -509,9 +528,9 @@ class HighAvailabilityNotificationBroker {
       presentationUrl:
         "/presentations/CS2833_ClassPresentation-2833-Mittal-AU2025_1756737502392001n65E.pdf",
       challenge:
-        "Executing a full-scale digital transformation for a major enterprise like DLF involves aligning complex workflows with new platforms. As the second co-lead, the challenge was to directly coordinate with the GM of tech transformation, ensuring a smooth transition to ACC while concurrently building an advanced reporting infrastructure.",
+        "Executing a full-scale digital transformation for a major enterprise construction company involves aligning complex workflows with new platforms. As the second co-lead, the challenge was to directly coordinate with the GM of tech transformation, ensuring a smooth transition to ACC while concurrently building an advanced reporting infrastructure.",
       impactNarrative:
-        "Successfully co-led the technical transformation and implementation of ACC across DLF's operations. The simultaneous development of over 50 custom dashboards provided unprecedented visibility into the rollout, ultimately validating the effort in an Autodesk University 2025 presentation.",
+        "Successfully co-led the technical transformation and implementation of ACC across an enterprise construction company's operations. The simultaneous development of over 50 custom dashboards provided unprecedented visibility into the rollout, ultimately validating the effort in an Autodesk University 2025 presentation.",
     },
   ] as Project[]
 ).sort((a, b) => a.order - b.order);

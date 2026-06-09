@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { ETISTechnicalArchitectureModel } from "@/components/sections/systems/architecture-diagrams/ArchitectureModel";
+import { FederatedArchitectureModel } from "@/components/sections/systems/architecture-diagrams/ArchitectureModel";
 import { OperationallyRealizedRuntime } from "@/components/sections/systems/architecture-diagrams/workflow/OperationallyRealizedRuntime";
 
 export const metadata: Metadata = {
-  title: "Workflow Architecture",
+  title: "Workflow Architecture Case Study",
   description:
-    "Detailed technical architecture of the distributed coordination and workflow ingestion systems.",
+    "Detailed technical case study of federated distributed coordination and colocated operational runtimes.",
 };
 
 export default function WorkflowArchitecturePage() {
   return (
     <main className="min-h-screen bg-[#05070A]">
-      <ETISTechnicalArchitectureModel />
+      <FederatedArchitectureModel />
       <OperationallyRealizedRuntime />
     </main>
   );

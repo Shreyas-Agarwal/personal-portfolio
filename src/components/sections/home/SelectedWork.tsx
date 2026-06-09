@@ -17,7 +17,7 @@ const work = [
     title: "Plant-Pollinator Network Dynamics",
     description:
       "Research into stochastic ecological interaction networks using graph modelling, large-scale data processing, and computational simulation pipelines.",
-    href: "/research/network-dynamics",
+    href: "/journal/network-dynamics",
     size: "small",
   },
   {
@@ -25,7 +25,7 @@ const work = [
     title: "Contextual Multi-Agent Analysis",
     description:
       "Built experimental agent-based analytical workflows for interpreting dynamic football data through coordinated reasoning and state-aware processing.",
-    href: "/research/context-systems",
+    href: "/journal/context-systems",
     size: "small",
   },
 ];

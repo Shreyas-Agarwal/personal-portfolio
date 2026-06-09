@@ -12,7 +12,7 @@ import { TelemetryControl } from "./workflow/TelemetryControl";
 import { TenantExecutionClusters } from "./workflow/TenantExecutionClusters";
 import { WorkerExecution } from "./workflow/WorkerExecution";
 
-export function ETISTechnicalArchitectureModel() {
+export function FederatedArchitectureModel() {
   return (
     <section
       data-header-theme="dark"

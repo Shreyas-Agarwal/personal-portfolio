@@ -462,7 +462,7 @@ function DiagramWhatsApp() {
       </text>
       <Edge x1={94} y1={107} x2={100} y2={107} dashed color="rgba(248,113,113,0.3)" />
 
-      {/* Secure server call */}
+          {/* Secure server call */}
       <Arrow x1={50} y1={117} x2={50} y2={127} />
       <Node x={50} y={125} label="Secure API Call" w={60} />
       <Arrow x1={50} y1={135} x2={50} y2={145} />
@@ -474,18 +474,18 @@ function DiagramWhatsApp() {
 }
 
 // ─── 5. Event Broker & Compliance Guardian ────────────────────────────────────
-// ACC webhook → BullMQ/Redis → Compliance audit → fan-out (WhatsApp/Email) + DLQ
+// Webhook → BullMQ/Redis → Compliance audit → fan-out (Messaging/Email) + DLQ
 
 function DiagramBroker() {
   return (
     <>
-      {/* ACC Webhook source */}
-      <Node x={50} y={12} label="ACC Webhook" w={58} />
+      {/* Webhook source */}
+      <Node x={50} y={12} label="Webhook Ingress" w={58} />
       <Arrow x1={50} y1={22} x2={50} y2={34} />
 
       {/* Ingest / idempotency */}
       <Node x={50} y={42} label="Ingest + SHA-256" w={66} />
-      <Label x={78} y={45} text="idempotency" />
+      <Label x={77} y={45} text="idempotency" />
 
       <Arrow x1={50} y1={52} x2={50} y2={62} />
 
@@ -532,8 +532,8 @@ function DiagramBroker() {
       <Arrow x1={50} y1={112} x2={28} y2={126} />
       <Arrow x1={50} y1={112} x2={72} y2={126} />
 
-      <Node x={28} y={133} label="WhatsApp" w={48} accent />
-      <Node x={72} y={133} label="Email/SMS" w={48} />
+      <Node x={28} y={133} label="Messaging" w={48} accent />
+      <Node x={72} y={133} label="Email Alert" w={48} />
 
       {/* DLQ branch */}
       <Edge x1={90} y1={100} x2={130} y2={114} dashed color="rgba(248,113,113,0.25)" />

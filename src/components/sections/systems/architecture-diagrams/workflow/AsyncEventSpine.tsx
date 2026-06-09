@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Cpu, Layers3, MessageSquare, Webhook } from "lucide-react";
+import { Cpu, Layers3, Webhook } from "lucide-react";
 import { DistributionNode, HorizontalFlow, MiniService } from "./SharedComponents";
 
 export function AsyncEventSpine() {
@@ -33,9 +33,7 @@ export function AsyncEventSpine() {
       <div className="grid gap-8 xl:grid-cols-[1fr_120px_1fr_120px_1fr]">
         {/* SOURCES */}
         <div className="space-y-4">
-          <MiniService icon={<Webhook size={16} />} title="Autodesk Webhooks" />
-
-          <MiniService icon={<MessageSquare size={16} />} title="WhatsApp Events" />
+          <MiniService icon={<Webhook size={16} />} title="External Webhook Events" />
 
           <MiniService icon={<Layers3 size={16} />} title="External Integrations" />
         </div>

@@ -1,27 +1,23 @@
 import type { Metadata } from "next";
-import { ComplexityCoordinationSection } from "@/components/sections/systems/Complexity";
 import { SystemsHero } from "@/components/sections/systems/Hero";
-import { OperationalArtefactsSection } from "@/components/sections/systems/OperationalArtefacts";
-import { OperationalObservationsSection } from "@/components/sections/systems/OperationalObservations";
+import { SystemRegistry } from "@/components/sections/systems/SystemRegistry";
 
 export const metadata: Metadata = {
-  title: "Systems Architecture",
+  title: "Systems",
   description:
-    "Explore technical architectures, complexity coordination, and operational artifacts from real-world deployments.",
+    "Engineering registry of architectural systems, integration patterns, and infrastructure artifacts built under real operational pressure.",
   openGraph: {
-    title: "Systems Architecture | Shreyas Agarwal",
+    title: "Systems | Shreyas Agarwal",
     description:
-      "Explore technical architectures, complexity coordination, and operational artifacts from real-world deployments.",
+      "A catalog of architectural systems, integration patterns, and infrastructure artifacts — each representing a real design decision under operational constraint.",
   },
 };
 
-export default function Home() {
+export default function SystemsPage() {
   return (
     <>
       <SystemsHero />
-      <ComplexityCoordinationSection />
-      <OperationalArtefactsSection />
-      <OperationalObservationsSection />
+      <SystemRegistry />
     </>
   );
 }

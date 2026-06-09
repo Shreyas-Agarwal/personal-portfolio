@@ -15,30 +15,40 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const filePath = path.join(process.cwd(), "content/docs", `${slug}.md`);
+  const filePath = path.join(process.cwd(), "content/journal", `${slug}.md`);
   if (!fs.existsSync(filePath)) return { title: "Not Found" };
 
   const fileContent = fs.readFileSync(filePath, "utf8");
   const { data } = matter(fileContent);
 
   return {
-    title: `${data.title} — Systems Architecture`,
-    description: data.subtitle || data.description,
+    title: `${data.title} — Journal`,
+    description: data.subtitle,
+    openGraph: {
+      title: `${data.title} | Shreyas Agarwal`,
+      description: data.subtitle,
+    },
   };
 }
 
 export async function generateStaticParams() {
-  const docsDirectory = path.join(process.cwd(), "content/docs");
-  if (!fs.existsSync(docsDirectory)) return [];
-  const filenames = fs.readdirSync(docsDirectory);
-  return filenames.map((filename) => ({
-    slug: filename.replace(/\.md$/, ""),
-  }));
+  const journalDirectory = path.join(process.cwd(), "content/journal");
+  if (!fs.existsSync(journalDirectory)) return [];
+  const filenames = fs.readdirSync(journalDirectory);
+  return filenames
+    .filter((f) => f.endsWith(".md"))
+    .map((filename) => ({
+      slug: filename.replace(/\.md$/, ""),
+    }));
 }
 
-export default async function SystemDocPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function JournalEntryPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
-  const filePath = path.join(process.cwd(), "content/docs", `${slug}.md`);
+  const filePath = path.join(process.cwd(), "content/journal", `${slug}.md`);
 
   if (!fs.existsSync(filePath)) {
     notFound();
@@ -52,25 +62,27 @@ export default async function SystemDocPage({ params }: { params: Promise<{ slug
       data-header-theme="light"
       className="min-h-screen bg-[#F3F1EC] text-[#1a1a1a] selection:bg-black/10"
     >
-      {/* System Header */}
+      {/* Entry Header */}
       <header className="border-b border-neutral-200 bg-white/50 backdrop-blur-md">
         <div className="mx-auto max-w-4xl px-6 py-24 md:px-12">
           <Link
-            href="/systems"
+            href="/journal"
             className="group mb-12 inline-flex items-center gap-2 text-sm font-medium tracking-tight text-neutral-500 transition-colors hover:text-black"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            Back to Systems
+            Back to Journal
           </Link>
 
           <div className="space-y-6">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="rounded-full border border-neutral-200 bg-neutral-100/50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-                {data.category || "Architecture"}
-              </span>
+              {data.category && (
+                <span className="rounded-full border border-neutral-200 bg-neutral-100/50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-neutral-500">
+                  {data.category}
+                </span>
+              )}
               <span className="flex items-center gap-1.5 text-[11px] font-medium text-neutral-400">
                 <Clock className="h-3 w-3" />
-                {data.year || data.date?.split("-")[0] || new Date().getFullYear()}
+                {data.year || new Date().getFullYear()}
               </span>
             </div>
 
@@ -78,9 +90,9 @@ export default async function SystemDocPage({ params }: { params: Promise<{ slug
               <h1 className="text-4xl font-semibold tracking-tight text-black md:text-5xl lg:text-6xl">
                 {data.title}
               </h1>
-              {(data.subtitle || data.description) && (
+              {data.subtitle && (
                 <p className="max-w-2xl text-xl leading-relaxed text-neutral-600">
-                  {data.subtitle || data.description}
+                  {data.subtitle}
                 </p>
               )}
             </div>
@@ -118,13 +130,14 @@ export default async function SystemDocPage({ params }: { params: Promise<{ slug
         </div>
       </header>
 
-      {/* Doc Content */}
+      {/* Entry Content */}
       <main className="mx-auto max-w-4xl px-6 py-24 md:px-12">
         <article
           className="prose prose-neutral max-w-none 
                     prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-black
                     prose-h1:text-3xl prose-h1:mb-8 prose-h1:mt-16
                     prose-h2:text-2xl prose-h2:mb-6 prose-h2:mt-12
+                    prose-h3:text-xl prose-h3:mb-4 prose-h3:mt-10
                     prose-p:leading-relaxed prose-p:text-neutral-800 prose-p:text-lg
                     prose-strong:text-black
                     prose-blockquote:border-l-2 prose-blockquote:border-black prose-blockquote:bg-white/50 prose-blockquote:py-2 prose-blockquote:italic prose-blockquote:text-neutral-700
@@ -161,11 +174,11 @@ export default async function SystemDocPage({ params }: { params: Promise<{ slug
         <footer className="mt-32 border-t border-neutral-200 pt-12">
           <div className="flex items-center justify-between">
             <Link
-              href="/systems"
+              href="/journal"
               className="group inline-flex items-center gap-2 text-sm font-medium text-neutral-500 transition-colors hover:text-black"
             >
               <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-              Back to Systems
+              Back to Journal
             </Link>
             <p className="text-sm text-neutral-400">
               &copy; {new Date().getFullYear()} Shreyas Agarwal

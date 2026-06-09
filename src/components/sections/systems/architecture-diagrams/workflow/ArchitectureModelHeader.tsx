@@ -9,21 +9,21 @@ export function ArchitectureModelHeader() {
         </span>
 
         <h2 className="max-w-5xl text-4xl font-medium leading-tight tracking-tight text-white/92 md:text-6xl">
-          Proposed distributed coordination architecture for the etiS platform ecosystem.
+          Federated Operational Architecture
         </h2>
       </div>
 
       <div className="max-w-md md:pt-5">
         <p className="text-sm leading-relaxed text-white/42">
-          This model represents the ideal long-term execution architecture originally proposed for
-          the etiS product suite: a federated operational system separating governance, execution,
-          tenancy, and event orchestration into independently scalable layers.
+          This architectural case study models a reference distributed system: a federated
+          execution plane separating governance, execution, tenancy, and event orchestration
+          into independently scalable, decoupled layers.
         </p>
 
-        <div className="mt-6 rounded-2xl border border-amber-500/15 bg-amber-500/[0.04] p-4">
-          <p className="text-xs leading-relaxed text-amber-100/60">
-            This architecture represents the proposed target system model — not the currently
-            deployed production implementation.
+        <div className="mt-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <p className="text-xs leading-relaxed text-white/40">
+            This model serves as a case study in federated systems design, demonstrating 
+            patterns for workload isolation and cross-cluster coordination.
           </p>
         </div>
       </div>

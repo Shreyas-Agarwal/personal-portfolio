@@ -1,4 +1,4 @@
-import { ArrowLeft, ExternalLink, Layers } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, ExternalLink, Layers } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -228,6 +228,33 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ id: 
                   <pre className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 max-h-96 overflow-auto bg-[#05070A] p-5 text-[11px] leading-relaxed text-white/60">
                     <code>{project.solutionCode}</code>
                   </pre>
+                </div>
+              </div>
+            )}
+            {/* Section D: Applied Systems (cross-link) */}
+            {project.appliedSystems && project.appliedSystems.length > 0 && (
+              <div className="space-y-4 border-t border-white/[0.06] pt-8">
+                <span className="font-mono text-[9px] tracking-[0.25em] text-white/20">
+                  SECTION_D {/* APPLIED_SYSTEMS */}
+                </span>
+                <div className="space-y-2">
+                  {project.appliedSystems.map((sys) => (
+                    <Link
+                      key={sys.href}
+                      href={sys.href}
+                      className="group flex items-center justify-between border border-white/[0.06] bg-white/[0.02] px-5 py-4 transition-all hover:border-white/20 hover:bg-white/[0.05]"
+                    >
+                      <div>
+                        <span className="mb-1 block font-mono text-[9px] tracking-[0.18em] text-white/20">
+                          SYSTEM_REF
+                        </span>
+                        <span className="text-sm font-medium tracking-tight text-white/70 transition-colors group-hover:text-white/90">
+                          {sys.label}
+                        </span>
+                      </div>
+                      <ArrowUpRight className="h-4 w-4 text-white/25 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white/60" />
+                    </Link>
+                  ))}
                 </div>
               </div>
             )}

@@ -153,7 +153,7 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
                     Autodesk University 2025 Contribution
                   </h4>
                   <p className="text-xs text-white/45 max-w-2xl">
-                    Coordinated directly with the DLF GM for Tech Transformation to co-lead this
+                    Coordinated directly with the GM of Tech Transformation to co-lead this
                     rollout. The results, workflows, and contributions were presented at the
                     Autodesk University 2025 global conference.
                   </p>
@@ -180,8 +180,9 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
                   Dashboard Suite Architecture Breakdown
                 </h4>
                 <p className="text-xs text-white/40 mt-1 max-w-3xl">
-                  A high-level tracking matrix developed for Experion, monitoring structural
-                  workflows, labor constraints, and future forecasts across active workspaces.
+                  A high-level tracking matrix developed for an enterprise construction client,
+                  monitoring structural workflows, labor constraints, and future forecasts across
+                  active workspaces.
                 </p>
               </div>
 
@@ -240,7 +241,7 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
                 <div className="flex items-center gap-3">
                   <Users className="h-4.5 w-4.5 text-white/30 shrink-0" />
                   <span className="font-mono text-[9px] tracking-wider text-white/40">
-                    Direct Coordination: Experion Project Controls Director & Lead Engineers
+                    Direct Coordination: Enterprise Project Controls Director & Lead Engineers
                   </span>
                 </div>
                 <div className="flex items-center gap-2 rounded-sm bg-orange-500/[0.03] px-3.5 py-2 border border-orange-500/10">

@@ -9,20 +9,20 @@ const notes = [
     title: "The Silicon Ceiling: The Road to AGI",
     excerpt:
       "Why modern AI may be a historic breakthrough, a civilizational inflection point… and still fundamentally incapable of becoming true Artificial General Intelligence.",
-    href: "/notes/the-silicon-ceiling",
+    href: "/journal/the-silicon-ceiling",
   },
   {
     type: "SYSTEMS ECOLOGY",
     title: "Ecological Networks and AI Systems",
     excerpt: "Why ecosystems may already be performing forms of distributed computation",
-    href: "/notes/ecology-and-ai",
+    href: "/journal/ecology-and-ai",
   },
   {
     type: "AI ARCHITECTURE",
     title: "The Context Rot Paradox: MCPs at T-Minus Zero",
     excerpt:
       "A deep dive into the physics of LLM attention, agentic architectures, and why connecting an AI to everything may quietly make it worse at thinking",
-    href: "/notes/mcp-context-rot",
+    href: "/journal/mcp-context-rot",
   },
 ];
 
@@ -41,7 +41,7 @@ export function NotesAndClosureSection() {
         <div className="mb-24 grid gap-10 md:grid-cols-[1fr_320px] md:items-end">
           <div className="max-w-3xl">
             <span className="mb-5 block font-mono text-[10px] tracking-[0.2em] text-black/30">
-              NOTES_AND_OBSERVATIONS
+              JOURNAL
             </span>
 
             <h2 className="text-3xl font-medium leading-tight tracking-tight text-black/90 md:text-5xl">
@@ -51,8 +51,8 @@ export function NotesAndClosureSection() {
 
           <div>
             <p className="text-sm leading-relaxed text-black/50">
-              Ongoing observations around operational systems, information architecture, workflow
-              coordination, and infrastructural thinking.
+              Ongoing writing on systems architecture, AI, operational complexity, and the ideas
+              that don't fit neatly into a project or system.
             </p>
           </div>
         </div>
@@ -92,8 +92,8 @@ export function NotesAndClosureSection() {
         {/* Closing Footnote */}
         <div className="mt-32 border-t border-black/[0.08] pt-10">
           <p className="max-w-2xl text-lg font-light leading-relaxed text-black/60">
-            Currently exploring systems around operational coordination, workflow architecture, and
-            information flow under scale.
+            Currently writing about operational coordination, architectural tradeoffs, and the
+            systems questions that keep recurring across domains.
           </p>
         </div>
       </div>

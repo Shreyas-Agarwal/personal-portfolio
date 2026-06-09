@@ -1,6 +1,6 @@
 "use client";
 
-import { Layers3, MessageSquare, Webhook } from "lucide-react";
+import { Layers3, Webhook } from "lucide-react";
 import { ArchitectureNode, ArchitectureSectionLabel } from "./SharedComponents";
 
 export function ExternalEventIngestion() {
@@ -11,17 +11,12 @@ export function ExternalEventIngestion() {
         description="Push-based operational integrations"
       />
 
-      <div className="mt-8 grid gap-5 md:grid-cols-3">
+      <div className="mt-8 grid gap-5 md:grid-cols-2">
         <ArchitectureNode
           icon={<Webhook size={20} />}
-          title="Autodesk Webhooks"
-          subtitle="Broadcast operational events"
-        />
-
-        <ArchitectureNode
-          icon={<MessageSquare size={20} />}
-          title="WhatsApp Events"
-          subtitle="Directed communication events"
+          title="External Webhook Events"
+          subtitle="Ingress for push-based operational events"
+          accent="blue"
         />
 
         <ArchitectureNode

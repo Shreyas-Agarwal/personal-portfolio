@@ -41,7 +41,7 @@ export function PdfViewer({ url, title }: PdfViewerProps) {
               </span>
             </div>
             <h4 className="font-mono text-[10px] tracking-wider text-white/70 mt-0.5">
-              AU2025_DLF_CLASS_HANDBOOK.PDF
+              AU2025_CLASS_HANDBOOK.PDF
             </h4>
           </div>
         </div>
@@ -69,7 +69,7 @@ export function PdfViewer({ url, title }: PdfViewerProps) {
         <div className="absolute bottom-4 left-4 z-20 flex items-center gap-1.5 rounded-sm bg-black/60 px-2.5 py-1.5 border border-white/[0.05] backdrop-blur-sm pointer-events-none">
           <FileText className="h-3.5 w-3.5 text-white/40" />
           <span className="font-mono text-[9px] tracking-wider text-white/55">
-            DLF Contribution Page Reference
+            AU2025 Class Contribution Reference
           </span>
         </div>
       </div>

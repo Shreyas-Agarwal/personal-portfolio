@@ -32,11 +32,11 @@ export function OperationallyRealizedRuntime() {
               <div className="flex items-start gap-4">
                 <Info size={18} className="mt-0.5 text-blue-400/70" />
                 <div>
-                  <h4 className="text-sm font-medium text-white/90">Architectural Evolution</h4>
+                  <h4 className="text-sm font-medium text-white/90">Architectural Trade-offs</h4>
                   <p className="mt-2 text-xs leading-relaxed text-blue-100/40">
-                    This runtime represents the currently realized operational architecture, while
-                    the previously shown federated coordination model represents the intended
-                    long-term platform direction.
+                    This colocated model represents a simplified deployment topology, demonstrating
+                    how consolidating queues and persistence simplifies operations compared to the fully
+                    federated design.
                   </p>
                 </div>
               </div>
@@ -81,10 +81,10 @@ export function OperationallyRealizedRuntime() {
                 Capability
               </div>
               <div className="px-8 py-5 text-xs font-mono tracking-widest text-white/25 uppercase border-l border-white/[0.06]">
-                Proposed Coordination
+                Federated Pattern
               </div>
               <div className="px-8 py-5 text-xs font-mono tracking-widest text-white/25 uppercase border-l border-white/[0.06]">
-                Realized Runtime
+                Colocated Pattern
               </div>
             </div>
 
@@ -135,9 +135,9 @@ export function OperationallyRealizedRuntime() {
               for iteration.
               <span className="text-white/90 font-normal">
                 {" "}
-                The realized runtime surface is an intentional choice{" "}
+                A colocated runtime design pattern is an effective strategy{" "}
               </span>
-              to minimize operational surface area while the platform's semantic logic matures.
+              to minimize operational complexity during early stages of platform development.
             </p>
           </div>
         </div>

@@ -58,7 +58,7 @@ export function WorkerExecution() {
 
           <div className="mt-8 space-y-4">
             <WorkerTask label="Email Delivery Pipelines" />
-            <WorkerTask label="WhatsApp Messaging Workers" />
+            <WorkerTask label="External Messaging Workers" />
             <WorkerTask label="Document Processing Jobs" />
             <WorkerTask label="Notification Orchestration" />
             <WorkerTask label="Background Operational Tasks" />
