@@ -39,7 +39,7 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
       </div>
 
       {/* ── Header Section ────────────────────────────────────────────────── */}
-      <header className="border-b border-white/[0.06] px-6 py-16 md:px-12">
+      <header className="border-b border-white/[0.06] px-6 pt-10 pb-8 md:px-12">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl space-y-4">
@@ -67,7 +67,7 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
           </div>
 
           {/* Tech & Framework tags */}
-          <div className="mt-8 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             {project.techStack.map((tech) => (
               <span
                 key={tech}
@@ -81,7 +81,7 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
       </header>
 
       {/* ── Main Layout ─────────────────────────────────────────────── */}
-      <main className="mx-auto max-w-7xl px-6 py-16 md:px-12 space-y-16">
+      <main className="mx-auto max-w-7xl px-6 py-10 md:px-12 space-y-10">
         {/* ── Section A: Business Impact Metrics Grid ──────────────────── */}
         <section className="space-y-6">
           <div>

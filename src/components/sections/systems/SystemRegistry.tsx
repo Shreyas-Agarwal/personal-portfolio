@@ -71,7 +71,7 @@ export function SystemRegistry() {
   return (
     <section
       data-header-theme="light"
-      className="relative overflow-hidden bg-[#F3F1EC] px-6 py-32 md:px-12"
+      className="relative overflow-hidden bg-[#F3F1EC] px-6 py-16 md:px-12"
     >
       {/* Structural Rules */}
       <div className="absolute top-0 left-1/3 h-full w-px bg-black/[0.04]" />
@@ -79,7 +79,7 @@ export function SystemRegistry() {
 
       <div className="relative mx-auto max-w-7xl">
         {/* Registry Header */}
-        <div className="mb-20 grid gap-12 md:grid-cols-[1fr_380px] md:items-end">
+        <div className="mb-10 grid gap-12 md:grid-cols-[1fr_380px] md:items-end">
           <div>
             <span className="mb-5 block font-mono text-[10px] tracking-[0.22em] text-black/30">
               ENGINEERING_REGISTRY
@@ -112,7 +112,7 @@ export function SystemRegistry() {
                 key={system.id}
                 className="group bg-[#F3F1EC] transition-colors hover:bg-black/[0.02]"
               >
-                <div className="grid gap-8 px-8 py-14 md:grid-cols-[220px_1fr_240px] md:px-12">
+                <div className="grid gap-8 px-8 py-8 md:grid-cols-[220px_1fr_240px] md:px-12">
                   {/* Left Rail — Metadata */}
                   <div className="flex flex-col gap-6">
                     <div>
@@ -206,7 +206,7 @@ export function SystemRegistry() {
         </div>
 
         {/* Registry Footer */}
-        <div className="mt-20 border-t border-black/[0.08] pt-10">
+        <div className="mt-10 border-t border-black/[0.08] pt-10">
           <div className="flex items-center justify-between">
             <p className="max-w-xl text-sm leading-relaxed text-black/40">
               Architecture diagrams and decision records are available within each system entry.

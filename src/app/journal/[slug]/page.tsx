@@ -151,7 +151,7 @@ export default async function JournalEntryPage({
       <ArticleHeader entry={entry} readingTime={readingTime} />
 
       {/* ── Three-column reading layout ─────────────────────────────── */}
-      <div className="mx-auto max-w-[1400px] px-6 py-12 md:px-12">
+      <div className="mx-auto max-w-[1400px] px-6 py-8 md:px-12">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[220px_1fr_200px] xl:gap-16">
 
           {/* ── Left rail: Table of Contents (desktop only) ─────────── */}
@@ -190,7 +190,7 @@ export default async function JournalEntryPage({
             <RelatedArticles entries={relatedEntries} />
 
             {/* Discussion */}
-            <GiscusSection slug={slug} />
+            <GiscusSection />
 
             {/* Prev / next navigation */}
             <ArticleFooterNav prev={prev} next={next} />

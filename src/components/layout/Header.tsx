@@ -24,7 +24,7 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Compressed state for when the user is deep in the "data"
-  const headerHeight = useTransform(scrollY, [0, 100], ["120px", "72px"]);
+  const headerHeight = useTransform(scrollY, [0, 100], ["96px", "72px"]);
   const blurAmount = useTransform(scrollY, [0, 100], ["blur(0px)", "blur(20px)"]);
   const borderOpacity = useTransform(scrollY, [0, 100], [0, 1]);
 

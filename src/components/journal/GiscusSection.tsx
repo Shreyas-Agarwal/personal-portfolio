@@ -2,14 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
-interface GiscusSectionProps {
-  slug: string;
-}
-
-export function GiscusSection({ slug }: GiscusSectionProps) {
+export function GiscusSection() {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Intentionally reload Giscus when article changes.
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -37,6 +32,7 @@ export function GiscusSection({ slug }: GiscusSectionProps) {
     script.setAttribute("data-theme", "light");
     script.setAttribute("data-lang", "en");
     script.setAttribute("crossorigin", "anonymous");
+    script.setAttribute("data-loading", "lazy");
     script.async = true;
 
     containerRef.current.appendChild(script);

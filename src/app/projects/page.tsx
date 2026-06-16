@@ -19,7 +19,7 @@ export default function ProjectsPage() {
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section
         data-header-theme="dark"
-        className="relative overflow-hidden border-b border-white/[0.06] bg-[#0B0D10] px-6 py-28 md:px-12"
+        className="relative overflow-hidden border-b border-white/[0.06] bg-[#0B0D10] px-6 pt-20 pb-14 md:px-12"
       >
         {/* Structural grid lines */}
         <div className="pointer-events-none absolute inset-0">
@@ -37,7 +37,7 @@ export default function ProjectsPage() {
             <span className="font-medium text-white">real operational pressure.</span>
           </h1>
 
-          <p className="mt-8 max-w-xl text-base leading-relaxed text-white/45">
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-white/45">
             Seven production case studies spanning AEC data platforms, enterprise pipelines,
             compliance automation, and operational transformation rollouts — each with a deep
             breakdown.
@@ -46,7 +46,7 @@ export default function ProjectsPage() {
       </section>
 
       {/* ── Projects Grid ────────────────────────────────────────────────── */}
-      <section data-header-theme="dark" className="relative bg-[#0B0D10] px-6 py-20 md:px-12">
+      <section data-header-theme="dark" className="relative bg-[#0B0D10] px-6 py-12 md:px-12">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute top-0 left-1/3 h-full w-px bg-white/[0.02]" />
           <div className="absolute top-0 left-2/3 h-full w-px bg-white/[0.02]" />

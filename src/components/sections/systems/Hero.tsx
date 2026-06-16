@@ -14,7 +14,7 @@ export function SystemsHero() {
   return (
     <section
       data-header-theme="dark"
-      className="relative overflow-hidden bg-[#0A0F14] px-6 pt-32 pb-24 md:px-12"
+      className="relative overflow-hidden bg-[#0A0F14] px-6 pt-20 pb-14 md:px-12"
     >
       {/* Structural Grid */}
       <div className="absolute top-0 left-1/3 h-full w-px bg-white/[0.04]" />
@@ -32,7 +32,7 @@ export function SystemsHero() {
               Systems evolve under operational pressure.
             </h1>
 
-            <div className="mt-10 max-w-2xl space-y-6">
+            <div className="mt-6 max-w-2xl space-y-4">
               <p className="text-xl font-light leading-relaxed text-white/62">
                 Most architectures do not begin as complex systems. Complexity emerges gradually
                 through coordination requirements, workflow scaling, distributed execution, and
@@ -47,7 +47,7 @@ export function SystemsHero() {
             </div>
 
             {/* CTA */}
-            <div className="mt-14">
+            <div className="mt-8">
               <Link
                 href="#system-evolution"
                 className="group inline-flex items-center gap-3 text-sm text-white/45 transition-colors hover:text-white"
@@ -83,7 +83,7 @@ export function SystemsHero() {
             </div>
 
             {/* Observation Block */}
-            <div className="mt-20 border-l border-white/[0.08] pl-6">
+            <div className="mt-10 border-l border-white/[0.08] pl-6">
               <span className="mb-4 block font-mono text-[10px] tracking-[0.2em] text-white/18">
                 OBSERVATION
               </span>

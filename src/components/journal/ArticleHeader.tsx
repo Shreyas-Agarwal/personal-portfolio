@@ -60,18 +60,18 @@ export function ArticleHeader({ entry, readingTime }: ArticleHeaderProps) {
 
   return (
     <header className="border-b border-neutral-200 bg-white/50 backdrop-blur-md">
-      <div className="mx-auto max-w-[1400px] px-6 pb-8 pt-6 md:px-12">
+      <div className="mx-auto max-w-[1400px] px-6 pb-5 pt-4 md:px-12">
         {/* ── Breadcrumb / Back link ───────────────────────────────────── */}
         <Link
           href="/journal"
-          className="group mb-5 inline-flex items-center gap-1.5 text-[11px] font-medium text-neutral-400 transition-colors hover:text-neutral-900"
+          className="group mb-3 inline-flex items-center gap-1.5 text-[11px] font-medium text-neutral-400 transition-colors hover:text-neutral-900"
         >
           <ArrowLeft className="h-3 w-3 transition-transform group-hover:-translate-x-0.5" />
           Journal
         </Link>
 
         {/* ── Domain chips + Format + Series ─────────────────────────── */}
-        <div className="mb-3 flex flex-wrap items-center gap-2">
+        <div className="mb-2 flex flex-wrap items-center gap-2">
           {entry.domains.map((d) => (
             <span
               key={d}
@@ -97,7 +97,7 @@ export function ArticleHeader({ entry, readingTime }: ArticleHeaderProps) {
 
         {/* ── Subtitle ─────────────────────────────────────────────────── */}
         {entry.subtitle && (
-          <p className="mb-3 max-w-3xl text-[15px] leading-relaxed text-neutral-500 md:text-base">
+          <p className="mb-2 max-w-3xl text-[15px] leading-relaxed text-neutral-500 md:text-base">
             {entry.subtitle}
           </p>
         )}

@@ -114,7 +114,7 @@ export function JournalIndex({
     >
       {/* ── Page Header ─────────────────────────────────────────────────── */}
       <header className="border-b border-neutral-200 bg-white/50 backdrop-blur-md">
-        <div className="mx-auto max-w-7xl px-6 py-20 md:px-12">
+        <div className="mx-auto max-w-7xl px-6 pt-16 pb-12 md:px-12">
           <div className="space-y-4">
             <span className="block font-mono text-[10px] tracking-[0.25em] text-neutral-400 uppercase">
               PUBLIC_WRITING
@@ -130,14 +130,14 @@ export function JournalIndex({
           </div>
 
           {/* Search — inset inside header for prominence */}
-          <div className="mt-10 max-w-2xl">
+          <div className="mt-6 max-w-2xl">
             <SearchBar query={searchQuery} onChange={setSearchQuery} />
           </div>
         </div>
       </header>
 
       {/* ── Body ────────────────────────────────────────────────────────── */}
-      <main className="mx-auto max-w-7xl px-6 py-16 md:px-12">
+      <main className="mx-auto max-w-7xl px-6 py-10 md:px-12">
         <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
 
           {/* ── Left Sidebar ──────────────────────────────────────────── */}

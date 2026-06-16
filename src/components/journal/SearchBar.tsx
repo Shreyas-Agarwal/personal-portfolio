@@ -19,14 +19,7 @@ export function SearchBar({ query, onChange }: SearchBarProps) {
         placeholder="Search by title, domain, format, or tag…"
         value={query}
         onChange={(e) => onChange(e.target.value)}
-        className="
-          w-full rounded-none border-0 border-b border-neutral-200
-          bg-transparent py-4 pl-11 pr-10
-          text-[15px] text-neutral-900 placeholder:text-neutral-400
-          outline-none ring-0
-          transition-colors
-          focus:border-neutral-900
-        "
+        className="w-full rounded-none border-0 border-b border-neutral-200 bg-transparent py-4 pl-11 pr-10 text-[15px] text-neutral-900 placeholder:text-neutral-400 outline-none ring-0 transition-colors focus:border-neutral-900"
       />
       {query && (
         <button

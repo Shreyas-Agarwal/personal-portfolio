@@ -54,10 +54,10 @@ export default async function SystemDocPage({ params }: { params: Promise<{ slug
     >
       {/* System Header */}
       <header className="border-b border-neutral-200 bg-white/50 backdrop-blur-md">
-        <div className="mx-auto max-w-4xl px-6 py-24 md:px-12">
+        <div className="mx-auto max-w-4xl px-6 pt-14 pb-8 md:px-12">
           <Link
             href="/systems"
-            className="group mb-12 inline-flex items-center gap-2 text-sm font-medium tracking-tight text-neutral-500 transition-colors hover:text-black"
+            className="group mb-6 inline-flex items-center gap-2 text-sm font-medium tracking-tight text-neutral-500 transition-colors hover:text-black"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             Back to Systems
@@ -119,7 +119,7 @@ export default async function SystemDocPage({ params }: { params: Promise<{ slug
       </header>
 
       {/* Doc Content */}
-      <main className="mx-auto max-w-4xl px-6 py-24 md:px-12">
+      <main className="mx-auto max-w-4xl px-6 py-10 md:px-12">
         <article
           className="prose prose-neutral max-w-none 
                     prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-black
@@ -158,7 +158,7 @@ export default async function SystemDocPage({ params }: { params: Promise<{ slug
           </ReactMarkdown>
         </article>
 
-        <footer className="mt-32 border-t border-neutral-200 pt-12">
+        <footer className="mt-14 border-t border-neutral-200 pt-12">
           <div className="flex items-center justify-between">
             <Link
               href="/systems"

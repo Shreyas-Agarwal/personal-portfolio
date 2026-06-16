@@ -77,7 +77,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ id: 
       </div>
 
       {/* ── Page Header ────────────────────────────────────────────────── */}
-      <header className="border-b border-white/[0.06] px-6 py-16 md:px-12">
+      <header className="border-b border-white/[0.06] px-6 pt-10 pb-8 md:px-12">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl space-y-4">
@@ -115,7 +115,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ id: 
           </div>
 
           {/* Tech stack tags */}
-          <div className="mt-8 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             {project.techStack.map((tech) => (
               <span
                 key={tech}
@@ -129,7 +129,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ id: 
       </header>
 
       {/* ── Split-screen body ─────────────────────────────────────────── */}
-      <main className="mx-auto max-w-7xl px-6 py-16 md:px-12">
+      <main className="mx-auto max-w-7xl px-6 py-10 md:px-12">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* ── LEFT: Evidence Engine ──────────────────────────────────── */}
           <div className="space-y-6">
