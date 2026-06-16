@@ -1,9 +1,16 @@
 ---
 title: "Evolution Never Uses Clean Architecture"
 subtitle: "Why biological systems scale through redundancy, ambiguity, and controlled chaos — while software keeps chasing purity"
-category: "Systems Biology"
 year: "2026"
-tags: ["Evolution", "Software Architecture", "Complexity", "Biology"]
+domains:
+  - Ecology & Complexity
+  - Systems & Architecture
+format: Essay
+tags:
+  - Evolution
+  - Software Architecture
+  - Complexity
+  - Biology
 ---
 
 # Evolution Never Uses Clean Architecture

@@ -2,9 +2,11 @@
 title: "Contextual Multi-Agent Analysis"
 subtitle: "Experimental orchestration systems for real-time football intelligence"
 slug: "context-systems"
-category: "DISTRIBUTED SYSTEMS"
-featured: true
 year: "2025"
+domains:
+  - AI & Computation
+  - Systems & Architecture
+format: Research Note
 tags:
   - Multi-Agent Systems
   - Distributed Reasoning
@@ -15,6 +17,8 @@ tags:
   - System Design
   - Information Architecture
 github: "https://github.com/Shreyas-Agarwal/football-analytics"
+featured: true
+featuredPriority: 2
 ---
 
 # Contextual Multi-Agent Analysis

@@ -2,9 +2,11 @@
 title: "Ecological Network Resilience"
 subtitle: "Computational modelling of stochastic plant-pollinator interaction systems"
 slug: "network-dynamics"
-category: "COMPLEX SYSTEMS"
-featured: true
 year: "2024"
+domains:
+  - Ecology & Complexity
+  - Systems & Architecture
+format: Research Note
 tags:
   - Network Science
   - Stochastic Modelling
@@ -14,6 +16,8 @@ tags:
   - Systems Modelling
   - Simulation
   - Data Analysis
+featured: true
+featuredPriority: 1
 ---
 
 # Ecological Network Resilience

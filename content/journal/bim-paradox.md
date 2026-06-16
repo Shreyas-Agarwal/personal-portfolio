@@ -1,9 +1,16 @@
 ---
 title: "The BIM Paradox: Why Your Implementation is Stalling"
 subtitle: "Waterfall is what the client wants. Agile is what BIM needs"
-category: "Process Management"
 year: "2026"
-tags: ["BIM", "Agile", "Construction", "Change Management"]
+domains:
+  - Process & Organization
+  - Operational Thinking
+format: Op-Ed
+tags:
+  - BIM
+  - Agile
+  - Construction
+  - Change Management
 ---
 
 # The BIM Paradox: Why Your Implementation is Stalling

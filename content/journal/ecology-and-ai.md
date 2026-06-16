@@ -1,9 +1,16 @@
 ---
 title: "Ecological Networks and AI Systems"
 subtitle: "Why ecosystems may already be performing forms of distributed computation"
-category: "Systems Ecology"
 year: "2026"
-tags: ["Ecology", "AI", "Networks", "Distributed Systems"]
+domains:
+  - Ecology & Complexity
+  - AI & Computation
+format: Essay
+tags:
+  - Ecology
+  - AI
+  - Networks
+  - Distributed Systems
 ---
 
 # Ecological Networks and AI Systems

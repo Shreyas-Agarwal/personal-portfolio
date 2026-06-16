@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowUpRight, ExternalLink, Layers } from "lucide-react";
+import { ArrowLeft, ExternalLink, Layers } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";

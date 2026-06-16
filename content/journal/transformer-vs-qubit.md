@@ -1,9 +1,17 @@
 ---
 title: "Transformer Scaling Laws vs Quantum State Superposition"
 subtitle: "The Physics of Intelligence Scaling"
-category: "Computation Physics"
 year: "2026"
-tags: ["AI", "Physics", "Quantum Computing", "AGI"]
+domains:
+  - AI & Computation
+  - Systems & Architecture
+format: Analysis
+series: "Silicon Ceiling Series"
+tags:
+  - AI
+  - Physics
+  - Quantum Computing
+  - AGI
 ---
 
 # Transformer Scaling Laws vs Quantum State Superposition
