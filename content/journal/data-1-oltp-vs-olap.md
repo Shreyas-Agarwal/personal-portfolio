@@ -6,7 +6,7 @@ domains:
   - Analytics Architecture
   - Systems Architecture
 format: Essay
-series: "The Architecture of Information Systems"
+series: "Architecture of Information Systems"
 track: Data
 part: 1
 tags:
