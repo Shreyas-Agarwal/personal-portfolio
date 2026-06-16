@@ -10,7 +10,10 @@ export interface JournalEntry {
   slug: string;
   title: string;
   subtitle?: string;
+  abstract?: string;
   year: string;
+  published?: string;
+  updated?: string;
   domains: string[];
   format: string;
   tags: string[];
@@ -91,7 +94,10 @@ export function getJournalEntries(): JournalEntry[] {
       slug,
       title: (data.title as string) || slug,
       subtitle: data.subtitle as string | undefined,
+      abstract: data.abstract as string | undefined,
       year: (data.year as string) || String(new Date().getFullYear()),
+      published: data.published as string | undefined,
+      updated: data.updated as string | undefined,
       domains: normalizeDomains(data),
       format: normalizeFormat(data),
       tags: normalizeTags(data),

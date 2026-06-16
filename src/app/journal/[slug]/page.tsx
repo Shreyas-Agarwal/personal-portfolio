@@ -1,13 +1,55 @@
 import fs from "node:fs";
 import path from "node:path";
+import { ArticleBody } from "@/components/journal/ArticleBody";
+import { ArticleFooterNav } from "@/components/journal/ArticleFooterNav";
+import { ArticleHeader } from "@/components/journal/ArticleHeader";
+import { ArticleMetaRail } from "@/components/journal/ArticleMetaRail";
+import { GiscusSection } from "@/components/journal/GiscusSection";
+import { RelatedArticles } from "@/components/journal/RelatedArticles";
+import { TableOfContents } from "@/components/journal/TableOfContents";
+import { getJournalEntries, type JournalEntry } from "@/lib/journal";
+import { getRelatedEntries } from "@/lib/related";
+import { parseTocHeadings } from "@/lib/toc";
 import matter from "gray-matter";
-import { ArrowLeft, Clock, Github, Tag } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { MermaidDiagram } from "@/components/ui/mermaid-diagram";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Constants
+// ─────────────────────────────────────────────────────────────────────────────
+
+const JOURNAL_DIR = path.join(process.cwd(), "content/journal");
+const WORDS_PER_MINUTE = 238;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+function computeReadingTime(content: string): string {
+  const wordCount = content.trim().split(/\s+/).length;
+  const minutes = Math.max(1, Math.ceil(wordCount / WORDS_PER_MINUTE));
+  return `${minutes} min read`;
+}
+
+function resolveFilePath(slug: string): string | null {
+  // Try exact slug match first, then fall back to scanning for a frontmatter slug match
+  const direct = path.join(JOURNAL_DIR, `${slug}.md`);
+  if (fs.existsSync(direct)) return direct;
+
+  // Scan for a file with matching frontmatter slug field
+  if (!fs.existsSync(JOURNAL_DIR)) return null;
+  for (const file of fs.readdirSync(JOURNAL_DIR)) {
+    if (!file.endsWith(".md")) continue;
+    const fp = path.join(JOURNAL_DIR, file);
+    const { data } = matter(fs.readFileSync(fp, "utf8"));
+    if (data.slug === slug) return fp;
+  }
+  return null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Metadata
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({
   params,
@@ -15,32 +57,42 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const filePath = path.join(process.cwd(), "content/journal", `${slug}.md`);
-  if (!fs.existsSync(filePath)) return { title: "Not Found" };
+  const filePath = resolveFilePath(slug);
+  if (!filePath) return { title: "Not Found" };
 
-  const fileContent = fs.readFileSync(filePath, "utf8");
-  const { data } = matter(fileContent);
+  const { data } = matter(fs.readFileSync(filePath, "utf8"));
+  const description = data.abstract ?? data.subtitle;
 
   return {
     title: `${data.title} — Journal`,
-    description: data.subtitle,
+    description,
     openGraph: {
       title: `${data.title} | Shreyas Agarwal`,
-      description: data.subtitle,
+      description,
     },
   };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Static params
+// ─────────────────────────────────────────────────────────────────────────────
+
 export async function generateStaticParams() {
-  const journalDirectory = path.join(process.cwd(), "content/journal");
-  if (!fs.existsSync(journalDirectory)) return [];
-  const filenames = fs.readdirSync(journalDirectory);
-  return filenames
+  if (!fs.existsSync(JOURNAL_DIR)) return [];
+  return fs
+    .readdirSync(JOURNAL_DIR)
     .filter((f) => f.endsWith(".md"))
-    .map((filename) => ({
-      slug: filename.replace(/\.md$/, ""),
-    }));
+    .map((filename) => {
+      const { data } = matter(
+        fs.readFileSync(path.join(JOURNAL_DIR, filename), "utf8"),
+      );
+      return { slug: data.slug ?? filename.replace(/\.md$/, "") };
+    });
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default async function JournalEntryPage({
   params,
@@ -48,144 +100,110 @@ export default async function JournalEntryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const filePath = path.join(process.cwd(), "content/journal", `${slug}.md`);
+  const filePath = resolveFilePath(slug);
 
-  if (!fs.existsSync(filePath)) {
-    notFound();
-  }
+  if (!filePath) notFound();
 
   const fileContent = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(fileContent);
 
+  // ── Normalise entry data ──────────────────────────────────────────────────
+  const allEntries = getJournalEntries();
+  const entryFromLib = allEntries.find((e) => e.slug === slug);
+
+  // Build the entry from raw frontmatter + lib normalisation fallback
+  const entry: JournalEntry = entryFromLib ?? {
+    slug,
+    title: (data.title as string) || slug,
+    subtitle: data.subtitle as string | undefined,
+    abstract: data.abstract as string | undefined,
+    year: (data.year as string) || String(new Date().getFullYear()),
+    published: data.published as string | undefined,
+    updated: data.updated as string | undefined,
+    domains: Array.isArray(data.domains) ? (data.domains as string[]) : [],
+    format: (data.format as string) || "Essay",
+    tags: Array.isArray(data.tags) ? (data.tags as string[]) : [],
+    series: data.series as string | undefined,
+    featured: Boolean(data.featured),
+    featuredPriority: typeof data.featuredPriority === "number" ? data.featuredPriority : 99,
+    readingTime: computeReadingTime(content),
+    github: data.github as string | undefined,
+  };
+
+  // ── Derived data ─────────────────────────────────────────────────────────
+  const readingTime = computeReadingTime(content);
+  const tocHeadings = parseTocHeadings(content);
+  const relatedEntries = getRelatedEntries(entry, allEntries, 4);
+
+  // Prev / next in sorted archive order
+  const currentIndex = allEntries.findIndex((e) => e.slug === slug);
+  const prev = currentIndex > 0 ? allEntries[currentIndex - 1] : null;
+  const next =
+    currentIndex < allEntries.length - 1 ? allEntries[currentIndex + 1] : null;
+
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <div
       data-header-theme="light"
       className="min-h-screen bg-[#F3F1EC] text-[#1a1a1a] selection:bg-black/10"
     >
-      {/* Entry Header */}
-      <header className="border-b border-neutral-200 bg-white/50 backdrop-blur-md">
-        <div className="mx-auto max-w-4xl px-6 py-24 md:px-12">
-          <Link
-            href="/journal"
-            className="group mb-12 inline-flex items-center gap-2 text-sm font-medium tracking-tight text-neutral-500 transition-colors hover:text-black"
-          >
-            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            Back to Journal
-          </Link>
+      {/* ── Compact article header ──────────────────────────────────── */}
+      <ArticleHeader entry={entry} readingTime={readingTime} />
 
-          <div className="space-y-6">
-            <div className="flex flex-wrap items-center gap-3">
-              {data.category && (
-                <span className="rounded-full border border-neutral-200 bg-neutral-100/50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-                  {data.category}
-                </span>
-              )}
-              <span className="flex items-center gap-1.5 text-[11px] font-medium text-neutral-400">
-                <Clock className="h-3 w-3" />
-                {data.year || new Date().getFullYear()}
-              </span>
+      {/* ── Three-column reading layout ─────────────────────────────── */}
+      <div className="mx-auto max-w-[1400px] px-6 py-12 md:px-12">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[220px_1fr_200px] xl:gap-16">
+
+          {/* ── Left rail: Table of Contents (desktop only) ─────────── */}
+          <div className="hidden lg:block">
+            <div className="sticky top-24">
+              <TableOfContents headings={tocHeadings} />
             </div>
+          </div>
 
-            <div className="space-y-4">
-              <h1 className="text-4xl font-semibold tracking-tight text-black md:text-5xl lg:text-6xl">
-                {data.title}
-              </h1>
-              {data.subtitle && (
-                <p className="max-w-2xl text-xl leading-relaxed text-neutral-600">
-                  {data.subtitle}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-wrap items-center justify-between gap-4 pt-4">
-              {data.tags && (
-                <div className="flex flex-wrap gap-2">
-                  {Array.isArray(data.tags)
-                    ? data.tags.map((tag: string) => (
-                        <span
-                          key={tag}
-                          className="flex items-center gap-1 text-[11px] font-medium text-neutral-500"
-                        >
-                          <Tag className="h-3 w-3" />
-                          {tag}
-                        </span>
-                      ))
-                    : null}
+          {/* ── Center: Article + appendices ────────────────────────── */}
+          <div className="min-w-0">
+            {/* Mobile TOC — shown above content on smaller screens */}
+            {tocHeadings.length > 0 && (
+              <details className="mb-8 rounded border border-neutral-200 bg-white/50 px-4 py-3 lg:hidden">
+                <summary className="cursor-pointer font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-400">
+                  Contents
+                </summary>
+                <div className="mt-3 space-y-1 border-t border-neutral-100 pt-3">
+                  {tocHeadings.map((h) => (
+                    <a
+                      key={h.id}
+                      href={`#${h.id}`}
+                      className={`block text-[12px] leading-relaxed text-neutral-500 hover:text-neutral-900 ${h.level === 3 ? "pl-3 text-[11px]" : ""}`}
+                    >
+                      {h.text}
+                    </a>
+                  ))}
                 </div>
-              )}
+              </details>
+            )}
 
-              {data.github && (
-                <a
-                  href={data.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-xs font-medium text-neutral-700 shadow-sm transition-all hover:border-black hover:text-black"
-                >
-                  <Github className="h-3.5 w-3.5" />
-                  View Repository
-                </a>
-              )}
+            {/* Article body */}
+            <ArticleBody content={content} />
+
+            {/* Related writing */}
+            <RelatedArticles entries={relatedEntries} />
+
+            {/* Discussion */}
+            <GiscusSection slug={slug} />
+
+            {/* Prev / next navigation */}
+            <ArticleFooterNav prev={prev} next={next} />
+          </div>
+
+          {/* ── Right rail: Metadata (desktop only) ─────────────────── */}
+          <div className="hidden lg:block">
+            <div className="sticky top-24">
+              <ArticleMetaRail entry={entry} readingTime={readingTime} />
             </div>
           </div>
         </div>
-      </header>
-
-      {/* Entry Content */}
-      <main className="mx-auto max-w-4xl px-6 py-24 md:px-12">
-        <article
-          className="prose prose-neutral max-w-none 
-                    prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-black
-                    prose-h1:text-3xl prose-h1:mb-8 prose-h1:mt-16
-                    prose-h2:text-2xl prose-h2:mb-6 prose-h2:mt-12
-                    prose-h3:text-xl prose-h3:mb-4 prose-h3:mt-10
-                    prose-p:leading-relaxed prose-p:text-neutral-800 prose-p:text-lg
-                    prose-strong:text-black
-                    prose-blockquote:border-l-2 prose-blockquote:border-black prose-blockquote:bg-white/50 prose-blockquote:py-2 prose-blockquote:italic prose-blockquote:text-neutral-700
-                    prose-code:rounded prose-code:bg-neutral-200/50 prose-code:px-1 prose-code:py-0.5 prose-code:font-mono prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
-                    prose-pre:rounded-none prose-pre:bg-white prose-pre:border prose-pre:border-neutral-200 prose-pre:text-neutral-900
-                    prose-table:border-collapse prose-table:border prose-table:border-neutral-300
-                    prose-th:border prose-th:border-neutral-300 prose-th:bg-neutral-100/50 prose-th:p-3 prose-th:text-left
-                    prose-td:border prose-td:border-neutral-200 prose-td:p-3
-                    prose-hr:border-neutral-300
-                    prose-li:text-neutral-800
-                    "
-        >
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-              code({ node, className, children, ...props }) {
-                const match = /language-(\w+)/.exec(className || "");
-                const isInline = !match && !String(children).includes("\n");
-
-                return !isInline && match && match[1] === "mermaid" ? (
-                  <MermaidDiagram code={String(children).replace(/\n$/, "")} />
-                ) : (
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
-                );
-              },
-            }}
-          >
-            {content}
-          </ReactMarkdown>
-        </article>
-
-        <footer className="mt-32 border-t border-neutral-200 pt-12">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/journal"
-              className="group inline-flex items-center gap-2 text-sm font-medium text-neutral-500 transition-colors hover:text-black"
-            >
-              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-              Back to Journal
-            </Link>
-            <p className="text-sm text-neutral-400">
-              &copy; {new Date().getFullYear()} Shreyas Agarwal
-            </p>
-          </div>
-        </footer>
-      </main>
+      </div>
     </div>
   );
 }
