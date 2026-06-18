@@ -92,7 +92,9 @@ export function ArticleMetaRail({ entry, readingTime }: ArticleMetaRailProps) {
         <>
           <Divider />
           <MetaRow label="Series">
-            <p className="text-[12px] text-neutral-600">{entry.series}</p>
+            <p className="text-[12px] text-neutral-600">
+              {entry.series}{entry.part != null ? ` · Part ${entry.part}` : ""}
+            </p>
           </MetaRow>
         </>
       )}

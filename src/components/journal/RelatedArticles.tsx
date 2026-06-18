@@ -1,7 +1,7 @@
 import type { JournalEntry } from "@/lib/journal";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { DOMAIN_TEXT_COLORS } from "./ArticleHeader";
+import { DOMAIN_TEXT_COLORS, TRACK_COLORS } from "./ArticleHeader";
 
 interface RelatedArticlesProps {
   entries: JournalEntry[];
@@ -24,7 +24,7 @@ export function RelatedArticles({ entries }: RelatedArticlesProps) {
           >
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0 flex-1 space-y-1.5">
-                {/* Domain + format */}
+                {/* Domain + format + track */}
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
                   {entry.domains.slice(0, 2).map((d) => (
                     <span
@@ -37,6 +37,14 @@ export function RelatedArticles({ entries }: RelatedArticlesProps) {
                   <span className="text-[10px] uppercase tracking-widest text-neutral-300">
                     {entry.format}
                   </span>
+                  {/* Series track pill */}
+                  {entry.track && (
+                    <span
+                      className={`rounded border px-1.5 py-0.5 text-[9px] font-semibold tracking-wide ${TRACK_COLORS[entry.track] ?? "text-neutral-500 bg-neutral-50 border-neutral-200"}`}
+                    >
+                      {entry.track}{entry.part != null ? ` · ${entry.part}` : ""}
+                    </span>
+                  )}
                 </div>
 
                 {/* Title */}

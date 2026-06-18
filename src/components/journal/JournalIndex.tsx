@@ -2,9 +2,10 @@
 
 import type { JournalEntry } from "@/lib/journal";
 import { useMemo, useState } from "react";
+import { TRACK_COLORS } from "@/components/journal/ArticleHeader";
 import { EmptyState } from "./EmptyState";
 import { EntryRow } from "./EntryRow";
-import { FeaturedShelf } from "./FeaturedShelf";
+import { FeaturedShelf, type SeriesSummary } from "./FeaturedShelf";
 import { FilterSidebar } from "./FilterSidebar";
 import { SearchBar } from "./SearchBar";
 
@@ -19,6 +20,50 @@ interface JournalIndexProps {
   allTags: string[];
   allSeries: string[];
   allYears: string[];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Series group header — shown above a run of same-series articles
+// ─────────────────────────────────────────────────────────────────────────────
+
+function SeriesGroupHeader({
+  seriesName,
+  entries,
+}: {
+  seriesName: string;
+  entries: JournalEntry[];
+}) {
+  // Collect unique tracks for this series
+  const tracks = [...new Set(entries.map((e) => e.track).filter(Boolean))] as string[];
+
+  return (
+    <div className="mb-6 mt-14 flex flex-wrap items-center gap-3 border-t border-neutral-200 pt-8 first:mt-0 first:border-0 first:pt-0">
+      <div className="space-y-1">
+        <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.25em] text-neutral-400">
+          Series
+        </p>
+        <h2 className="text-[17px] font-semibold tracking-tight text-neutral-800">
+          {seriesName}
+        </h2>
+      </div>
+      {/* Track pills */}
+      {tracks.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 ml-auto">
+          {tracks.map((track) => (
+            <span
+              key={track}
+              className={`rounded border px-2 py-0.5 text-[10px] font-semibold tracking-wide ${TRACK_COLORS[track] ?? "text-neutral-500 bg-neutral-50 border-neutral-200"}`}
+            >
+              {track} Track
+            </span>
+          ))}
+          <span className="text-[10px] text-neutral-400 self-center ml-1">
+            {entries.length} {entries.length === 1 ? "part" : "parts"}
+          </span>
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -61,7 +106,8 @@ export function JournalIndex({
           entry.domains.some((d) => d.toLowerCase().includes(q)) ||
           entry.format.toLowerCase().includes(q) ||
           entry.tags.some((t) => t.toLowerCase().includes(q)) ||
-          (entry.series?.toLowerCase().includes(q) ?? false);
+          (entry.series?.toLowerCase().includes(q) ?? false) ||
+          (entry.track?.toLowerCase().includes(q) ?? false);
         if (!matches) return false;
       }
       // Domains — OR semantics: entry must match at least one selected domain
@@ -83,6 +129,28 @@ export function JournalIndex({
     });
   }, [entries, searchQuery, selectedDomains, selectedFormats, selectedTags, selectedSeries, selectedYears]);
 
+  // ─── Series summaries for FeaturedShelf ───────────────────────────────────
+  const seriesSummaries = useMemo((): SeriesSummary[] => {
+    const map = new Map<string, JournalEntry[]>();
+    for (const entry of entries) {
+      if (entry.series && entry.part != null) {
+        const group = map.get(entry.series) ?? [];
+        group.push(entry);
+        map.set(entry.series, group);
+      }
+    }
+    return [...map.entries()].map(([name, parts]) => {
+      const sorted = [...parts].sort((a, b) => (a.part ?? 0) - (b.part ?? 0));
+      return {
+        name,
+        tracks: [...new Set(parts.map((e) => e.track).filter(Boolean))] as string[],
+        totalParts: parts.length,
+        firstEntry: sorted[0],
+        domains: [...new Set(parts.flatMap((e) => e.domains))],
+      };
+    });
+  }, [entries]);
+
   // ─── Derived state ─────────────────────────────────────────────────────────
   const featuredEntries = entries.filter((e) => e.featured);
 
@@ -94,7 +162,7 @@ export function JournalIndex({
     selectedYears.size > 0;
 
   const showFeatured =
-    featuredEntries.length > 0 &&
+    (featuredEntries.length > 0 || seriesSummaries.length > 0) &&
     !searchQuery.trim() &&
     !hasActiveFilters;
 
@@ -105,6 +173,40 @@ export function JournalIndex({
     setSelectedSeries(null);
     setSelectedYears(new Set());
   }
+
+  // ─── Group entries into runs ───────────────────────────────────────────────
+  // Build a list of display segments: each segment is either a standalone entry
+  // or a series group (contiguous block of same-series articles).
+  // When search/filter is active we skip grouping and render flat.
+  type Segment =
+    | { kind: "standalone"; entry: JournalEntry }
+    | { kind: "series"; seriesName: string; entries: JournalEntry[] };
+
+  const segments = useMemo((): Segment[] => {
+    if (searchQuery.trim() || hasActiveFilters) {
+      return filteredEntries.map((entry) => ({ kind: "standalone", entry }));
+    }
+
+    const result: Segment[] = [];
+    const seriesMap = new Map<string, JournalEntry[]>();
+
+    for (const entry of filteredEntries) {
+      if (entry.series && entry.part != null) {
+        const group = seriesMap.get(entry.series);
+        if (group) {
+          group.push(entry);
+        } else {
+          const newGroup = [entry];
+          seriesMap.set(entry.series, newGroup);
+          result.push({ kind: "series", seriesName: entry.series, entries: newGroup });
+        }
+      } else {
+        result.push({ kind: "standalone", entry });
+      }
+    }
+
+    return result;
+  }, [filteredEntries, searchQuery, hasActiveFilters]);
 
   // ─── Render ────────────────────────────────────────────────────────────────
   return (
@@ -167,7 +269,7 @@ export function JournalIndex({
 
             {/* Featured shelf — only visible when no search or filter active */}
             {showFeatured && (
-              <FeaturedShelf entries={featuredEntries} />
+              <FeaturedShelf entries={featuredEntries} series={seriesSummaries} />
             )}
 
             {/* Results metadata */}
@@ -183,12 +285,24 @@ export function JournalIndex({
               </div>
             )}
 
-            {/* Entry list */}
+            {/* Entry list — grouped when no active filters, flat otherwise */}
             {filteredEntries.length > 0 ? (
               <div>
-                {filteredEntries.map((entry) => (
-                  <EntryRow key={entry.slug} entry={entry} />
-                ))}
+                {segments.map((segment, idx) =>
+                  segment.kind === "standalone" ? (
+                    <EntryRow key={segment.entry.slug} entry={segment.entry} />
+                  ) : (
+                    <div key={segment.seriesName}>
+                      <SeriesGroupHeader
+                        seriesName={segment.seriesName}
+                        entries={segment.entries}
+                      />
+                      {segment.entries.map((entry) => (
+                        <EntryRow key={entry.slug} entry={entry} />
+                      ))}
+                    </div>
+                  )
+                )}
               </div>
             ) : (
               <EmptyState

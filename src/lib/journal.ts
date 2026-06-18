@@ -18,6 +18,10 @@ export interface JournalEntry {
   format: string;
   tags: string[];
   series?: string;
+  /** Track within a multi-track series (e.g. "Data" | "Infrastructure") */
+  track?: string;
+  /** Global part number within the series — used for ordering across tracks */
+  part?: number;
   featured: boolean;
   featuredPriority: number;
   readingTime: string;
@@ -102,6 +106,8 @@ export function getJournalEntries(): JournalEntry[] {
       format: normalizeFormat(data),
       tags: normalizeTags(data),
       series: data.series as string | undefined,
+      track: data.track as string | undefined,
+      part: typeof data.part === "number" ? data.part : undefined,
       featured: Boolean(data.featured),
       featuredPriority: typeof data.featuredPriority === "number" ? data.featuredPriority : 99,
       readingTime: computeReadingTime(content),
@@ -109,13 +115,47 @@ export function getJournalEntries(): JournalEntry[] {
     };
   });
 
-  // Sort: by year descending, then title alphabetically
-  entries.sort((a, b) => {
+  // ── Sorting strategy ───────────────────────────────────────────────────────
+  // 1. Series articles that have a `part` number are sorted by part ASC within
+  //    their series group, then the groups themselves are sorted by the year of
+  //    the first part and the series name.
+  // 2. Standalone articles (no series or no part) are sorted year DESC, title ASC.
+  // 3. Final list: standalone articles first (newest first), then each series
+  //    group in order. This keeps the index feeling fresh while making series
+  //    easy to follow.
+
+  const seriesGroups = new Map<string, JournalEntry[]>();
+  const standalone: JournalEntry[] = [];
+
+  for (const entry of entries) {
+    if (entry.series && entry.part != null) {
+      const group = seriesGroups.get(entry.series) ?? [];
+      group.push(entry);
+      seriesGroups.set(entry.series, group);
+    } else {
+      standalone.push(entry);
+    }
+  }
+
+  // Sort standalone: year desc, title asc
+  standalone.sort((a, b) => {
     if (b.year !== a.year) return b.year.localeCompare(a.year);
     return a.title.localeCompare(b.title);
   });
 
-  return entries;
+  // Sort each series group by part number asc
+  for (const group of seriesGroups.values()) {
+    group.sort((a, b) => (a.part ?? 0) - (b.part ?? 0));
+  }
+
+  // Interleave: standalone first, then append each series in declaration order
+  // (series are naturally ordered by when they appear in the filesystem scan).
+  const result: JournalEntry[] = [...standalone];
+  for (const group of seriesGroups.values()) {
+    result.push(...group);
+  }
+
+  return result;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

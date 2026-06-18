@@ -124,6 +124,8 @@ export default async function JournalEntryPage({
     format: (data.format as string) || "Essay",
     tags: Array.isArray(data.tags) ? (data.tags as string[]) : [],
     series: data.series as string | undefined,
+    track: data.track as string | undefined,
+    part: typeof data.part === "number" ? data.part : undefined,
     featured: Boolean(data.featured),
     featuredPriority: typeof data.featuredPriority === "number" ? data.featuredPriority : 99,
     readingTime: computeReadingTime(content),
@@ -135,11 +137,24 @@ export default async function JournalEntryPage({
   const tocHeadings = parseTocHeadings(content);
   const relatedEntries = getRelatedEntries(entry, allEntries, 4);
 
-  // Prev / next in sorted archive order
-  const currentIndex = allEntries.findIndex((e) => e.slug === slug);
-  const prev = currentIndex > 0 ? allEntries[currentIndex - 1] : null;
-  const next =
-    currentIndex < allEntries.length - 1 ? allEntries[currentIndex + 1] : null;
+  // ── Series-aware prev / next ──────────────────────────────────────────────
+  // If this article belongs to a series with a part number, navigate within the
+  // series (sorted by part). Otherwise fall back to global archive order.
+  let prev: JournalEntry | null = null;
+  let next: JournalEntry | null = null;
+
+  if (entry.series && entry.part != null) {
+    const seriesEntries = allEntries
+      .filter((e) => e.series === entry.series && e.part != null)
+      .sort((a, b) => (a.part ?? 0) - (b.part ?? 0));
+    const idx = seriesEntries.findIndex((e) => e.slug === slug);
+    prev = idx > 0 ? seriesEntries[idx - 1] : null;
+    next = idx < seriesEntries.length - 1 ? seriesEntries[idx + 1] : null;
+  } else {
+    const currentIndex = allEntries.findIndex((e) => e.slug === slug);
+    prev = currentIndex > 0 ? allEntries[currentIndex - 1] : null;
+    next = currentIndex < allEntries.length - 1 ? allEntries[currentIndex + 1] : null;
+  }
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (

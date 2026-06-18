@@ -1,18 +1,16 @@
 import type { JournalEntry } from "@/lib/journal";
 import { ArrowRight, Clock } from "lucide-react";
 import Link from "next/link";
+import { DOMAIN_CHIP_COLORS } from "./ArticleHeader";
 
 interface EntryRowProps {
   entry: JournalEntry;
 }
 
-// Color assignments for domain labels
-const DOMAIN_COLORS: Record<string, string> = {
-  "AI & Computation": "text-sky-600 bg-sky-50 border-sky-100",
-  "Ecology & Complexity": "text-emerald-700 bg-emerald-50 border-emerald-100",
-  "Systems & Architecture": "text-violet-600 bg-violet-50 border-violet-100",
-  "Operational Thinking": "text-amber-700 bg-amber-50 border-amber-100",
-  "Process & Organization": "text-rose-600 bg-rose-50 border-rose-100",
+// Track pill colour overrides — distinct from domain chips
+const TRACK_COLORS: Record<string, string> = {
+  Data: "text-indigo-600 bg-indigo-50 border-indigo-200",
+  Infrastructure: "text-zinc-600 bg-zinc-100 border-zinc-200",
 };
 
 const DEFAULT_DOMAIN_COLOR = "text-neutral-600 bg-neutral-100 border-neutral-200";
@@ -23,13 +21,13 @@ export function EntryRow({ entry }: EntryRowProps) {
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         {/* Left content area */}
         <div className="min-w-0 flex-1 space-y-3">
-          {/* Meta row: domains + format + year */}
+          {/* Meta row: domains + format + track + year */}
           <div className="flex flex-wrap items-center gap-2">
             {/* Domains */}
             {entry.domains.map((d) => (
               <span
                 key={d}
-                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold tracking-wide ${DOMAIN_COLORS[d] ?? DEFAULT_DOMAIN_COLOR}`}
+                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold tracking-wide ${DOMAIN_CHIP_COLORS[d] ?? DEFAULT_DOMAIN_COLOR}`}
               >
                 {d}
               </span>
@@ -40,10 +38,17 @@ export function EntryRow({ entry }: EntryRowProps) {
               {entry.format}
             </span>
 
-            {/* Series badge */}
+            {/* Series + track + part badge */}
             {entry.series && (
-              <span className="text-[10px] text-neutral-300">
-                ↳ {entry.series}
+              <span className="flex items-center gap-1.5 text-[10px] text-neutral-300">
+                <span>↳ {entry.series}</span>
+                {entry.track && (
+                  <span
+                    className={`rounded border px-1.5 py-0.5 text-[9px] font-semibold tracking-wide ${TRACK_COLORS[entry.track] ?? "text-neutral-500 bg-neutral-50 border-neutral-200"}`}
+                  >
+                    {entry.track}{entry.part != null ? ` · ${entry.part}` : ""}
+                  </span>
+                )}
               </span>
             )}
 
