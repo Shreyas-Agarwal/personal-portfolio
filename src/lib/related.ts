@@ -29,8 +29,8 @@ export function getRelatedEntries(
       .filter((e) => e.series === current.series && e.part != null && e.slug !== current.slug)
       .sort((a, b) => (a.part ?? 0) - (b.part ?? 0));
 
-    const prevPart = seriesEntries.filter((e) => (e.part ?? 0) < current.part!).at(-1);
-    const nextPart = seriesEntries.filter((e) => (e.part ?? 0) > current.part!).at(0);
+    const prevPart = seriesEntries.filter((e) => (e.part ?? 0) < (current.part ?? 0)).at(-1);
+    const nextPart = seriesEntries.filter((e) => (e.part ?? 0) > (current.part ?? 0)).at(0);
 
     if (prevPart) pinned.push(prevPart);
     if (nextPart) pinned.push(nextPart);

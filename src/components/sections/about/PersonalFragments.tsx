@@ -86,6 +86,7 @@ function FlippableCard({
   const [hovered, setHovered] = useState(false);
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: Hover effect is purely presentational
     <div
       className={`relative flex flex-col transition-all duration-300 ${className} ${hovered ? "z-50" : "z-10"}`}
       style={{ perspective: "1200px" }}

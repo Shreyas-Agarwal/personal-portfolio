@@ -288,7 +288,7 @@ export function JournalIndex({
             {/* Entry list — grouped when no active filters, flat otherwise */}
             {filteredEntries.length > 0 ? (
               <div>
-                {segments.map((segment, idx) =>
+                {segments.map((segment, _idx) =>
                   segment.kind === "standalone" ? (
                     <EntryRow key={segment.entry.slug} entry={segment.entry} />
                   ) : (

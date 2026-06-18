@@ -206,7 +206,7 @@ export function ArticleBody({ content }: ArticleBodyProps) {
             const match = /language-(\w+)/.exec(className || "");
             const isBlock = !!match;
 
-            if (isBlock && match![1] === "mermaid") {
+            if (isBlock && match?.[1] === "mermaid") {
               return (
                 <MermaidDiagram code={String(children).replace(/\n$/, "")} />
               );
