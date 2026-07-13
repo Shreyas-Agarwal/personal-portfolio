@@ -8,10 +8,10 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 const nav = [
-  { to: "/systems", label: "01. SYSTEMS", subtitle: "architectures" },
-  { to: "/projects", label: "02. PROJECTS", subtitle: "case-studies" },
-  { to: "/journal", label: "03. JOURNAL", subtitle: "writing" },
-  { to: "/about", label: "04. IDENTITY", subtitle: "the-data-person" },
+  { to: "/systems", label: "Systems" },
+  { to: "/projects", label: "Case Studies" },
+  { to: "/journal", label: "Writing" },
+  { to: "/about", label: "About" },
 ];
 
 type HeaderTheme = "dark" | "light";
@@ -128,21 +128,7 @@ export function Header() {
               <Link key={n.to} href={n.to} className="group relative flex flex-col items-end">
                 <span
                   className={cn(
-                    "font-mono text-[10px] tracking-widest transition-colors",
-                    isLight
-                      ? isActive
-                        ? "text-black/70"
-                        : "text-black/35 group-hover:text-black/70"
-                      : isActive
-                        ? "text-primary"
-                        : "text-muted-foreground group-hover:text-foreground",
-                  )}
-                >
-                  {n.subtitle}
-                </span>
-                <span
-                  className={cn(
-                    "text-sm font-medium transition-all group-hover:tracking-wider",
+                    "text-sm font-medium transition-colors",
                     isLight
                       ? isActive
                         ? "text-black"
@@ -207,21 +193,7 @@ export function Header() {
                   >
                     <span
                       className={cn(
-                        "font-mono text-xs tracking-widest transition-colors",
-                        isLight
-                          ? isActive
-                            ? "text-black/70"
-                            : "text-black/40 group-hover:text-black/70"
-                          : isActive
-                            ? "text-primary"
-                            : "text-muted-foreground group-hover:text-foreground",
-                      )}
-                    >
-                      {n.subtitle}
-                    </span>
-                    <span
-                      className={cn(
-                        "text-xl font-medium transition-all mt-1",
+                        "text-xl font-medium transition-all",
                         isLight
                           ? isActive
                             ? "text-black"

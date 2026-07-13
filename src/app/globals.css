@@ -29,6 +29,25 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --animate-flow-travel: flow-travel 4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+/* Field Journal homepage (/v2) — traveling flow-diagram dot */
+@keyframes flow-travel {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 7px);
+    opacity: 0;
+  }
 }
 
 :root {
