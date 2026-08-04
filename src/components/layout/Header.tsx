@@ -1,228 +1,216 @@
 "use client";
 
-import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { plexMono, serif } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
+import { useHeaderTitle } from "./HeaderContext";
 
 const nav = [
+  { to: "/projects", label: "Works" },
   { to: "/systems", label: "Systems" },
-  { to: "/projects", label: "Case Studies" },
   { to: "/journal", label: "Writing" },
   { to: "/about", label: "About" },
 ];
 
-type HeaderTheme = "dark" | "light";
+const ROUTE_TITLE_MAP: Record<string, string> = {
+  "/": "Collected Engineering Works",
+  "/projects": "Works & Case Studies",
+  "/systems": "Systems Architecture",
+  "/journal": "Technical Publications",
+  "/about": "Author & Monograph",
+  "/projects/publications/architecture-of-information-systems":
+    "Architecture of Information Systems",
+  "/projects/publications/desktop-connector": "Desktop Synchronization Architecture",
+  "/projects/publications/bim-paradox": "The BIM Data Paradox",
+  "/projects/publications/semantic-models": "Canonical Semantic Models",
+  "/projects/publications/context-systems": "Context Systems & Memory Boundaries",
+  "/projects/publications/mcp-context-rot": "Context Rot in LLM Agents",
+  "/projects/publications/the-silicon-ceiling": "The Silicon Ceiling",
+  "/projects/publications/ecology-and-ai": "Ecology and AI Systems",
+  "/projects/publications/evolution-vs-software": "Software vs Biological Evolution",
+  "/projects/publications/transformer-vs-qubit": "Transformer vs Qubit Architectures",
+  "/projects/publications/network-dynamics": "Network Dynamics & Latency",
+};
 
 export function Header() {
   const pathname = usePathname();
-  const { scrollY } = useScroll();
-  const headerRef = useRef<HTMLElement>(null);
-  const [theme, setTheme] = useState<HeaderTheme>("dark");
+  const { activeTitle } = useHeaderTitle();
+  const [isMastheadVisible, setIsMastheadVisible] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const lastScrollY = useRef(0);
 
-  // Compressed state for when the user is deep in the "data"
-  const headerHeight = useTransform(scrollY, [0, 100], ["96px", "72px"]);
-  const blurAmount = useTransform(scrollY, [0, 100], ["blur(0px)", "blur(20px)"]);
-  const borderOpacity = useTransform(scrollY, [0, 100], [0, 1]);
+  // Dynamic publication title resolution
+  const resolvedWorkTitle =
+    activeTitle ||
+    ROUTE_TITLE_MAP[pathname] ||
+    (pathname.startsWith("/projects")
+      ? "Engineering Work"
+      : pathname.startsWith("/systems")
+        ? "Systems Architecture"
+        : pathname.startsWith("/journal")
+          ? "Technical Publication"
+          : "Engineering Systems");
 
-  // --- Dynamic theme adaptation via IntersectionObserver ---
-  // Strategy: observe all sections tagged with [data-header-theme].
-  // We use rootMargin to create a thin horizontal "sensor" strip at the
-  // top of the viewport (just below the header). Whichever section
-  // intersects that strip is the one currently behind the header.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is needed to re-initialize observer on route changes
+  // Editorial scroll choreography: hide masthead on scroll down, show on scroll up / top
   useEffect(() => {
-    const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-header-theme]"));
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
 
-    if (sections.length === 0) return;
-
-    // Start with the theme of the first section
-    const firstTheme = sections[0].dataset.headerTheme as HeaderTheme;
-    setTheme(firstTheme ?? "dark");
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const sectionTheme = (entry.target as HTMLElement).dataset.headerTheme as HeaderTheme;
-            setTheme(sectionTheme ?? "dark");
-          }
+      if (currentScrollY <= 60) {
+        setIsMastheadVisible(true);
+      } else {
+        if (currentScrollY > lastScrollY.current + 10) {
+          // Scrolling down -> hide masthead
+          setIsMastheadVisible(false);
+        } else if (currentScrollY < lastScrollY.current - 10) {
+          // Scrolling up -> show masthead
+          setIsMastheadVisible(true);
         }
-      },
-      {
-        // The rootMargin creates a 1px-tall horizontal slice at the very
-        // top of the viewport. A section "intersects" when its top edge
-        // passes through that slice — i.e., it's right behind the header.
-        rootMargin: "-1px 0px -99% 0px",
-        threshold: 0,
-      },
-    );
+      }
+      lastScrollY.current = currentScrollY;
+    };
 
-    for (const section of sections) {
-      observer.observe(section);
-    }
-
-    return () => observer.disconnect();
-  }, [pathname]); // Re-run when the route changes (page sections change)
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Close mobile menu on route change
-  // biome-ignore lint/correctness/useExhaustiveDependencies: we want to close the menu when the route changes
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is needed to close mobile menu on route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // -------------------------------------------------------
-
-  const isLight = theme === "light";
-
   return (
-    <motion.header
-      ref={headerRef}
-      style={{ height: headerHeight, backdropFilter: blurAmount }}
-      className={cn(
-        "sticky top-0 z-50 w-full transition-colors duration-500",
-        isLight ? "bg-[#F3F1EC]/80 text-black" : "bg-[#0B0D10]/70 text-white",
-      )}
-    >
-      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 md:px-8">
-        {/* IDENTITY: SYSTEM PATH */}
-        <div className="flex flex-col font-mono uppercase tracking-[0.2em]">
-          <div className="flex items-center gap-2">
-            <span
-              className={cn(
-                "h-2 w-2 rounded-full animate-pulse",
-                isLight ? "bg-black/60" : "bg-primary",
-              )}
-            />
-            <Link
-              href="/"
-              className={cn(
-                "text-sm font-bold transition-colors",
-                isLight ? "text-black hover:text-black/70" : "text-white/90 hover:text-primary",
-              )}
-            >
-              SHREYAS_AGARWAL {"//"}
-            </Link>
-          </div>
+    <header className="sticky top-0 z-50 w-full bg-[#0B0D10] text-[#E6E1D6]">
+      {/* ── LAYER 1: PRIMARY MASTHEAD ── */}
+      <AnimatePresence initial={false}>
+        {isMastheadVisible && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className={cn(
-              "mt-1 text-[10px] flex items-center gap-4",
-              isLight ? "text-black/40" : "text-muted-foreground",
-            )}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden border-b border-[#2C2E32]/70 bg-[#0B0D10]"
           >
-            <span>DOM: DATA_INFRASTRUCTURE</span>
-          </motion.div>
-        </div>
-
-        {/* NAVIGATION: THE WORKBENCH */}
-        <nav className="hidden md:flex items-center gap-12">
-          {nav.map((n) => {
-            const isActive = pathname.startsWith(n.to);
-
-            return (
-              <Link key={n.to} href={n.to} className="group relative flex flex-col items-end">
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 md:px-8">
+              {/* PUBLICATION IMPRINT BRANDING */}
+              <Link href="/" className="group flex flex-col gap-0.5">
                 <span
                   className={cn(
-                    "text-sm font-medium transition-colors",
-                    isLight
-                      ? isActive
-                        ? "text-black"
-                        : "text-black/50 group-hover:text-black"
-                      : isActive
-                        ? "text-foreground"
-                        : "text-muted-foreground/60 group-hover:text-foreground",
+                    serif.className,
+                    "text-base md:text-lg font-normal tracking-[0.22em] uppercase text-[#E6E1D6] transition-colors group-hover:text-white",
                   )}
                 >
-                  {n.label}
+                  Shreyas Agarwal
                 </span>
-
-                {isActive && (
-                  <motion.div
-                    layoutId="system-underline"
-                    className={cn(
-                      "absolute -bottom-4 right-0 h-[2px] w-full",
-                      isLight ? "bg-black/60" : "bg-primary shadow-[0_0_10px_var(--color-primary)]",
-                    )}
-                  />
-                )}
+                <span
+                  className={cn(
+                    plexMono.className,
+                    "text-[10px] tracking-[0.25em] uppercase text-[#E6E1D6]/45",
+                  )}
+                >
+                  Engineering Systems
+                </span>
               </Link>
-            );
-          })}
-        </nav>
 
-        {/* MOBILE MENU TOGGLE */}
-        <button
-          type="button"
-          className={cn("md:hidden p-2 -mr-2", isLight ? "text-black" : "text-white")}
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle Menu"
-        >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
+              {/* EDITORIAL NAVIGATION */}
+              <nav className="hidden md:flex items-center gap-10">
+                {nav.map((n) => {
+                  const isActive = pathname === n.to || (n.to !== "/" && pathname.startsWith(n.to));
 
-      {/* MOBILE NAVIGATION OVERLAY */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className={cn(
-              "absolute left-0 top-[100%] w-full overflow-hidden border-t",
-              isLight
-                ? "bg-[#F3F1EC]/95 border-black/10 text-black"
-                : "bg-[#0B0D10]/95 border-white/10 text-white",
-            )}
-            style={{ backdropFilter: "blur(20px)" }}
-          >
-            <nav className="flex flex-col px-6 py-8 gap-8">
-              {nav.map((n) => {
-                const isActive = pathname.startsWith(n.to);
-                return (
-                  <Link
-                    key={n.to}
-                    href={n.to}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="group flex flex-col"
-                  >
-                    <span
+                  return (
+                    <Link
+                      key={n.to}
+                      href={n.to}
                       className={cn(
-                        "text-xl font-medium transition-all",
-                        isLight
-                          ? isActive
-                            ? "text-black"
-                            : "text-black/60 group-hover:text-black"
-                          : isActive
-                            ? "text-foreground"
-                            : "text-muted-foreground/80 group-hover:text-foreground",
+                        plexMono.className,
+                        "text-xs uppercase tracking-[0.2em] transition-colors relative py-1",
+                        isActive
+                          ? "text-[#E6E1D6] font-semibold"
+                          : "text-[#E6E1D6]/50 hover:text-[#E6E1D6]",
                       )}
                     >
                       {n.label}
-                    </span>
-                  </Link>
-                );
-              })}
-            </nav>
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              {/* MOBILE MENU TOGGLE */}
+              <button
+                type="button"
+                className="md:hidden p-2 text-[#E6E1D6]/70 hover:text-[#E6E1D6] transition-colors"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label="Toggle Menu"
+              >
+                {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
+            </div>
+
+            {/* MOBILE NAVIGATION OVERLAY */}
+            <AnimatePresence>
+              {isMobileMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="border-t border-[#2C2E32]/70 bg-[#0B0D10] px-6 py-6 md:hidden"
+                >
+                  <nav className="flex flex-col gap-5">
+                    {nav.map((n) => {
+                      const isActive =
+                        pathname === n.to || (n.to !== "/" && pathname.startsWith(n.to));
+                      return (
+                        <Link
+                          key={n.to}
+                          href={n.to}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className={cn(
+                            plexMono.className,
+                            "text-sm uppercase tracking-[0.2em] transition-colors",
+                            isActive ? "text-[#E6E1D6] font-semibold" : "text-[#E6E1D6]/50",
+                          )}
+                        >
+                          {n.label}
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* FRACTURE BORDER */}
-      <motion.div
-        style={{ opacity: borderOpacity }}
-        className={cn(
-          "absolute bottom-0 left-0 h-[1px] w-full",
-          isLight
-            ? "bg-gradient-to-r from-transparent via-black/15 to-transparent"
-            : "bg-gradient-to-r from-transparent via-foreground/20 to-transparent",
-        )}
-      />
-    </motion.header>
+      {/* ── LAYER 2: RUNNING HEADER ── */}
+      <div className="border-b border-[#2C2E32] bg-[#0B0D10] px-4 py-2.5 text-[10px] md:px-8">
+        <div className="mx-auto flex max-w-7xl items-center justify-between font-mono uppercase tracking-[0.2em] text-[#E6E1D6]/60">
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className={cn(
+                plexMono.className,
+                "text-[10px] tracking-[0.2em] font-medium text-[#E6E1D6]/70 hover:text-[#E6E1D6] transition-colors",
+              )}
+            >
+              SHREYAS AGARWAL
+            </Link>
+          </div>
+          <div
+            className={cn(
+              plexMono.className,
+              "truncate text-right text-[10px] tracking-[0.15em] text-[#E6E1D6]/45 max-w-[60%] md:max-w-[70%]",
+            )}
+          >
+            {resolvedWorkTitle}
+          </div>
+        </div>
+      </div>
+    </header>
   );
 }

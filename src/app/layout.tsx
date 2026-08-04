@@ -25,6 +25,7 @@ export const metadata: Metadata = {
 
 import { FooterRenderer } from "@/components/layout/FooterRenderer";
 import { Header } from "@/components/layout/Header";
+import { HeaderProvider } from "@/components/layout/HeaderContext";
 import { getGitHubContributions } from "@/lib/github";
 
 export default async function RootLayout({
@@ -43,9 +44,11 @@ export default async function RootLayout({
         <style>{`body { background-color: #000 !important; color: #fff !important; }`}</style>
         <Analytics />
         <SpeedInsights />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <FooterRenderer gitHubCommits={gitHubCommits} />
+        <HeaderProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <FooterRenderer gitHubCommits={gitHubCommits} />
+        </HeaderProvider>
       </body>
     </html>
   );

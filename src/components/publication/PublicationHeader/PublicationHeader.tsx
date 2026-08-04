@@ -9,7 +9,10 @@
  * - Compact metadata bar (date · revision · reading time)
  */
 
+"use client";
+
 import Link from "next/link";
+import { useHeaderTitle } from "@/components/layout/HeaderContext";
 import { plexMono, serif } from "@/lib/fonts";
 import type { PublicationManifest, PublicationSection } from "@/lib/publication/types";
 
@@ -33,6 +36,8 @@ function formatDate(iso: string): string {
 
 export function PublicationHeader({ manifest, current, basePath }: PublicationHeaderProps) {
   const isIndex = (current.href ?? "") === "";
+  useHeaderTitle(isIndex ? manifest.title : current.title);
+
   const dateLabel = formatDate(manifest.date);
 
   return (
