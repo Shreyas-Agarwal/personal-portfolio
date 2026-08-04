@@ -1,0 +1,54 @@
+---
+title: "The Modern Memory Leak: Unbounded Connection & Context Pools"
+date: "2026-07-01"
+---
+
+# The Modern Memory Leak: Unbounded Connection & Context Pools
+
+In traditional C/C++ programming, a memory leak was a forgotten `free()` or `delete`. In modern garbage-collected languages (Go, TypeScript/Node.js, Java), memory leaks take a different form: **unbounded object retention in long-lived pools and contexts**.
+
+Garbage collectors cannot free memory that remains reachable from active root objects, connection pools, or event listeners.
+
+<Observation n={1}>
+  The modern memory leak is not un-allocated bytes; it is reachable retained memory. Event listeners, un-canceled Context objects, and idle connection pools keep massive object graphs alive indefinitely.
+</Observation>
+
+---
+
+## Common Vectors of Modern Memory Leaks
+
+### 1. Un-Canceled Contexts & Event Listeners
+In Node.js and Go, registering callbacks or deriving child contexts without explicit cleanup retains closures in memory:
+
+```typescript filename="event-leak.ts"
+// LEAK: Adding event listener on a global singleton without cleanup
+function processRequest(req: Request) {
+  globalEmitter.on('update', (data) => {
+    // This closure captures req in memory permanently!
+    console.log(req.headers, data);
+  });
+}
+```
+
+### 2. Unbounded Connection Pools
+Database connection pools configured with high `maxConnections` under idle load consume socket buffers, memory caches, and file descriptors.
+
+---
+
+## Diagnostics and Remediation
+
+1. **Heap Dumps & Retainer Trees**: Inspect Chrome DevTools / Go `pprof` heap profiles to find root paths holding unreachable objects.
+2. **Context Lifetimes**: Always invoke `cancel()` functions returned by `context.WithTimeout()` in Go or remove event listeners in Node.js `finally` blocks.
+
+<Decision n={1} status="accepted">
+  Set strict maximum bounds and idle connection timeouts on all connection pools, and enforce explicit `finally` cleanup for all event listeners and background contexts.
+</Decision>
+
+<Tradeoff
+  gain="Prevents progressive memory degradation and Out-Of-Memory (OOM) pod crashes under continuous load."
+  cost="Requires explicit resource lifecycle management in application code."
+/>
+
+---
+
+*Next in Track 02: **[Session State Costs](session-state-has-a-cost)**.*

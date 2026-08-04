@@ -1,15 +1,46 @@
-"use client"
+"use client";
 import { motion } from "framer-motion";
 
 export function BackpressureVisual() {
   return (
-    <svg viewBox="0 0 160 40" className="w-full h-10 mt-2 bg-[#1B1D1F]/70 rounded border border-[#E6E1D6]/5 p-1 select-none">
+    <svg
+      viewBox="0 0 160 40"
+      className="w-full h-10 mt-2 bg-[#1B1D1F]/70 rounded border border-[#E6E1D6]/5 p-1 select-none"
+    >
       {/* Queue Box */}
-      <rect x="50" y="8" width="60" height="24" rx="2" fill="none" stroke="#E6E1D6" strokeOpacity="0.15" strokeWidth={1} />
+      <rect
+        x="50"
+        y="8"
+        width="60"
+        height="24"
+        rx="2"
+        fill="none"
+        stroke="#E6E1D6"
+        strokeOpacity="0.15"
+        strokeWidth={1}
+      />
       {/* Ingestion Path */}
-      <line x1="8" y1="20" x2="50" y2="20" stroke="#E6E1D6" strokeOpacity="0.15" strokeWidth={1} strokeDasharray="3 3" />
+      <line
+        x1="8"
+        y1="20"
+        x2="50"
+        y2="20"
+        stroke="#E6E1D6"
+        strokeOpacity="0.15"
+        strokeWidth={1}
+        strokeDasharray="3 3"
+      />
       {/* Processing Path */}
-      <line x1="110" y1="20" x2="152" y2="20" stroke="#E6E1D6" strokeOpacity="0.15" strokeWidth={1} strokeDasharray="3 3" />
+      <line
+        x1="110"
+        y1="20"
+        x2="152"
+        y2="20"
+        stroke="#E6E1D6"
+        strokeOpacity="0.15"
+        strokeWidth={1}
+        strokeDasharray="3 3"
+      />
 
       {/* Fast incoming packets */}
       <motion.circle

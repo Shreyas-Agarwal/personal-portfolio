@@ -1,6 +1,6 @@
-import type { JournalEntry } from "@/lib/journal";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import type { JournalEntry } from "@/lib/journal";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Domain colour palette — shared across article components
@@ -77,9 +77,7 @@ interface ArticleHeaderProps {
 }
 
 export function ArticleHeader({ entry, readingTime }: ArticleHeaderProps) {
-  const publishedLabel = entry.published
-    ? formatDate(entry.published)
-    : entry.year;
+  const publishedLabel = entry.published ? formatDate(entry.published) : entry.year;
 
   const updatedLabel = entry.updated ? formatDate(entry.updated) : null;
 
@@ -115,7 +113,8 @@ export function ArticleHeader({ entry, readingTime }: ArticleHeaderProps) {
                 <span
                   className={`rounded border px-1.5 py-0.5 text-[9px] font-semibold tracking-wide ${TRACK_COLORS[entry.track] ?? "text-neutral-500 bg-neutral-50 border-neutral-200"}`}
                 >
-                  {entry.track}{entry.part != null ? ` · Part ${entry.part}` : ""}
+                  {entry.track}
+                  {entry.part != null ? ` · Part ${entry.part}` : ""}
                 </span>
               )}
             </span>

@@ -47,7 +47,8 @@ export const systems: SystemDossier[] = [
     labs: [
       {
         name: "Operational Platform",
-        context: "Where dispatchers watch the gap between plan and reality widen in real time, and decide what to do about it.",
+        context:
+          "Where dispatchers watch the gap between plan and reality widen in real time, and decide what to do about it.",
       },
       {
         name: "Go Event Lab",
@@ -68,12 +69,7 @@ export const systems: SystemDossier[] = [
     started: "2026",
     lastUpdated: "13 July 2026",
     href: "/systems/transit-intelligence",
-    usesPatterns: [
-      "event-sourcing",
-      "transactional-checkpointing",
-      "bulkheads",
-      "graph-traversal",
-    ],
+    usesPatterns: ["event-sourcing", "transactional-checkpointing", "bulkheads", "graph-traversal"],
   },
   {
     id: "quant",

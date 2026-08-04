@@ -1,0 +1,57 @@
+---
+title: "Contextual Multi-Agent Analysis"
+description: "Experimental orchestration systems for real-time football intelligence and state-aware event streams."
+date: 2025-11-15
+readingTime: 6 min
+---
+
+# Contextual Multi-Agent Analysis
+
+<Callout type="note">
+  **Core Hypothesis:** Distributed analytical systems operating over continuous event streams must maintain state-aware context propagation to avoid context decay and interpretive fragmentation.
+</Callout>
+
+## Research Motivation
+
+Modern analytical systems operate in environments where information arrives continuously, state changes rapidly, and context decays over time. Football match event streams provide a rigorous experimental environment for studying distributed multi-agent reasoning under real-time constraints.
+
+<Process>
+  <Step n={1} title="Continuous Stream Ingestion">
+    High-density spatial and temporal event feeds arrive continuously without fixed phase boundaries.
+  </Step>
+  <Step n={2} title="Context Propagation & Memory">
+    Agents maintain dynamic state windows to evaluate current tactical events against historical match context.
+  </Step>
+  <Step n={3} title="Distributed Reasoning Consensus">
+    Specialized agent roles (Tactical, Physical, Strategic) reach interpretive consensus without central locking.
+  </Step>
+</Process>
+
+---
+
+## Architectural Principles
+
+<Observation n={1}>
+  Standard LLM agent pipelines suffer from context rot when fed long event logs. By structuring memory into state-aware contextual layers, agent reasoning remains deterministic and latency bounded.
+</Observation>
+
+```typescript filename="agent-orchestrator.ts"
+interface AgentState {
+  agentId: string;
+  role: "tactical" | "physical" | "strategic";
+  contextWindow: Array<{
+    timestamp: number;
+    eventVector: number[];
+    decayFactor: number;
+  }>;
+}
+```
+
+<Decision n={1} status="accepted">
+  **State-Aware Agent Synchronization:** Agents publish intent and contextual updates to a lightweight pub/sub event bus, preserving temporal boundaries without global lock contention.
+</Decision>
+
+<Tradeoff
+  gain="High throughput, low-latency multi-agent reasoning over continuous real-time data streams."
+  cost="Requires state decay tracking and event synchronization protocols across agent instances."
+/>

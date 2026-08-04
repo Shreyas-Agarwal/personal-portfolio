@@ -29,9 +29,7 @@ export function AnnotatedTerm({ note, children }: AnnotatedTermProps) {
         sideOffset={8}
         className="w-64 border-[#E6E1D6]/10 bg-[#25282A] p-3"
       >
-        <p className={`${plexMono.className} text-xs leading-relaxed text-[#E6E1D6]/80`}>
-          {note}
-        </p>
+        <p className={`${plexMono.className} text-xs leading-relaxed text-[#E6E1D6]/80`}>{note}</p>
       </HoverCardContent>
     </HoverCard>
   );

@@ -1,6 +1,6 @@
-import type { JournalEntry } from "@/lib/journal";
 import { ArrowLeft, ArrowRight, LayoutList } from "lucide-react";
 import Link from "next/link";
+import type { JournalEntry } from "@/lib/journal";
 
 interface ArticleFooterNavProps {
   prev: JournalEntry | null; // previous in sorted list (newer entry)
@@ -34,9 +34,7 @@ export function ArticleFooterNav({ prev, next }: ArticleFooterNavProps) {
             className="group flex flex-col items-center gap-1.5 text-neutral-400 transition-colors hover:text-neutral-900"
           >
             <LayoutList className="h-4 w-4" />
-            <span className="font-mono text-[9px] uppercase tracking-[0.18em]">
-              Browse
-            </span>
+            <span className="font-mono text-[9px] uppercase tracking-[0.18em]">Browse</span>
           </Link>
         </div>
 

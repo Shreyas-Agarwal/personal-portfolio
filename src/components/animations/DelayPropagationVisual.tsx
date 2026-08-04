@@ -1,9 +1,12 @@
-"use client"
+"use client";
 import { motion } from "framer-motion";
 
 export function DelayPropagationVisual() {
   return (
-    <svg viewBox="0 0 160 40" className="w-full h-10 mt-2 bg-[#1B1D1F]/70 rounded border border-[#E6E1D6]/5 p-1 select-none">
+    <svg
+      viewBox="0 0 160 40"
+      className="w-full h-10 mt-2 bg-[#1B1D1F]/70 rounded border border-[#E6E1D6]/5 p-1 select-none"
+    >
       {/* Target Node 1 (Source delay) */}
       <motion.circle
         cx="20"
@@ -13,12 +16,36 @@ export function DelayPropagationVisual() {
         animate={{ scale: [1, 1.3, 1] }}
         transition={{ duration: 1.5, repeat: Infinity }}
       />
-      
+
       {/* Intermediary nodes */}
-      <circle cx="65" cy="12" r="3" fill="none" stroke="#E6E1D6" strokeOpacity={0.5} strokeWidth={1} />
-      <circle cx="65" cy="28" r="3" fill="none" stroke="#E6E1D6" strokeOpacity={0.5} strokeWidth={1} />
-      <circle cx="110" cy="20" r="3" fill="none" stroke="#E6E1D6" strokeOpacity={0.5} strokeWidth={1} />
-      
+      <circle
+        cx="65"
+        cy="12"
+        r="3"
+        fill="none"
+        stroke="#E6E1D6"
+        strokeOpacity={0.5}
+        strokeWidth={1}
+      />
+      <circle
+        cx="65"
+        cy="28"
+        r="3"
+        fill="none"
+        stroke="#E6E1D6"
+        strokeOpacity={0.5}
+        strokeWidth={1}
+      />
+      <circle
+        cx="110"
+        cy="20"
+        r="3"
+        fill="none"
+        stroke="#E6E1D6"
+        strokeOpacity={0.5}
+        strokeWidth={1}
+      />
+
       {/* Connected target end node */}
       <motion.circle
         cx="145"
@@ -26,7 +53,7 @@ export function DelayPropagationVisual() {
         r="4"
         animate={{
           fill: ["#E6E1D6", "#DE4B31", "#E6E1D6"],
-          stroke: ["#E6E1D6", "#DE4B31", "#E6E1D6"]
+          stroke: ["#E6E1D6", "#DE4B31", "#E6E1D6"],
         }}
         transition={{ duration: 1.5, repeat: Infinity, delay: 0.8 }}
       />

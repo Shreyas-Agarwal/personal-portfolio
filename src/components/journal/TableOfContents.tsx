@@ -1,7 +1,7 @@
 "use client";
 
-import type { TocHeading } from "@/lib/toc";
 import { useEffect, useState } from "react";
+import type { TocHeading } from "@/lib/toc";
 
 interface TableOfContentsProps {
   headings: TocHeading[];
@@ -59,9 +59,7 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
             onClick={() => scrollTo(h.id)}
             className={[
               "block w-full text-left py-0.5 leading-snug transition-colors duration-150",
-              h.level === 3
-                ? "pl-3 text-[11px]"
-                : "text-[12px]",
+              h.level === 3 ? "pl-3 text-[11px]" : "text-[12px]",
               activeId === h.id
                 ? "font-medium text-neutral-900"
                 : "text-neutral-400 hover:text-neutral-700",

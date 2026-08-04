@@ -170,8 +170,7 @@ export function FilterSidebar({
     selectedSeries !== null ||
     selectedYears.size > 0;
 
-  const moreFiltersCount =
-    selectedTags.size + selectedYears.size + (selectedSeries ? 1 : 0);
+  const moreFiltersCount = selectedTags.size + selectedYears.size + (selectedSeries ? 1 : 0);
 
   return (
     <aside className="w-full space-y-8 lg:w-64 lg:shrink-0">
@@ -217,16 +216,9 @@ export function FilterSidebar({
       {(allTags.length > 0 || allSeries.length > 0 || allYears.length > 0) && (
         <>
           <div className="border-t border-neutral-200" />
-          <Collapsible
-            title="More Filters"
-            badge={moreFiltersCount}
-          >
+          <Collapsible title="More Filters" badge={moreFiltersCount}>
             {allSeries.length > 0 && (
-              <SeriesSection
-                items={allSeries}
-                selected={selectedSeries}
-                onSet={onSetSeries}
-              />
+              <SeriesSection items={allSeries} selected={selectedSeries} onSet={onSetSeries} />
             )}
             {allTags.length > 0 && (
               <FilterSection
@@ -258,9 +250,7 @@ export function FilterSidebar({
         Filters
         {hasActiveFilters && (
           <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-neutral-900 px-1 text-[9px] font-bold text-white">
-            {selectedDomains.size +
-              selectedFormats.size +
-              moreFiltersCount}
+            {selectedDomains.size + selectedFormats.size + moreFiltersCount}
           </span>
         )}
       </button>

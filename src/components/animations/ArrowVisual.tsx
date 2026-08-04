@@ -1,9 +1,12 @@
-"use client"
+"use client";
 import { motion } from "framer-motion";
 
 export function ArrowVisual() {
   return (
-    <svg viewBox="0 0 160 40" className="w-full h-10 mt-2 bg-[#1B1D1F]/70 rounded border border-[#E6E1D6]/5 p-1 select-none">
+    <svg
+      viewBox="0 0 160 40"
+      className="w-full h-10 mt-2 bg-[#1B1D1F]/70 rounded border border-[#E6E1D6]/5 p-1 select-none"
+    >
       <g stroke="#E6E1D6" strokeOpacity={0.3} fill="none">
         <rect x="15" y="5" width="20" height="30" rx="1" />
         <rect x="45" y="5" width="20" height="30" rx="1" />

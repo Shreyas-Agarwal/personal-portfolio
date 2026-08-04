@@ -153,9 +153,9 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
                     Autodesk University 2025 Contribution
                   </h4>
                   <p className="text-xs text-white/45 max-w-2xl">
-                    Coordinated directly with the GM of Tech Transformation to co-lead this
-                    rollout. The results, workflows, and contributions were presented at the
-                    Autodesk University 2025 global conference.
+                    Coordinated directly with the GM of Tech Transformation to co-lead this rollout.
+                    The results, workflows, and contributions were presented at the Autodesk
+                    University 2025 global conference.
                   </p>
                 </div>
                 <a
@@ -170,7 +170,11 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
               </div>
 
               {/* Secure read-only PDF document viewer */}
-              <PdfViewer url={project.presentationUrl} title={project.title} projectId={project.id} />
+              <PdfViewer
+                url={project.presentationUrl}
+                title={project.title}
+                projectId={project.id}
+              />
             </div>
           ) : project.id === "experion-implementation" ? (
             <div className="rounded-none border border-white/[0.08] bg-[#0E1013] p-8 space-y-8">

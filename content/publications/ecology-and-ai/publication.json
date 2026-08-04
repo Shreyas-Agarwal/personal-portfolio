@@ -1,0 +1,20 @@
+{
+  "id": "ecology-and-ai",
+  "type": "essay",
+  "title": "Ecology & Machine Intelligence",
+  "subtitle": "Parallels between biological feedback systems and distributed computing architectures.",
+  "abstract": "Exploring how biological ecosystems handle complexity, resource constraints, and decentralized signaling, and what distributed computing systems can learn from living feedback loops.",
+  "volume": "Volume I",
+  "revision": "Revision 01",
+  "date": "2026-06-10",
+  "author": "Shreyas Agarwal",
+  "domains": ["Complex Systems", "Biological Computing", "Systems Architecture"],
+  "status": "published",
+  "sections": [
+    {
+      "id": "index",
+      "title": "Ecology & Machine Intelligence",
+      "href": ""
+    }
+  ]
+}

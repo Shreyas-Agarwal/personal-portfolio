@@ -1,0 +1,52 @@
+---
+title: "The 4-Tuple Limit"
+date: "2026-07-01"
+---
+
+# The 4-Tuple Limit
+
+High-throughput distributed microservices frequently run into mysterious connection failures under load (`EADDRNOTAVAIL` or socket connection timeouts).
+
+The root cause is almost always TCP socket 4-tuple exhaustion.
+
+<Observation n={1}>
+  A TCP connection is uniquely identified by a 4-tuple: (Source IP, Source Port, Destination IP, Destination Port). Between a single client host and single destination IP:Port, there are at most ~64,000 ephemeral ports available.
+</Observation>
+
+---
+
+## Anatomy of Port Exhaustion
+
+When a client application opens rapid HTTP connections to a single backend IP:Port without HTTP connection reuse (keep-alive):
+
+1. Ephemeral ports (`1024-65535`) are consumed rapidly.
+2. Closed sockets enter the `TIME_WAIT` state (typically 60 seconds) to ensure delayed in-flight packets expire.
+3. The OS runs out of available local ports, causing `Cannot assign requested address` errors.
+
+```text filename="tcp-4-tuple.txt"
+TCP 4-Tuple:
+(Source IP: 192.168.1.10, Source Port: 54321) <---> (Dest IP: 10.0.0.5, Dest Port: 443)
+
+If Dest IP and Dest Port are fixed, Source Port is the ONLY variable!
+```
+
+---
+
+## Mitigations
+
+1. **HTTP Keep-Alive & Connection Pooling**: Reuse existing TCP connections across requests rather than opening a new socket per request.
+2. **Multiple Destination IPs / Virtual IPs**: Distribute requests across multiple backend IP addresses to expand the 4-tuple space.
+3. **Kernel Tuning**: Tune `sysctl` settings (`net.ipv4.tcp_tw_reuse = 1`, expand `net.ipv4.ip_local_port_range`).
+
+<Decision n={1} status="accepted">
+  Enforce HTTP client keep-alive pooling in microservice communication to reuse TCP connections and prevent TIME_WAIT socket exhaustion.
+</Decision>
+
+<Tradeoff
+  gain="Eliminates ephemeral port exhaustion and TCP 3-way handshake latency overhead."
+  cost="Requires maintaining active TCP connection pools across microservice instances."
+/>
+
+---
+
+*Next in Track 02: **[The Reverse Proxy Gateway](the-reverse-proxy)**.*

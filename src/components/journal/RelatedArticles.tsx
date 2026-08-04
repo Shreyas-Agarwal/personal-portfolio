@@ -1,6 +1,6 @@
-import type { JournalEntry } from "@/lib/journal";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import type { JournalEntry } from "@/lib/journal";
 import { DOMAIN_TEXT_COLORS, TRACK_COLORS } from "./ArticleHeader";
 
 interface RelatedArticlesProps {
@@ -42,26 +42,22 @@ export function RelatedArticles({ entries }: RelatedArticlesProps) {
                     <span
                       className={`rounded border px-1.5 py-0.5 text-[9px] font-semibold tracking-wide ${TRACK_COLORS[entry.track] ?? "text-neutral-500 bg-neutral-50 border-neutral-200"}`}
                     >
-                      {entry.track}{entry.part != null ? ` · ${entry.part}` : ""}
+                      {entry.track}
+                      {entry.part != null ? ` · ${entry.part}` : ""}
                     </span>
                   )}
                 </div>
 
                 {/* Title */}
                 <h3 className="text-[15px] font-semibold leading-snug tracking-tight text-neutral-900">
-                  <Link
-                    href={`/journal/${entry.slug}`}
-                    className="before:absolute before:inset-0"
-                  >
+                  <Link href={`/journal/${entry.slug}`} className="before:absolute before:inset-0">
                     {entry.title}
                   </Link>
                 </h3>
 
                 {/* Subtitle */}
                 {entry.subtitle && (
-                  <p className="line-clamp-1 text-[13px] text-neutral-500">
-                    {entry.subtitle}
-                  </p>
+                  <p className="line-clamp-1 text-[13px] text-neutral-500">{entry.subtitle}</p>
                 )}
               </div>
 

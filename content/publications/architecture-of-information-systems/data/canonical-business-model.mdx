@@ -1,0 +1,89 @@
+---
+title: "Why Analytics Platforms Require a Canonical Business Model"
+date: "2026-07-01"
+---
+
+# Why Analytics Platforms Require a Canonical Business Model
+
+Many organizations begin by believing their reporting environment is simply a reflection of their operational systems. The CRM defines customers, the project management platform defines projects, the scheduling tool defines schedules, and dashboards simply visualize the data.
+
+Initially, this works. Then the questions start changing.
+
+<Observation n={1}>
+  Operational systems are designed to operate workflows. Analytics platforms are designed to understand businesses. Those are not the same objective.
+</Observation>
+
+---
+
+## The Shift From Visibility to Understanding
+
+Most analytics initiatives begin with simple visibility: *How many projects are active? How many open issues exist?*
+
+```text
+Operational System → Dashboard
+```
+
+As organizations mature, leadership stops asking *what is happening* and begins asking *why is it happening*:
+
+- Which project characteristics consistently correlate with schedule delays?
+- Which issue categories create the greatest downstream financial impact?
+- Which leading indicators predict future delivery failures?
+
+These questions require relationships, historical context, cross-system analysis, derived metrics, and business definitions that operational schemas were never designed to express.
+
+---
+
+## The Visualization Layer Starts Absorbing Business Logic
+
+When operational schemas cannot answer business questions directly, logic quietly migrates into the BI layer:
+
+- A Power Query transformation is added.
+- A calculated column appears.
+- A DAX measure is introduced.
+- Custom aggregations multiply.
+
+<Callout type="warning">
+  When business logic is scattered across Power Query transformations, DAX measures, and report-level calculations, the BI tool stops visualizing data and starts silently transforming data.
+</Callout>
+
+### The Silicon Ceiling of BI Tools
+
+Power BI, Tableau, and Looker are visualization tools. They are not intended to function as:
+
+1. Transformation engines
+2. Data integration platforms
+3. Business rules repositories
+4. Enterprise semantic architectures
+
+When forced into all four roles, refresh cycles expand, performance deteriorates, and the organization suffers an analytical bottleneck.
+
+---
+
+## The Canonical Business Model
+
+Mature analytics platforms resolve this by making an architectural transition. They stop asking *what does the vendor call this?* and start asking *what does the business call this?*
+
+<Decision n={1} status="accepted">
+  Establish a Canonical Business Model. Define vendor-agnostic entities (Project, Schedule, Contract, Asset, Customer) in a centralized transformation layer, decoupling analytical consumers from upstream SaaS schemas.
+</Decision>
+
+```text
+Operational Systems
+        ↓
+Canonical Business Model
+        ↓
+Transformation Layer (dbt / SQL)
+        ↓
+Semantic Layer
+        ↓
+Visualization / BI
+```
+
+<Tradeoff
+  gain="Buffers analytical consumers from vendor API updates, field deprecations, and schema drift."
+  cost="Requires maintaining an explicit transformation and semantic layer outside the BI tool."
+/>
+
+---
+
+*Next in Track 01: **[Cost of Generic Relationships](generic-relationship-cost)**.*

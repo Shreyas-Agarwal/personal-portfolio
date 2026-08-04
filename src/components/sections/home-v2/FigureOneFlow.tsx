@@ -35,12 +35,24 @@ interface EdgeSpec {
 const DESKTOP_NODES: NodeSpec[] = [
   { id: "reality", label: "REALITY", kind: "io", pos: { x: 70, y: 120 }, labelSide: "right" },
   { id: "signals", label: "SIGNALS", kind: "io", pos: { x: 150, y: 260 }, labelSide: "top" },
-  { id: "observations", label: "OBSERVATIONS", kind: "io", pos: { x: 260, y: 80 }, labelSide: "bottom" },
+  {
+    id: "observations",
+    label: "OBSERVATIONS",
+    kind: "io",
+    pos: { x: 260, y: 80 },
+    labelSide: "bottom",
+  },
   { id: "state", label: "STATE", kind: "io", pos: { x: 410, y: 50 }, labelSide: "bottom" },
   { id: "context", label: "CONTEXT", kind: "io", pos: { x: 230, y: 290 }, labelSide: "top" },
   { id: "memory", label: "MEMORY", kind: "io", pos: { x: 430, y: 200 }, labelSide: "right" },
   { id: "history", label: "HISTORY", kind: "io", pos: { x: 380, y: 300 }, labelSide: "top" },
-  { id: "coordination", label: "COORDINATION", kind: "io", pos: { x: 570, y: 270 }, labelSide: "top" },
+  {
+    id: "coordination",
+    label: "COORDINATION",
+    kind: "io",
+    pos: { x: 570, y: 270 },
+    labelSide: "top",
+  },
   { id: "models", label: "MODELS", kind: "io", pos: { x: 590, y: 90 }, labelSide: "bottom" },
   { id: "decisions", label: "DECISIONS", kind: "io", pos: { x: 740, y: 180 }, labelSide: "left" },
   { id: "c1", label: "", kind: "compute", pos: { x: 170, y: 150 } },
@@ -87,12 +99,24 @@ const DESKTOP_EDGES: EdgeSpec[] = [
 const MOBILE_NODES: NodeSpec[] = [
   { id: "m-reality", label: "REALITY", kind: "io", pos: { x: 40, y: 40 }, labelSide: "right" },
   { id: "m-signals", label: "SIGNALS", kind: "io", pos: { x: 180, y: 75 }, labelSide: "left" },
-  { id: "m-observations", label: "OBSERVATIONS", kind: "io", pos: { x: 90, y: 115 }, labelSide: "right" },
+  {
+    id: "m-observations",
+    label: "OBSERVATIONS",
+    kind: "io",
+    pos: { x: 90, y: 115 },
+    labelSide: "right",
+  },
   { id: "m-state", label: "STATE", kind: "io", pos: { x: 170, y: 160 }, labelSide: "left" },
   { id: "m-context", label: "CONTEXT", kind: "io", pos: { x: 45, y: 195 }, labelSide: "right" },
   { id: "m-memory", label: "MEMORY", kind: "io", pos: { x: 130, y: 235 }, labelSide: "right" },
   { id: "m-history", label: "HISTORY", kind: "io", pos: { x: 40, y: 280 }, labelSide: "right" },
-  { id: "m-coordination", label: "COORDINATION", kind: "io", pos: { x: 180, y: 315 }, labelSide: "left" },
+  {
+    id: "m-coordination",
+    label: "COORDINATION",
+    kind: "io",
+    pos: { x: 180, y: 315 },
+    labelSide: "left",
+  },
   { id: "m-models", label: "MODELS", kind: "io", pos: { x: 80, y: 360 }, labelSide: "right" },
   { id: "m-decisions", label: "DECISIONS", kind: "io", pos: { x: 170, y: 395 }, labelSide: "left" },
   { id: "m-c1", label: "", kind: "compute", pos: { x: 110, y: 55 } },
@@ -188,7 +212,15 @@ function DiagramNode({ node }: { node: NodeSpec }) {
   const { dx, dy, anchor } = labelOffset(node.labelSide);
   return (
     <g>
-      <circle cx={node.pos.x} cy={node.pos.y} r={7} fill="none" stroke={INK} strokeOpacity={0.5} strokeWidth={1} />
+      <circle
+        cx={node.pos.x}
+        cy={node.pos.y}
+        r={7}
+        fill="none"
+        stroke={INK}
+        strokeOpacity={0.5}
+        strokeWidth={1}
+      />
       <text
         x={node.pos.x + dx}
         y={node.pos.y + dy}
@@ -224,7 +256,15 @@ function NetworkDiagram({
       aria-label="Diagram of colored data packets traveling curved paths between systems through computation nodes"
     >
       <defs>
-        <marker id="fig01-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <marker
+          id="fig01-arrow"
+          viewBox="0 0 10 10"
+          refX="8"
+          refY="5"
+          markerWidth="6"
+          markerHeight="6"
+          orient="auto-start-reverse"
+        >
           <path d="M 0 0 L 10 5 L 0 10 z" fill={INK} fillOpacity={0.45} />
         </marker>
       </defs>
@@ -343,10 +383,20 @@ export function FigureOneFlow() {
       className="w-full"
     >
       <div className="hidden aspect-[810/340] w-full md:block">
-        <NetworkDiagram nodes={DESKTOP_NODES} edges={DESKTOP_EDGES} viewBox="0 0 810 340" reducedMotion={reducedMotion} />
+        <NetworkDiagram
+          nodes={DESKTOP_NODES}
+          edges={DESKTOP_EDGES}
+          viewBox="0 0 810 340"
+          reducedMotion={reducedMotion}
+        />
       </div>
       <div className="aspect-[220/420] w-full max-w-xs md:hidden">
-        <NetworkDiagram nodes={MOBILE_NODES} edges={MOBILE_EDGES} viewBox="0 0 220 420" reducedMotion={reducedMotion} />
+        <NetworkDiagram
+          nodes={MOBILE_NODES}
+          edges={MOBILE_EDGES}
+          viewBox="0 0 220 420"
+          reducedMotion={reducedMotion}
+        />
       </div>
     </motion.div>
   );

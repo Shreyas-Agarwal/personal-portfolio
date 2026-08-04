@@ -1,0 +1,45 @@
+---
+title: "Evolution vs Software"
+description: "Why biological systems adapt while software systems decay."
+date: 2026-05-18
+readingTime: 5 min
+---
+
+# Evolution vs Software: Adapting Under Entropy
+
+<Callout type="note">
+  Software tends toward entropy: as codebases age, maintenance cost rises exponentially. Biological systems do the opposite — surviving millions of years of environmental shocks through continuous evolutionary adaptation.
+</Callout>
+
+## The Contrast
+
+| Software Systems | Biological Systems |
+| :--- | :--- |
+| **Top-Down Design:** Fixed blueprints created by human engineers. | **Emergent Design:** Bottom-up selection driven by environmental fitness. |
+| **Fragile Interfaces:** Breaking changes propagate across dependencies. | **Modular Robustness:** Gene networks exhibit high mutation tolerance. |
+| **Accumulated Technical Debt:** Refactoring becomes exponentially harder over time. | **Pruning via Natural Selection:** Unfit pathways are continuously pruned. |
+
+---
+
+## Architectural Adaptation
+
+<Process>
+  <Step n={1} title="Rigid Schema Lock-in">
+    Traditional software freezes data structures early, making future domain shifts painful.
+  </Step>
+  <Step n={2} title="Continuous Mutation & Testing">
+    Evolutionary software design uses automated canary deployments, feature flags, and chaos engineering to test changes under real load.
+  </Step>
+  <Step n={3} title="Automated Pruning">
+    Deprecated code paths and dead features are automatically removed based on usage telemetry rather than manual cleanup.
+  </Step>
+</Process>
+
+<Decision n={1} status="accepted">
+  **Evolutionary Architecture Principle:** Build software systems with modular boundaries, explicit contract versioning, and continuous automated fitness testing so codebases adapt rather than decay.
+</Decision>
+
+<Tradeoff
+  gain="Long-term codebase survivability, low refactoring resistance, and high change velocity."
+  cost="Requires continuous automated testing pipelines and strict interface isolation."
+/>

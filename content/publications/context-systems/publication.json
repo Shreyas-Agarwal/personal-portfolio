@@ -1,0 +1,21 @@
+{
+  "id": "context-systems",
+  "type": "research-note",
+  "title": "Contextual Multi-Agent Analysis",
+  "subtitle": "Experimental orchestration systems for real-time intelligence and state-aware event streams.",
+  "abstract": "Investigating how distributed analytical agents collaborate over dynamic event streams while maintaining contextual continuity, interpretive consistency, and state synchronization.",
+  "volume": "Volume I",
+  "revision": "Revision 01",
+  "date": "2025-11-15",
+  "author": "Shreyas Agarwal",
+  "github": "https://github.com/Shreyas-Agarwal/football-analytics",
+  "domains": ["AI & Computation", "Systems Architecture", "Event Processing"],
+  "status": "published",
+  "sections": [
+    {
+      "id": "index",
+      "title": "Contextual Multi-Agent Analysis",
+      "href": ""
+    }
+  ]
+}

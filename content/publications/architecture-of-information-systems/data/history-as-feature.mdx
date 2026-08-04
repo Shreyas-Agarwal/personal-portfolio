@@ -1,0 +1,71 @@
+---
+title: "History Is a First-Class Feature"
+date: "2026-07-01"
+---
+
+# History Is a First-Class Feature
+
+Most application databases optimize for the present. A user updates a status column, an SQL `UPDATE` statement executes in place, and the previous state vanishes forever.
+
+For transaction processing, this works fine. For analytical systems, destructive updates destroy temporal reasoning.
+
+<Observation n={1}>
+  An UPDATE statement is destructive mutation. It replaces truth with current truth, destroying the historical context required to analyze trends, latency, and system evolution over time.
+</Observation>
+
+---
+
+## The Tyranny of Destructive Mutation
+
+Consider a project record in a standard operational table:
+
+```sql filename="update-mutation.sql"
+-- Destructive UPDATE: Replaces current status, erasing when & why it changed
+UPDATE projects 
+SET status = 'DELAYED', updated_at = NOW() 
+WHERE project_id = 'p-10492';
+```
+
+When an executive asks *“Which projects spent more than 20% of their lifecycle in a delayed state?”*, the current state table cannot answer. The past has been overwritten.
+
+---
+
+## Temporal Strategies in Data Architecture
+
+To track history, systems adopt one of three primary patterns:
+
+### 1. Slowly Changing Dimensions (SCD Type 2)
+Tracks versioned records with effective date ranges (`valid_from`, `valid_to`, `is_current`).
+
+```sql filename="scd2.sql"
+SELECT 
+    project_id,
+    status,
+    valid_from,
+    valid_to,
+    (valid_to IS NULL) AS is_current
+FROM dim_projects_scd2
+WHERE project_id = 'p-10492'
+ORDER BY valid_from ASC;
+```
+
+### 2. Event Sourcing / Change Data Capture (CDC)
+Appends immutable state change events (`ProjectStatusChanged`) to an append-only log. Current state is a derived projection computed by replaying events.
+
+### 3. Bitemporal Modeling
+Tracks two independent time axes:
+- **Valid Time** (when the event occurred in the real world)
+- **Transaction Time** (when the event was recorded in the database)
+
+<Decision n={1} status="accepted">
+  Model core state transitions as append-only event streams or SCD2 tables. Treat current state as a materialized projection rather than the primary store of truth.
+</Decision>
+
+<Tradeoff
+  gain="Enables point-in-time historical reporting, auditability, and time-series analysis."
+  cost="Increases storage footprint and requires range-based join conditions during querying."
+/>
+
+---
+
+*Next in Track 01: **[The Hidden Cost of Moving Data](cost-of-moving-data)**.*

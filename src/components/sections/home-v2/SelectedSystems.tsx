@@ -6,7 +6,8 @@ import { RedPenNote } from "../../ui/RedPenNote";
 import { RevisionLog } from "./RevisionLog";
 
 const TRADEOFF_NOTE: Record<string, string> = {
-  quant: "Chose fidelity over speed: full event replay costs runtime a vectorized backtest wouldn't.",
+  quant:
+    "Chose fidelity over speed: full event replay costs runtime a vectorized backtest wouldn't.",
 };
 
 /**
@@ -18,7 +19,9 @@ export function SelectedSystems() {
   return (
     <section data-header-theme="dark" className="relative bg-[#1B1D1F] px-6 py-20 md:px-12">
       <div className="mx-auto max-w-5xl">
-        <span className={`${plexMono.className} mb-8 block text-[10px] tracking-[0.22em] text-[#E6E1D6]/25`}>
+        <span
+          className={`${plexMono.className} mb-8 block text-[10px] tracking-[0.22em] text-[#E6E1D6]/25`}
+        >
           SELECTED_SYSTEMS
         </span>
 
@@ -34,7 +37,9 @@ export function SelectedSystems() {
               >
                 {system.name}
               </span>
-              <p className={`${serif.className} mb-2 max-w-2xl text-sm leading-snug text-[#E6E1D6]/75`}>
+              <p
+                className={`${serif.className} mb-2 max-w-2xl text-sm leading-snug text-[#E6E1D6]/75`}
+              >
                 {system.oneLiner}{" "}
                 {TRADEOFF_NOTE[system.id] && (
                   <>
@@ -48,9 +53,7 @@ export function SelectedSystems() {
               </p>
               <RevisionLog
                 compact
-                entries={[
-                  { n: 2, date: system.lastUpdated, description: system.status },
-                ]}
+                entries={[{ n: 2, date: system.lastUpdated, description: system.status }]}
               />
             </Link>
           ))}

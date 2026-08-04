@@ -45,8 +45,7 @@ export function GiscusSection() {
   }, []);
 
   const isConfigured = Boolean(
-    process.env.NEXT_PUBLIC_GISCUS_REPO &&
-    process.env.NEXT_PUBLIC_GISCUS_REPO_ID,
+    process.env.NEXT_PUBLIC_GISCUS_REPO && process.env.NEXT_PUBLIC_GISCUS_REPO_ID,
   );
 
   return (
@@ -57,8 +56,7 @@ export function GiscusSection() {
           Discussion
         </h2>
         <p className="mt-2 max-w-prose text-[13px] leading-relaxed text-neutral-500">
-          Thoughtful disagreement, extensions, critiques, and questions are
-          encouraged.
+          Thoughtful disagreement, extensions, critiques, and questions are encouraged.
         </p>
       </header>
 
@@ -69,14 +67,11 @@ export function GiscusSection() {
         <div className="rounded border border-dashed border-neutral-200 bg-neutral-50/50 px-6 py-8 text-center">
           <p className="text-[12px] text-neutral-400">
             Discussion is not yet configured.{" "}
-            <span className="font-mono text-[11px] text-neutral-500">
-              NEXT_PUBLIC_GISCUS_*
-            </span>{" "}
+            <span className="font-mono text-[11px] text-neutral-500">NEXT_PUBLIC_GISCUS_*</span>{" "}
             environment variables are required.
           </p>
           <p className="mt-1 text-[11px] text-neutral-300">
-            See <span className="font-mono">.env.example</span> for setup
-            instructions.
+            See <span className="font-mono">.env.example</span> for setup instructions.
           </p>
         </div>
       )}

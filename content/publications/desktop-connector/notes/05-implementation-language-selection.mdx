@@ -1,0 +1,82 @@
+---
+title: "0005 — Implementation Language Selection"
+description: "Evaluation of Go vs. Python for a small, unattended, Windows-targeted desktop agent."
+date: 2026-08-01
+readingTime: 6 min
+---
+
+# Implementation Language Selection
+
+<Callout type="note">
+  **Scope:** Evaluates Go vs. Python specifically against the agent's actual operational requirements — a small, infrequently-run, I/O-bound client that extracts structured data and streams it to a remote endpoint.
+</Callout>
+
+## Context
+
+The existing implementation is Python 3, packaged as a single self-extracting frozen executable.
+
+The redesigned agent (Note 0002) introduces a requirement the existing implementation does not have: **asymmetric cryptographic signing (Ed25519)** of requests to the platform server.
+
+## Evaluation Axes
+
+<Process>
+  <Step n={1} title="Dependency Management (Primary Factor)">
+    **Go:** Standard library includes production-grade `crypto/ed25519` with zero external dependencies.
+    **Python:** Standard library covers only symmetric primitives. Asymmetric signing requires compiled native C extensions (`cryptography` package), re-introducing native bundling complexity.
+  </Step>
+  <Step n={2} title="Distribution & Antivirus Scrutiny">
+    **Go:** Compiles to a single static native binary.
+    **Python:** Frozen executables self-extract to temporary directories on every launch, triggering endpoint heuristic & antivirus quarantine flags on Windows.
+  </Step>
+  <Step n={3} title="Cross-Compilation">
+    **Go:** Native cross-compilation from any OS to Windows target (`GOOS=windows GOARCH=amd64`).
+    **Python:** Requires a dedicated Windows build host or complex cross-build toolchain.
+  </Step>
+  <Step n={4} title="Error Handling & Unattended Execution">
+    **Go:** Explicit error propagation prevents accidental silent exception suppression.
+    **Python:** Broad `except Exception:` blocks in legacy codebase led to silent failures.
+  </Step>
+</Process>
+
+### Non-Factors
+
+- **Concurrency:** Neutral. Workload is I/O-bound and low volume per run.
+- **XML/Data Parsing:** Neutral. Malformed control characters in raw exports break standard parsers in both languages, requiring custom tolerant tokenizers.
+
+## Decision
+
+<Decision n={1} status="accepted">
+  Implement the redesigned desktop agent in **Go**.
+</Decision>
+
+```go filename="signer.go"
+package agent
+
+import (
+	"crypto/ed25519"
+	"encoding/hex"
+)
+
+// SignRequest signs an outgoing HTTP request payload using the local private key
+func SignRequest(privateKey ed25519.PrivateKey, payload []byte) string {
+	signature := ed25519.Sign(privateKey, payload)
+	return hex.EncodeToString(signature)
+}
+```
+
+## Consequences
+
+<Tradeoff
+  gain="Zero-dependency Ed25519 signing from stdlib; single static binary reduces antivirus false positives and deployment friction."
+  cost="Requires a full rewrite of the desktop agent (Python and Go are not source-compatible)."
+/>
+
+- **Single static binary distribution** simplifies deployment and code-signing.
+- **Zero external native dependencies** for Ed25519 request signing.
+- **Cross-compilation simplicity** for target Windows environments.
+
+## Alternatives Considered
+
+- **Python with PyInstaller / cx_Freeze:** *Rejected* due to native C extension bundling complexity for Ed25519 and antivirus false positives.
+- **Rust:** *Rejected* as unnecessary overhead for an I/O-bound orchestration client with no zero-cost abstraction needs.
+- **Go:** *Accepted* for standard library cryptography, static binaries, and clean cross-compilation.

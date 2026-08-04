@@ -1,0 +1,49 @@
+---
+title: "Session State Has a Cost"
+date: "2026-07-01"
+---
+
+# Session State Has a Cost
+
+Every web application faces a fundamental architectural choice: where does user session state live?
+
+Whether stored in server memory (sticky sessions), centralized caches (Redis), or client-side tokens (JWTs), state management incurs trade-offs between consistency, horizontal scalability, revocation latency, and security.
+
+<Observation n={1}>
+  Stateless applications are a myth. State does not disappear; it merely moves. Storing state in JWTs transfers verification CPU overhead and revocation complexity to every single request boundary.
+</Observation>
+
+---
+
+## The Three Session Models
+
+### 1. Stateful In-Memory (Sticky Sessions)
+Sessions live in the web server process memory. Load balancers route requests using session affinity cookies.
+
+- **Gain**: Instant local memory lookup.
+- **Cost**: Prevents seamless rolling deployments; server failure drops active user sessions.
+
+### 2. Centralized Session Store (Redis / Memcached)
+Sessions live in a fast remote cache. Web servers remain stateless.
+
+- **Gain**: Seamless deployment; any server can process any request.
+- **Cost**: Every single HTTP request incurs a remote Redis network round-trip.
+
+### 3. Stateless Tokens (JWT)
+State is cryptographically signed and stored on the client.
+
+- **Gain**: Zero server-side session lookup; highly scalable across regions.
+- **Cost**: Instant session revocation is impossible without maintaining a centralized revocation list (which reinstates the cache dependency).
+
+<Tradeoff
+  gain="Stateless JWT tokens scale horizontally without database reads on every request."
+  cost="Revocation requires blacklists, and payload size bloats HTTP header overhead on every request."
+/>
+
+<Decision n={1} status="accepted">
+  Use hybrid token architecture: short-lived stateless JWTs (5-15 min expiration) for API authorization paired with refresh tokens stored in a centralized cache for instant revocation capability.
+</Decision>
+
+---
+
+*Next in Track 02: **[The 4-Tuple Limit](the-four-tuple)**.*

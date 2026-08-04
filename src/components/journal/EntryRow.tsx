@@ -1,6 +1,6 @@
-import type { JournalEntry } from "@/lib/journal";
 import { ArrowRight, Clock } from "lucide-react";
 import Link from "next/link";
+import type { JournalEntry } from "@/lib/journal";
 import { DOMAIN_CHIP_COLORS } from "./ArticleHeader";
 
 interface EntryRowProps {
@@ -46,25 +46,21 @@ export function EntryRow({ entry }: EntryRowProps) {
                   <span
                     className={`rounded border px-1.5 py-0.5 text-[9px] font-semibold tracking-wide ${TRACK_COLORS[entry.track] ?? "text-neutral-500 bg-neutral-50 border-neutral-200"}`}
                   >
-                    {entry.track}{entry.part != null ? ` · ${entry.part}` : ""}
+                    {entry.track}
+                    {entry.part != null ? ` · ${entry.part}` : ""}
                   </span>
                 )}
               </span>
             )}
 
             {/* Year — visually muted, pushed right on larger screens */}
-            <span className="ml-auto text-[11px] text-neutral-300 tabular-nums">
-              {entry.year}
-            </span>
+            <span className="ml-auto text-[11px] text-neutral-300 tabular-nums">{entry.year}</span>
           </div>
 
           {/* Title */}
           <div>
             <h2 className="text-xl font-semibold tracking-tight text-neutral-900 leading-snug md:text-2xl">
-              <Link
-                href={`/journal/${entry.slug}`}
-                className="before:absolute before:inset-0"
-              >
+              <Link href={`/journal/${entry.slug}`} className="before:absolute before:inset-0">
                 {entry.title}
               </Link>
             </h2>
@@ -79,10 +75,7 @@ export function EntryRow({ entry }: EntryRowProps) {
           {entry.tags.length > 0 && (
             <div className="flex flex-wrap gap-x-3 gap-y-1">
               {entry.tags.slice(0, 5).map((tag) => (
-                <span
-                  key={tag}
-                  className="text-[11px] text-neutral-400"
-                >
+                <span key={tag} className="text-[11px] text-neutral-400">
                   #{tag}
                 </span>
               ))}

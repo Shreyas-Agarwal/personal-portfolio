@@ -23,13 +23,7 @@ function formatDate(iso: string): string {
 // Sub-components
 // ─────────────────────────────────────────────────────────────────────────────
 
-function MetaRow({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function MetaRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
       <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.22em] text-neutral-400">
@@ -52,9 +46,7 @@ interface ArticleMetaRailProps {
 }
 
 export function ArticleMetaRail({ entry, readingTime }: ArticleMetaRailProps) {
-  const publishedLabel = entry.published
-    ? formatDate(entry.published)
-    : entry.year;
+  const publishedLabel = entry.published ? formatDate(entry.published) : entry.year;
 
   const updatedLabel = entry.updated ? formatDate(entry.updated) : null;
 
@@ -93,7 +85,8 @@ export function ArticleMetaRail({ entry, readingTime }: ArticleMetaRailProps) {
           <Divider />
           <MetaRow label="Series">
             <p className="text-[12px] text-neutral-600">
-              {entry.series}{entry.part != null ? ` · Part ${entry.part}` : ""}
+              {entry.series}
+              {entry.part != null ? ` · Part ${entry.part}` : ""}
             </p>
           </MetaRow>
         </>

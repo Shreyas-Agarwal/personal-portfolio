@@ -113,8 +113,7 @@ const FIELD_NOTES: FieldNote[] = [
   {
     number: "12",
     topic: "ARCHITECTURE",
-    paragraph:
-      "Architecture is the shape information takes while moving through an organization.",
+    paragraph: "Architecture is the shape information takes while moving through an organization.",
     filed: ["systems", "flow", "design"],
   },
   {
@@ -155,15 +154,13 @@ const FIELD_NOTES: FieldNote[] = [
   {
     number: "18",
     topic: "COORDINATION",
-    paragraph:
-      "Most engineering is coordination disguised as computation.",
+    paragraph: "Most engineering is coordination disguised as computation.",
     filed: ["teams", "systems", "communication"],
   },
   {
     number: "19",
     topic: "INFORMATION",
-    paragraph:
-      "Data records what happened. Information changes what happens next.",
+    paragraph: "Data records what happened. Information changes what happens next.",
     filed: ["decision-making", "analytics", "flow"],
   },
 ];
@@ -227,10 +224,7 @@ export function HeroV2() {
               told in silicon.
             </motion.h1>
 
-            <div
-              className="mt-16 border-t border-[#E6E1D6]/10 pt-6 md:mt-20"
-              aria-live="polite"
-            >
+            <div className="mt-16 border-t border-[#E6E1D6]/10 pt-6 md:mt-20" aria-live="polite">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={current.number}
@@ -250,7 +244,9 @@ export function HeroV2() {
                     {current.paragraph}
                   </p>
                   <div className="mt-4 md:hidden">
-                    <span className={`${plexMono.className} text-[11px] tracking-wide text-[#E6E1D6]/40`}>
+                    <span
+                      className={`${plexMono.className} text-[11px] tracking-wide text-[#E6E1D6]/40`}
+                    >
                       Filed: {current.filed.join(" · ")}
                     </span>
                   </div>
@@ -265,20 +261,26 @@ export function HeroV2() {
               aria-label="Next field note"
               className={`${inter.className} group mt-6 flex items-center gap-1.5 text-xs text-[#E6E1D6]/50 transition-colors hover:text-[#E6E1D6]/80`}
             >
-              <span className="border-b border-transparent group-hover:border-[#E6E1D6]/40">Next</span>
+              <span className="border-b border-transparent group-hover:border-[#E6E1D6]/40">
+                Next
+              </span>
               <span aria-hidden="true">→</span>
             </button>
           </div>
 
           <div className="hidden md:block">
-            <div className={`${plexMono.className} space-y-1.5 text-[11px] tracking-wide text-[#E6E1D6]/35`}>
+            <div
+              className={`${plexMono.className} space-y-1.5 text-[11px] tracking-wide text-[#E6E1D6]/35`}
+            >
               <div>VOL. I</div>
               <div>No. 00</div>
               <div>Rev {REV_DATE}</div>
             </div>
 
             <div className="mt-5 border-t border-[#E6E1D6]/10 pt-5">
-              <span className={`${plexMono.className} block text-[10px] uppercase tracking-[0.18em] text-[#E6E1D6]/25`}>
+              <span
+                className={`${plexMono.className} block text-[10px] uppercase tracking-[0.18em] text-[#E6E1D6]/25`}
+              >
                 Currently
               </span>
               <p className={`${serif.className} mt-2 text-sm leading-relaxed text-[#E6E1D6]/70`}>
@@ -287,7 +289,9 @@ export function HeroV2() {
             </div>
 
             <div className="mt-5 border-t border-[#E6E1D6]/10 pt-5">
-              <span className={`${plexMono.className} block text-[10px] uppercase tracking-[0.18em] text-[#E6E1D6]/25`}>
+              <span
+                className={`${plexMono.className} block text-[10px] uppercase tracking-[0.18em] text-[#E6E1D6]/25`}
+              >
                 Filed
               </span>
               <AnimatePresence mode="wait">
@@ -312,7 +316,9 @@ export function HeroV2() {
           transition={{ duration: 0.7, delay: 0.2, ease: EASE }}
           className="mt-16 max-w-2xl border-t border-[#E6E1D6]/10 pt-6 md:mt-20"
         >
-          <p className={`${serif.className} text-base leading-relaxed text-[#E6E1D6]/60 md:text-lg`}>
+          <p
+            className={`${serif.className} text-base leading-relaxed text-[#E6E1D6]/60 md:text-lg`}
+          >
             I didn't start by building distributed systems. I started by asking why operational
             reality and the record of that reality drift apart. Every project collected here is
             another attempt at answering that question—from analytics and workflow automation to

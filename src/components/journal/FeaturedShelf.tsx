@@ -1,7 +1,7 @@
-import type { JournalEntry } from "@/lib/journal";
 import { ArrowRight, BookOpen, Clock } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import type { JournalEntry } from "@/lib/journal";
 import { TRACK_COLORS } from "./ArticleHeader";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -10,10 +10,10 @@ import { TRACK_COLORS } from "./ArticleHeader";
 
 export interface SeriesSummary {
   name: string;
-  tracks: string[];            // unique track names, e.g. ["Data", "Infrastructure"]
+  tracks: string[]; // unique track names, e.g. ["Data", "Infrastructure"]
   totalParts: number;
-  firstEntry: JournalEntry;    // part 1 (or first by part order)
-  domains: string[];           // union of domains across all parts
+  firstEntry: JournalEntry; // part 1 (or first by part order)
+  domains: string[]; // union of domains across all parts
 }
 
 interface FeaturedShelfProps {
@@ -68,10 +68,7 @@ function SeriesCard({ s }: { s: SeriesSummary }) {
         </div>
 
         <h3 className="text-[15px] font-semibold leading-snug tracking-tight text-neutral-900">
-          <Link
-            href={`/journal/${s.firstEntry.slug}`}
-            className="before:absolute before:inset-0"
-          >
+          <Link href={`/journal/${s.firstEntry.slug}`} className="before:absolute before:inset-0">
             {s.name}
           </Link>
         </h3>
@@ -91,9 +88,7 @@ function SeriesCard({ s }: { s: SeriesSummary }) {
 
       {/* Footer: start reading CTA */}
       <div className="mt-auto flex items-center justify-between border-t border-neutral-100 pt-3">
-        <span className="text-[11px] text-neutral-400">
-          Start with Part 1
-        </span>
+        <span className="text-[11px] text-neutral-400">Start with Part 1</span>
         <ArrowRight className="h-3.5 w-3.5 text-neutral-300 transition-all group-hover:translate-x-0.5 group-hover:text-neutral-700" />
       </div>
     </article>
@@ -209,9 +204,7 @@ export function FeaturedShelf({ entries, series }: FeaturedShelfProps) {
           <p className="text-[13px] text-neutral-400">
             Trending will surface entries by engagement and views.
           </p>
-          <p className="mt-1 text-[12px] text-neutral-300">
-            Data source forthcoming.
-          </p>
+          <p className="mt-1 text-[12px] text-neutral-300">Data source forthcoming.</p>
         </div>
       )}
     </section>

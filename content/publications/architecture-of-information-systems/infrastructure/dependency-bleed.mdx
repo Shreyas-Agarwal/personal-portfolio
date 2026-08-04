@@ -1,0 +1,59 @@
+---
+title: "Dependency Bleed"
+date: "2026-07-01"
+---
+
+# Dependency Bleed
+
+Modern applications import dozens or hundreds of external libraries and SaaS APIs. Over time, these dependencies bleed past their integration boundaries and dictate the operational characteristics of your core system.
+
+When a third-party dependency stalls, errors out, or experiences latencies, your system is forced to inherit its failure mode unless explicitly isolated.
+
+<Observation n={1}>
+  Every unisolated external dependency is a potential single point of failure. A 100ms latency spike in a non-critical analytics tracking API can exhaust thread pools in your primary API gateway.
+</Observation>
+
+---
+
+## Patterns of Dependency Contagion
+
+1. **Unbounded Thread Blocking**: Synchronous HTTP calls to third-party APIs lock application worker threads.
+2. **Cascading Retries**: Uncoordinated client retries amplify traffic backpressure against failing downstream services.
+3. **Transitive Schema Bleed**: Vendor API response changes crash internal deserialization routines.
+
+```typescript filename="dependency-isolation.ts"
+// BAD: Direct un-isolated call blocks the main thread
+async function handleCheckout(order: Order) {
+  await paymentGateway.charge(order); // Might hang for 30s!
+  await analyticsTracker.log(order);  // Non-critical, but blocks response!
+}
+
+// GOOD: Isolated with timeout, fallback, and async execution
+async function handleCheckoutIsolated(order: Order) {
+  await withTimeout(paymentGateway.charge(order), 3000);
+  enqueueBackgroundJob('logAnalytics', order); // Fire-and-forget background queue
+}
+```
+
+---
+
+## Architectural Isolation Patterns
+
+To prevent dependency bleed:
+
+- **Circuit Breakers**: Trip open when dependency error rate exceeds threshold, instantly failing fast without executing network calls.
+- **Bulkheads**: Allocate isolated worker thread pools to specific external dependencies so one failing vendor cannot starve others.
+- **Asynchronous Decoupling**: Offload non-critical telemetry and enrichment to background queues.
+
+<Decision n={1} status="accepted">
+  Enforce strict timeout policies, circuit breakers, and bulkhead thread pools on all external network dependencies.
+</Decision>
+
+<Tradeoff
+  gain="Isolates system stability from third-party vendor outages and latency spikes."
+  cost="Adds architectural complexity with fallback logic and circuit state handling."
+/>
+
+---
+
+*Next in Track 02: **[Modern Memory Leaks](modern-memory-leak)**.*

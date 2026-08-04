@@ -1,0 +1,45 @@
+---
+title: "Ecology & Machine Intelligence"
+description: "Parallels between biological feedback systems and distributed computing architectures."
+date: 2026-06-10
+readingTime: 6 min
+---
+
+# Ecology & Machine Intelligence
+
+<Callout type="note">
+  Biological ecosystems are decentralized, self-repairing, energy-efficient networks. Software systems, by contrast, are often fragile, resource-heavy, and centrally coupled. What can systems engineering learn from ecological resilience?
+</Callout>
+
+## The Ecological Parallel
+
+Ecosystems manage immense complexity through localized signaling, energy budgets, and continuous feedback without central command.
+
+<Process>
+  <Step n={1} title="Localized Feedback Loops">
+    Organisms respond to immediate local signals (chemical, thermal, nutrient) rather than awaiting global state updates.
+  </Step>
+  <Step n={2} title="Adaptive Redundancy">
+    Niche overlap ensures that if one species or component drops out, surrounding elements absorb the functional load.
+  </Step>
+  <Step n={3} title="Strict Energy Bounding">
+    Biological computations operate under tight thermodynamic constraints, favoring efficiency over brute force.
+  </Step>
+</Process>
+
+---
+
+## Lessons for Distributed Software Architecture
+
+<Observation n={1}>
+  Centralized orchestrators create single points of bottleneck and failure. Decentralized biological signaling models provide blueprints for resilient mesh networks, edge computing, and multi-agent coordination.
+</Observation>
+
+<Decision n={1} status="accepted">
+  **Ecological Systems Architecture:** Design software agents to react to local state signals with strict memory and energy bounds, achieving global stability through emergent equilibrium rather than centralized control.
+</Decision>
+
+<Tradeoff
+  gain="Extreme fault tolerance, graceful degradation, and high resilience under unpredictable load."
+  cost="Requires abandoning absolute central state predictability in favor of eventual emergent consensus."
+/>

@@ -7,11 +7,7 @@ export async function generateStaticParams() {
   return [];
 }
 
-export default async function NotesSlugRedirect({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function NotesSlugRedirect({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   redirect(`/journal/${slug}`);
 }

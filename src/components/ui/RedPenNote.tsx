@@ -29,9 +29,7 @@ export function RedPenNote({ type, note, children }: RedPenNoteProps) {
   return (
     <HoverCard openDelay={150}>
       <HoverCardTrigger asChild>
-        <span
-          className="cursor-help text-[#DE4B31] decoration-wavy decoration-[#DE4B31] underline underline-offset-4"
-        >
+        <span className="cursor-help text-[#DE4B31] decoration-wavy decoration-[#DE4B31] underline underline-offset-4">
           {children}
         </span>
       </HoverCardTrigger>

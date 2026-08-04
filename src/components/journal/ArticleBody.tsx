@@ -1,20 +1,14 @@
-import { MermaidDiagram } from "@/components/ui/mermaid-diagram";
-import { slugify } from "@/lib/toc";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { MermaidDiagram } from "@/components/ui/mermaid-diagram";
+import { slugify } from "@/lib/toc";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Callout configuration
 // ─────────────────────────────────────────────────────────────────────────────
 
-type CalloutType =
-  | "NOTE"
-  | "IMPORTANT"
-  | "WARNING"
-  | "THESIS"
-  | "FRAMEWORK"
-  | "CAUTION";
+type CalloutType = "NOTE" | "IMPORTANT" | "WARNING" | "THESIS" | "FRAMEWORK" | "CAUTION";
 
 const CALLOUT_STYLES: Record<
   CalloutType,
@@ -70,27 +64,17 @@ const CALLOUT_TYPES = Object.keys(CALLOUT_STYLES).join("|");
 // Callout block renderer
 // ─────────────────────────────────────────────────────────────────────────────
 
-function CalloutBlock({
-  type,
-  children,
-}: {
-  type: CalloutType;
-  children: React.ReactNode;
-}) {
+function CalloutBlock({ type, children }: { type: CalloutType; children: React.ReactNode }) {
   const style = CALLOUT_STYLES[type];
   return (
-    <div
-      className={`not-prose my-7 border-l-4 ${style.border} ${style.bg} rounded-r-sm px-5 py-4`}
-    >
+    <div className={`not-prose my-7 border-l-4 ${style.border} ${style.bg} rounded-r-sm px-5 py-4`}>
       <div
         className={`mb-2.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] ${style.textColor}`}
       >
         <span aria-hidden="true">{style.icon}</span>
         <span>{style.label}</span>
       </div>
-      <div className="space-y-2 text-[14px] leading-relaxed text-neutral-700">
-        {children}
-      </div>
+      <div className="space-y-2 text-[14px] leading-relaxed text-neutral-700">{children}</div>
     </div>
   );
 }
@@ -109,14 +93,8 @@ function CalloutBlock({
 // ─────────────────────────────────────────────────────────────────────────────
 
 function preprocessCallouts(markdown: string): string {
-  const pattern = new RegExp(
-    `^> \\[!(${CALLOUT_TYPES})\\]\\s*$`,
-    "gim",
-  );
-  return markdown.replace(
-    pattern,
-    (_, type: string) => `> |||CALLOUT:${type.toUpperCase()}|||`,
-  );
+  const pattern = new RegExp(`^> \\[!(${CALLOUT_TYPES})\\]\\s*$`, "gim");
+  return markdown.replace(pattern, (_, type: string) => `> |||CALLOUT:${type.toUpperCase()}|||`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -128,9 +106,7 @@ function extractText(children: React.ReactNode): string {
   if (typeof children === "number") return String(children);
   if (Array.isArray(children)) return children.map(extractText).join("");
   if (React.isValidElement(children)) {
-    return extractText(
-      (children.props as { children?: React.ReactNode }).children,
-    );
+    return extractText((children.props as { children?: React.ReactNode }).children);
   }
   return "";
 }
@@ -183,9 +159,7 @@ export function ArticleBody({ content }: ArticleBodyProps) {
         remarkPlugins={[remarkGfm]}
         components={{
           // ── H1: render normally, excluded from TOC ─────────────────────
-          h1: ({ children }) => (
-            <h1>{children}</h1>
-          ),
+          h1: ({ children }) => <h1>{children}</h1>,
 
           // ── H2: inject id for TOC anchoring ───────────────────────────
           h2: ({ children }) => {
@@ -207,9 +181,7 @@ export function ArticleBody({ content }: ArticleBodyProps) {
             const isBlock = !!match;
 
             if (isBlock && match?.[1] === "mermaid") {
-              return (
-                <MermaidDiagram code={String(children).replace(/\n$/, "")} />
-              );
+              return <MermaidDiagram code={String(children).replace(/\n$/, "")} />;
             }
 
             if (!isBlock) {
@@ -230,41 +202,33 @@ export function ArticleBody({ content }: ArticleBodyProps) {
           // ── Blockquote: detect callouts vs standard editorial quote ────
           blockquote({ node, children }) {
             // Peek at the AST for the callout marker in the first paragraph
-            const firstBlock = (node as unknown as {
-              children?: Array<{
-                type: string;
-                children?: Array<{ type: string; value?: string }>;
-              }>;
-            })?.children?.[0];
+            const firstBlock = (
+              node as unknown as {
+                children?: Array<{
+                  type: string;
+                  children?: Array<{ type: string; value?: string }>;
+                }>;
+              }
+            )?.children?.[0];
 
             if (firstBlock?.type === "paragraph") {
               const firstInline = firstBlock.children?.[0];
               if (firstInline?.type === "text") {
-                const match = firstInline.value?.match(
-                  /^\|\|\|CALLOUT:(\w+)\|\|\|$/,
-                );
+                const match = firstInline.value?.match(/^\|\|\|CALLOUT:(\w+)\|\|\|$/);
                 if (match) {
                   const type = match[1] as CalloutType;
                   if (CALLOUT_STYLES[type]) {
                     // children[0] is the rendered <p> for |||CALLOUT:TYPE|||
                     // Slice it off — only pass the body content.
                     const childArray = React.Children.toArray(children);
-                    return (
-                      <CalloutBlock type={type}>
-                        {childArray.slice(1)}
-                      </CalloutBlock>
-                    );
+                    return <CalloutBlock type={type}>{childArray.slice(1)}</CalloutBlock>;
                   }
                 }
               }
             }
 
             // Standard editorial blockquote
-            return (
-              <blockquote>
-                {children}
-              </blockquote>
-            );
+            return <blockquote>{children}</blockquote>;
           },
         }}
       >

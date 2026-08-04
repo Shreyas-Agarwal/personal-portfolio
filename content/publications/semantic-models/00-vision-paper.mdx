@@ -1,0 +1,70 @@
+---
+title: "00 — Vision Paper: The Semantic Layer"
+description: "A shared semantic layer for analytical systems: local-first, edge-executable ontologies."
+date: 2026-08-04
+readingTime: 5 min
+---
+
+# Vision Paper: A Shared Semantic Layer
+
+<Callout type="note">
+  **Audience:** Architects, product strategy, and engineering leadership. Answers the fundamental question: *Why does this problem exist in the world, and why is a new architecture needed to solve it?*
+</Callout>
+
+## The Problem
+
+Modern analytical systems repeatedly encode business meaning independently across dashboards, reports, APIs, AI assistants, alerts, and automation. Every consumer reconstructs semantics from physical schemas, creating duplicated logic, inconsistent interpretations, and increasing maintenance cost as the number of consumers grows.
+
+<Observation n={1}>
+  The failure mode of fragmented semantics isn't a crash — it's quiet disagreement. Two features answer the same business question correctly, differently, and nobody notices until numbers are already trusted by leadership.
+</Observation>
+
+This problem compounds with AI-driven data interfaces. AI is the first consumer class that must resolve business meaning *on the fly* in response to open-ended natural-language questions, rather than consuming pre-built reports. AI exposes this semantic gap; it doesn't create it.
+
+## Existing Approaches & Limitations
+
+| Approach | Representative Tools | Philosophical Assumption | Limitations in Local/Edge Environments |
+| :--- | :--- | :--- | :--- |
+| **Vendor BI Models** | Power BI, Microsoft Fabric | Centralized, warehouse-bound | Round-trip latencies, proprietary lock-in |
+| **Declarative Models** | LookML | Centralized query targets | Monolithic server execution |
+| **Transformation Layers** | dbt Semantic Layer, MetricFlow | Metric-first batch transformation | High server latency for real-time edge UI |
+| **Semantic Servers** | Cube.js, AtScale | Centralized OLAP servers | Assumes server in the loop for every interaction |
+
+<Callout type="warning">
+  Existing tools optimize for **centralized warehouse execution**. They assume a central server resolves meaning and runs every query over the network.
+</Callout>
+
+## Core Principles
+
+<Process>
+  <Step n={1} title="Entity-First, Not Column-First">
+    A business concept (customer, revenue, transaction date) is the stable unit of meaning. Physical column names are temporary implementation details.
+  </Step>
+  <Step n={2} title="Projection Compilation">
+    Authored once, compiled into thin, purpose-built views (Prompt View, Planner View, Resolver View, Tool Registry). Raw objects are never shipped to models.
+  </Step>
+  <Step n={3} title="Decoupled Multi-Registry Architecture">
+    Definitions, relationships, value mappings, and live statistics evolve on independent lifecycles across four peer registries.
+  </Step>
+  <Step n={4} title="Stateless, Read-Only Runtime">
+    Registry definitions are a shared, immutable reference. Session state lives 100% outside registry definitions.
+  </Step>
+</Process>
+
+## Design Goals
+
+<Tradeoff
+  gain="Edge-first, local-first execution. Resolvable and executable in-browser or desktop runtimes with zero server round trips."
+  cost="Requires precomputing thin compiled projections for UI and LLM prompt windows."
+/>
+
+- **Local-First & Edge-Executable:** Resolvable in the client without server round trips.
+- **Deterministic:** The same request against the same ontology version yields identical queries every time.
+- **AI-Native:** Designed from the start to serve open-ended natural language intent.
+- **Human-Authorable:** Domain experts can declare business concepts without understanding compiler internals.
+
+## Non-Goals
+
+- Not replacing data warehouses or query engines.
+- Not a general-purpose graph database.
+- Not an ETL or batch data transformation framework.

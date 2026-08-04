@@ -1,0 +1,53 @@
+---
+title: "Your Application Code Is Not the System"
+date: "2026-07-01"
+---
+
+# Your Application Code Is Not the System
+
+When developers think about system reliability, they naturally focus on application code: route handlers, database queries, business logic, and error handling.
+
+Yet when production outages occur, the root cause is rarely a missing `if` check in application code. It is in the infrastructure network layers surrounding the application.
+
+<Observation n={1}>
+  Between a user's client request and your application process exists a stack of DNS resolution, TLS handshakes, reverse proxy buffers, socket queues, and network routes. Your application code is merely the final endpoint in a long physical path.
+</Observation>
+
+---
+
+## What Happens Before Application Code Runs
+
+Before a single line of your application code executes:
+
+1. **DNS Resolution**: Client resolves hostname to IP addresses across recursive nameservers.
+2. **TCP 3-Way Handshake**: `SYN` → `SYN-ACK` → `ACK` establishes socket connection.
+3. **TLS Negotiation**: Key exchange, certificate chain verification, and cipher suite negotiation.
+4. **Proxy Routing**: Reverse proxies (NGINX, Envoy, Cloudflare) parse HTTP headers, evaluate rate limits, and select upstream backends.
+5. **Kernel Socket Buffers**: The host OS receives bytes into kernel socket buffers before copying them to user space.
+
+```text
+Client → DNS → Anycast IP → Edge Firewall → TLS Proxy → NGINX → Socket Buffer → Node/Go Process
+```
+
+---
+
+## Where Reliability Fails
+
+If any layer in this path stalls, the user experiences failure regardless of how clean your application code is:
+
+- **DNS Timeout**: Client fails to resolve domain IP before HTTP timeout window expires.
+- **TLS Handshake Latency**: Expired certificates, untrusted CA chains, or missing SNI headers.
+- **Proxy Socket Starvation**: Reverse proxy worker threads become saturated waiting on slow backends.
+
+<Decision n={1} status="accepted">
+  Instrument operational health checks and telemetry at the proxy and network edge, not solely inside application process metrics.
+</Decision>
+
+<Tradeoff
+  gain="Detects network partitions, proxy buffer saturation, and TLS degradation before application metrics register failures."
+  cost="Requires monitoring edge network infrastructure alongside standard application logs."
+/>
+
+---
+
+*Next in Track 02: **[Dependency Bleed](dependency-bleed)**.*

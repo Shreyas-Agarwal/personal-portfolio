@@ -1,8 +1,8 @@
 "use client";
 
-import type { JournalEntry } from "@/lib/journal";
 import { useMemo, useState } from "react";
 import { TRACK_COLORS } from "@/components/journal/ArticleHeader";
+import type { JournalEntry } from "@/lib/journal";
 import { EmptyState } from "./EmptyState";
 import { EntryRow } from "./EntryRow";
 import { FeaturedShelf, type SeriesSummary } from "./FeaturedShelf";
@@ -42,9 +42,7 @@ function SeriesGroupHeader({
         <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.25em] text-neutral-400">
           Series
         </p>
-        <h2 className="text-[17px] font-semibold tracking-tight text-neutral-800">
-          {seriesName}
-        </h2>
+        <h2 className="text-[17px] font-semibold tracking-tight text-neutral-800">{seriesName}</h2>
       </div>
       {/* Track pills */}
       {tracks.length > 0 && (
@@ -127,7 +125,15 @@ export function JournalIndex({
 
       return true;
     });
-  }, [entries, searchQuery, selectedDomains, selectedFormats, selectedTags, selectedSeries, selectedYears]);
+  }, [
+    entries,
+    searchQuery,
+    selectedDomains,
+    selectedFormats,
+    selectedTags,
+    selectedSeries,
+    selectedYears,
+  ]);
 
   // ─── Series summaries for FeaturedShelf ───────────────────────────────────
   const seriesSummaries = useMemo((): SeriesSummary[] => {
@@ -225,9 +231,8 @@ export function JournalIndex({
               Journal
             </h1>
             <p className="max-w-2xl text-lg leading-relaxed text-neutral-500">
-              A living body of thought across systems, AI, ecology, and
-              operational complexity. Research notes, essays, frameworks, and
-              long-form analysis.
+              A living body of thought across systems, AI, ecology, and operational complexity.
+              Research notes, essays, frameworks, and long-form analysis.
             </p>
           </div>
 
@@ -241,7 +246,6 @@ export function JournalIndex({
       {/* ── Body ────────────────────────────────────────────────────────── */}
       <main className="mx-auto max-w-7xl px-6 py-10 md:px-12">
         <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
-
           {/* ── Left Sidebar ──────────────────────────────────────────── */}
           <FilterSidebar
             allDomains={allDomains}
@@ -266,11 +270,8 @@ export function JournalIndex({
 
           {/* ── Feed Area ─────────────────────────────────────────────── */}
           <div className="min-w-0 flex-1">
-
             {/* Featured shelf — only visible when no search or filter active */}
-            {showFeatured && (
-              <FeaturedShelf entries={featuredEntries} series={seriesSummaries} />
-            )}
+            {showFeatured && <FeaturedShelf entries={featuredEntries} series={seriesSummaries} />}
 
             {/* Results metadata */}
             {(searchQuery.trim() || hasActiveFilters) && (
@@ -301,7 +302,7 @@ export function JournalIndex({
                         <EntryRow key={entry.slug} entry={entry} />
                       ))}
                     </div>
-                  )
+                  ),
                 )}
               </div>
             ) : (

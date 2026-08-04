@@ -1,0 +1,125 @@
+---
+title: "The Schema That Runs the Business Is Not the Schema That Explains It"
+date: "2026-07-01"
+---
+
+# The Schema That Runs the Business Is Not the Schema That Explains It
+
+Most people encounter data through dashboards: revenue charts, customer funnels, retention curves, and operational reports. The assumption is understandable — somewhere underneath these visualizations exists a database storing all the information, and the dashboard is simply asking questions of it.
+
+That assumption is both reasonable and wrong. The database that runs a business is often the worst possible place to understand that business.
+
+<Observation n={1}>
+  The requirements of operating a business are fundamentally different from the requirements of explaining a business. The database designed to process thousands of small transactions is logically orthogonal to an analytical engine.
+</Observation>
+
+---
+
+## The First Responsibility: Keep the Business Alive
+
+Imagine an online retailer. A customer places an order. The system must:
+
+- Verify inventory
+- Calculate pricing
+- Process payment
+- Generate an order record
+- Update stock levels
+- Confirm the purchase
+
+Every operation must happen quickly and correctly. If inventory updates are delayed, overselling occurs. If payment records are inconsistent, revenue becomes unreliable. If customer information becomes corrupted, support operations break down.
+
+In this environment, the primary operational question is simple:
+
+<Callout type="important">
+  Can the transaction be completed safely and atomically without corrupting state?
+</Callout>
+
+Modern operational databases are optimized around this requirement in **Online Transaction Processing (OLTP)**:
+
+- Fast writes and updates
+- High concurrent user access
+- Strong ACID consistency
+- Minimal data duplication (normalization)
+
+---
+
+## Why Normalization Became Necessary
+
+Imagine storing customer information inside every order record. At first this seems convenient, until a customer changes their email address. Suddenly hundreds or thousands of historical records must be updated, creating opportunities for inconsistency.
+
+Relational database theory solved this through normalization (e.g. Third Normal Form, 3NF):
+
+- Customers live in one table
+- Orders live in another
+- Products live in another
+- Payments live in another
+
+This approach works exceptionally well for transactional systems. The schema is optimized for maintaining single-point truth.
+
+<Tradeoff
+  gain="Eliminates update anomalies and data redundancy through 3NF relational normalization."
+  cost="Requires complex multi-table JOINs and scans for aggregate analytical queries."
+/>
+
+---
+
+## The Question That Breaks Everything
+
+Imagine a CEO asks a seemingly simple question: *Which customer segment generated the highest profit growth over the last three years?*
+
+```sql filename="oltp-vs-olap.sql"
+-- 1. THE TRANSACTIONAL PATH (OLTP)
+-- Highly indexed, rapid, atomic single-row lookup targeting a specific ID.
+SELECT email, phone 
+FROM core_prod.customers 
+WHERE customer_id = '3b50b5d2-3d08-4c75-8150-12dbaf4e2555';
+
+-- 2. THE ANALYTICAL PATH (OLAP)
+-- Massive multi-table scan executing deep aggregates across historical periods.
+SELECT 
+    c.segment,
+    SUM(o.total_profit) AS aggregate_growth
+FROM core_prod.customers c
+JOIN core_prod.orders o ON o.customer_id = c.customer_id
+JOIN core_prod.payments p ON p.order_id = o.order_id
+WHERE o.created_at >= NOW() - INTERVAL '3 years'
+GROUP BY c.segment;
+```
+
+This is where the architecture begins to crack. Every additional join increases computational complexity. Every aggregation requires scanning more records. Every dashboard query competes with real-time operational transactions.
+
+---
+
+## Two Workloads, One Database
+
+The system is attempting to perform two fundamentally different jobs simultaneously:
+
+1. **OLTP Workload**: *What is happening right now?* (Prioritizes fast atomic writes, single-row updates)
+2. **OLAP Workload**: *What has happened over time?* (Prioritizes wide column scans, historical aggregation)
+
+<Decision n={1} status="accepted">
+  Decouple operational storage (OLTP) from analytical storage (OLAP). Rather than querying operational databases directly, copy data into specialized data warehouses or lakehouses optimized for columnar storage and analytical execution.
+</Decision>
+
+---
+
+## The Modern Evolution: Medallion Architecture
+
+As organizations adopted cloud platforms, analytical engineering evolved into structured medallion stages to progressively improve data quality:
+
+### Bronze (Raw Ingestion)
+Data arrives exactly as produced by source systems. Nothing is hidden or corrected. The objective is total preservation.
+
+### Silver (Standardization & Validation)
+Data types become consistent, duplicates are removed, and business entities emerge.
+
+### Gold (Business-Facing Datasets)
+Aggregated metrics and dimensions ready for executive decision-making, ML models, and dashboards.
+
+<Observation n={2}>
+  The medallion model acts as an architectural buffer between operational volatility and analytical stability. Source systems are free to evolve without silently breaking analytical consumers downstream.
+</Observation>
+
+---
+
+*Next in Track 01: **[Canonical Data Models](canonical-business-model)**.*

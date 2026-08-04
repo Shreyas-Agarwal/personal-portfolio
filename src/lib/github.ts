@@ -22,7 +22,7 @@ export const getGitHubContributions = cache(async (): Promise<number> => {
     const match = html.match(/([\d,]+)\s+contributions\s+in the last year/i);
     if (match) {
       const parsed = parseInt(match[1].replace(/,/g, ""), 10);
-      return isNaN(parsed) ? 500 : parsed;
+      return Number.isNaN(parsed) ? 500 : parsed;
     }
     return 500;
   } catch (error) {

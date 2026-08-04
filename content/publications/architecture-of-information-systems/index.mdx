@@ -1,0 +1,69 @@
+---
+title: "Architecture of Information Systems"
+subtitle: "A systematic exploration of data modeling, state boundaries, operational vs analytical schemas, and infrastructure dynamics."
+date: "2026-07-01"
+type: "research-series"
+---
+
+# Overview
+
+Every production software system is constrained by the physics of information movement: how state is represented, where boundaries are drawn, how schemas evolve, and how underlying infrastructure responds to load.
+
+This publication collects twelve foundational essays organized across two complementary tracks: **Data Architecture** and **Infrastructure Systems**.
+
+<Observation n={1}>
+  An operational system is rarely constrained by computation alone. It is constrained by the movement of information between independent representations of reality — from the database record to the reverse proxy buffer.
+</Observation>
+
+---
+
+## The Two Tracks
+
+The publication is structured into two parallel tracks that address information systems from different abstractions:
+
+### Track 01 — Data Architecture
+
+Data modeling is not an implementation detail; it is the semantic definition of the business. Once meaning becomes unstable at the data layer, every downstream application, API, and reporting engine starts compensating for ambiguity that should never have existed.
+
+- **01. Operational vs Analytical Schemas** — Why the schema that runs the business can never be the schema that explains it.
+- **02. Canonical Data Models** — The hidden cost of unifying every entity under a single global schema.
+- **03. Cost of Generic Relationships** — Why entity-attribute-value (EAV) and polymorphic joins degrade query optimization.
+- **04. History as a First-Class Feature** — Why overwriting state in place destroys auditability and temporal reasoning.
+- **05. The Hidden Cost of Moving Data** — The network, latency, and serialization taxes paid when state traverses boundaries.
+- **06. Cost of Random UUID Keys** — How random identifiers destroy index locality in B-Trees.
+
+<Callout type="note">
+  Start with **[Operational vs Analytical Schemas](./data/oltp-vs-olap)** if you are evaluating OLTP database bottlenecks or designing medallion architectures.
+</Callout>
+
+---
+
+### Track 02 — Infrastructure Systems
+
+Your application code is only a fraction of the runtime system. The network stack, TLS handshakes, reverse proxy buffers, session pools, and OS file descriptors dictate actual system resilience under load.
+
+- **01. Application Code Is Not the System** — Why system availability depends on everything outside your application binary.
+- **02. Dependency Bleed** — How transitively imported dependencies compromise operational boundaries.
+- **03. Modern Memory Leaks** — Unbounded connection pools, context propagation, and silent resource exhaustion.
+- **04. Session State Costs** — The architectural trade-offs between stateful sessions and distributed token validation.
+- **05. The 4-Tuple Limit** — Port exhaustion, ephemeral socket limits, and NAT bottlenecks in microservices.
+- **06. The Reverse Proxy Gateway** — Why the reverse proxy is your actual application boundary.
+
+<Tradeoff
+  gain="Decoupling data semantics from infrastructure execution allows both layers to evolve independently."
+  cost="Requires strict architectural discipline and upfront boundary enforcement across team boundaries."
+/>
+
+---
+
+## How to Navigate This Series
+
+Each essay in this publication is self-contained yet cross-referenced with related chapters across both tracks. 
+
+- Use the **Table of Contents** on the right to jump between sections.
+- Use the **Publication Navigation** on the left to switch between tracks.
+- Internal references (`[link](...)`) direct to adjacent chapters in the publication series.
+
+---
+
+*Begin reading Track 01 with **[Operational vs Analytical Schemas](./data/oltp-vs-olap)** or Track 02 with **[Application Code Is Not the System](./infrastructure/application-is-not-system)**.*

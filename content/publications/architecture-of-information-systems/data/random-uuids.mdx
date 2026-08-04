@@ -1,0 +1,65 @@
+---
+title: "The Hidden Cost of Random UUID Primary Keys"
+date: "2026-07-01"
+---
+
+# The Hidden Cost of Random UUID Primary Keys
+
+UUIDv4 (random 128-bit identifiers) is standard practice for distributed primary keys. It eliminates coordination between database nodes when generating unique IDs.
+
+However, using random UUIDs as clustered primary keys in B-Tree index structures (PostgreSQL, MySQL InnoDB) inflicts severe write amplification and index fragmentation.
+
+<Observation n={1}>
+  Random UUID inserts cause B-Tree page splits across the entire index tree. Because keys arrive out of order, write operations force random I/O disk page reads and writes, evicting warm pages from memory.
+</Observation>
+
+---
+
+## B-Tree Page Splits and Write Amplification
+
+B-Trees depend on sequential key ordering. When keys arrive sequentially (`1, 2, 3, 4`), new index entries append cleanly to the rightmost leaf page.
+
+When keys arrive randomly via UUIDv4:
+
+1. The database locates the target leaf page somewhere in the middle of the B-Tree.
+2. If the leaf page is full, it must split into two pages, relocating half its entries.
+3. Page splits propagate up the tree, causing write amplification and index bloat.
+
+```text filename="btree-comparison.txt"
+Sequential Keys (auto-increment / UUIDv7):
+[1, 2, 3] -> [4, 5, 6] -> [7, 8, 9] (Clean right-edge appends)
+
+Random Keys (UUIDv4):
+[a7, c3, f1] -> Page Split! -> [a7, b2] | [c3, f1] (Random middle inserts)
+```
+
+---
+
+## The Solution: Time-Ordered Identifiers (UUIDv7 & TSID)
+
+UUIDv7 combines a 48-bit UNIX timestamp millisecond prefix with 74 bits of randomness.
+
+```typescript filename="uuidv7-structure.ts"
+// UUIDv7 structure: Monotonically increasing prefix + random suffix
+// 018C-3F2A-10B4 - 7D9E - 81F2 - 4390A812E57F
+// [48-bit Timestamp] [Ver] [74-bit Randomness]
+```
+
+Because the timestamp prefix increases monotonically over time:
+
+- Inserts hit the rightmost B-Tree leaf page.
+- Buffer pool cache efficiency increases drastically.
+- Index size stays compact, preventing premature I/O bottlenecks.
+
+<Decision n={1} status="accepted">
+  Standardize on UUIDv7 or ULID/TSID for clustered primary keys in relational databases, reserving UUIDv4 exclusively for non-indexed ephemeral tokens.
+</Decision>
+
+<Tradeoff
+  gain="Restores sequential B-Tree write performance, eliminates page splits, and reduces index bloat by 40-60%."
+  cost="Leaks generation timestamp in the primary key (if timestamp confidentiality is required)."
+/>
+
+---
+
+*End of Track 01. Proceed to Track 02: **[Application Code Is Not the System](../infrastructure/application-is-not-system)**.*

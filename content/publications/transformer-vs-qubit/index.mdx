@@ -1,0 +1,50 @@
+---
+title: "Transformers vs Qubits"
+description: "Comparative analysis of classical neural attention vs. quantum superposition."
+date: 2026-02-14
+readingTime: 6 min
+---
+
+# Transformers vs Qubits: Paradigms of High-Dimensional Search
+
+<Callout type="note">
+  Both transformer neural networks and quantum computers solve high-dimensional search problems, but through fundamentally different physical and mathematical primitives.
+</Callout>
+
+## Mathematical Paradigms Compared
+
+| Property | Transformer Attention ($QK^T / \sqrt{d_k}$) | Quantum Superposition ($\sum \alpha_i |i\rangle$) |
+| :--- | :--- | :--- |
+| **State Space** | Dense continuous vector embeddings in $\mathbb{R}^d$ | Complex Hilbert space $\mathbb{C}^{2^n}$ |
+| **Search Mechanism** | Softmax-weighted similarity queries | Quantum interference & phase cancellation |
+| **Compute Cost** | Quadratic token length scaling $O(N^2)$ | Exponential state space in linear qubits $2^n$ |
+| **Hardware Realization** | High-bandwidth GPU/TPU matrix multiplication | Superconducting circuits / ion traps |
+
+---
+
+## Domain Suitability & Future Convergence
+
+<Observation n={1}>
+  Transformers excel at fuzzy semantic synthesis and pattern association. Quantum algorithms excel at precise combinatorial optimization, integer factorization, and molecular simulation.
+</Observation>
+
+<Process>
+  <Step n={1} title="Heuristic Pattern Recognition">
+    Use classical neural transformer architectures for natural language, code generation, and unstructured perception.
+  </Step>
+  <Step n={2} title="Quantum Subroutines">
+    Delegate hard combinatorial NP-complete subproblems (graph partitioning, protein folding, material simulation) to quantum processing units (QPUs).
+  </Step>
+  <Step n={3} title="Hybrid Execution Runtimes">
+    Bind classical neural orchestrators to quantum optimization solvers via standardized RPC tool interfaces.
+  </Step>
+</Process>
+
+<Decision n={1} status="accepted">
+  **Hybrid Computing Architecture:** Leverage neural transformers as intuitive intent compilers while routing exact combinatorial search problems to specialized quantum/optimization runtimes.
+</Decision>
+
+<Tradeoff
+  gain="Maximizes efficiency by pairing probabilistic semantic inference with exact mathematical solvers."
+  cost="Requires bridging classical GPU memory buses with cryogenic QPU interfaces."
+/>

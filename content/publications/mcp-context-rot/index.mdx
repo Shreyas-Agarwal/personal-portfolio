@@ -1,0 +1,54 @@
+---
+title: "Context Rot in Tool Protocols"
+description: "Analysis of context window saturation and token degradation in LLM tool interfaces."
+date: 2026-07-22
+readingTime: 6 min
+---
+
+# Context Rot in Tool Protocols
+
+<Callout type="important">
+  **The Core Problem:** Handing an LLM agent dozens of detailed tool schemas on first prompt load consumes significant context window budget, leading to hallucination, tool misapplication, and severe reasoning degradation.
+</Callout>
+
+## The Mechanism of Context Rot
+
+As tool manifests grow, the percentage of relevant tokens in an LLM context window drops precipitously:
+
+<Observation n={1}>
+  When an agent is presented with 50+ tool definitions containing complete JSON schemas, over 80% of the prompt context is occupied by tool signatures the agent will never invoke during that turn.
+</Observation>
+
+```typescript filename="tool-manifest-bloat.ts"
+// Monolithic Tool Manifest (Anti-Pattern)
+const monolithicManifest = [
+  /* 50+ full JSON schemas serialized into every prompt turn */
+];
+
+// Token consumption: ~15,000 tokens per prompt before user query is even evaluated!
+```
+
+---
+
+## Two-Phase Discover & Bind Solution
+
+<Process>
+  <Step n={1} title="Phase 1: Intent Discovery">
+    Agent queries the registry with intent keywords or embeddings (`discover("query sales by region")`) and receives a minified candidate list (name + 1-line description).
+  </Step>
+  <Step n={2} title="Phase 2: Dynamic Binding">
+    Agent selects a specific tool (`bind("sales_by_region")`) and receives only that tool's full JSON input schema.
+  </Step>
+  <Step n={3} title="Phase 3: Execution">
+    Agent invokes the bound tool with validated arguments (`invoke("sales_by_region", args)`).
+  </Step>
+</Process>
+
+<Decision n={1} status="accepted">
+  **Two-Phase Tool Invocation Standard:** Replace static, monolithic tool manifests with dynamic two-phase discover/bind registry lookup, reducing tool prompt footprint by up to 90%.
+</Decision>
+
+<Tradeoff
+  gain="Eliminates context rot, dramatically improves tool invocation accuracy, and reduces prompt costs."
+  cost="Adds a 1-turn discovery round-trip when an agent encounters unfamiliar intent categories."
+/>

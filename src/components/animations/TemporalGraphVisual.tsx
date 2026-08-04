@@ -1,12 +1,15 @@
-"use client"
+"use client";
 import { motion } from "framer-motion";
 
 export function TemporalGraphVisual() {
   return (
-    <svg viewBox="0 0 160 40" className="w-full h-10 mt-2 bg-[#1B1D1F]/70 rounded border border-[#E6E1D6]/5 p-1 select-none">
+    <svg
+      viewBox="0 0 160 40"
+      className="w-full h-10 mt-2 bg-[#1B1D1F]/70 rounded border border-[#E6E1D6]/5 p-1 select-none"
+    >
       {/* Node A */}
       <circle cx="20" cy="20" r="4" fill="none" stroke="#E6E1D6" strokeWidth={1} />
-      
+
       {/* Node B (Fades in/out representing temporal existence) */}
       <motion.circle
         cx="80"
@@ -18,10 +21,10 @@ export function TemporalGraphVisual() {
         animate={{ opacity: [0.2, 1, 0.2] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
-      
+
       {/* Node C */}
       <circle cx="140" cy="20" r="4" fill="none" stroke="#E6E1D6" strokeWidth={1} />
-      
+
       {/* Node D (Temporal) */}
       <motion.circle
         cx="80"

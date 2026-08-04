@@ -1,0 +1,34 @@
+# Case Study Note: Writing One Architecture at Four Altitudes
+
+**Companion piece to:** _Vision Paper_ → _Executive Proposal_ → _Architecture Overview_ → _Technical Specification_ (the shared semantic layer case study)
+
+---
+
+## What this is
+
+The four documents this note accompanies describe a single piece of software architecture — a shared semantic layer sitting between raw analytical data and every feature that consumes it (dashboards, an AI assistant, reports, future automation). What makes them worth presenting together isn't the architecture alone; it's that the same design is deliberately written four separate times, once for each of four audiences, each version answering a different question and containing almost none of the same sentences as the others.
+
+That's the actual skill on display here: recognizing that "explain this architecture" is not one task. It's at least four, and conflating them — writing one document and hoping it serves an executive, a senior engineer, and an implementer equally well — is a common failure mode that usually means the document serves none of them.
+
+## The four altitudes
+
+| Document                    | Question it answers                                   | Who reads it                                                       | What it deliberately omits                                                                                      |
+| --------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| **Vision Paper**            | Why does this problem exist in the world at all?      | Architects, product strategy, future self                          | Any mention of the specific company, product, or implementation                                                 |
+| **Executive Proposal**      | Why should we build this now, specifically?           | Leadership, budget and timeline owners                             | Schemas, field names, cache-key formats — anything an executive reader has no use for and would read as noise   |
+| **Architecture Overview**   | What is it, and how do the pieces talk to each other? | Senior engineers who need to build against it or integrate with it | Exact field-level types, storage formats, versioning keys — implementation detail that belongs one level down   |
+| **Technical Specification** | Exactly how does it work, field by field?             | The engineers implementing it                                      | Persuasion — by this point the decision is made; the document assumes agreement and moves straight to precision |
+
+Each document could, in principle, be extracted from the one above it by deletion — but that isn't how they were actually written, and it isn't how they should be read. The Executive Proposal isn't the Vision Paper with implementation details removed; it's a different argument, built around cost and timing, aimed at a reader whose first question is "what does this cost me" rather than "what problem does this solve in general." The Technical Specification isn't the Architecture Overview with more fields added; it's written for a reader who no longer needs to be convinced of anything and instead needs to never have to guess.
+
+## Why this progression, and not just "one good document"
+
+A single document trying to serve all four audiences at once fails in a specific, recognizable way: it either buries the executive in schema detail they'll skim past, or it strips the technical spec of the precision an implementer actually needs in order to keep the prose approachable for a non-technical reader. Every merge of two altitudes into one document is a compromise against both audiences, not a convenience for either.
+
+The discipline that makes the four-document approach work is deciding, before writing a single sentence, which altitude a given document lives at — and then being ruthless about not smuggling in content that belongs to a different altitude. The Vision Paper has an entire section on "Existing approaches" comparing philosophies of competing tools, and it deliberately never says "we will build a compiler and four registries" — that's the Architecture Overview's job, three documents later. The discipline is as much about what's left out of each document as what's included.
+
+## Why this is a durable skill, not a formatting trick
+
+Being able to write clearly at one altitude is a valuable, common skill. Being able to identify how many altitudes a piece of architecture actually needs, and write each one in the register its specific reader requires — without accidentally repeating yourself, without leaving a gap between altitudes, and without letting the wrong kind of detail leak upward or downward — is a smaller, more specialized skill, and it's the one this case study is meant to demonstrate.
+
+It's also a skill with an unusually long shelf life relative to the software itself. Implementation details in the Technical Specification will eventually be superseded by a different storage engine, a different cache strategy, a different naming convention. The Vision Paper's account of _why_ this class of problem exists, and the Executive Proposal's account of _why now is the right time_, remain true and legible long after any of the technical specifics have changed — which is exactly why they were worth writing as separate, durable documents in the first place, rather than as a preamble bolted onto the technical spec that would get deleted the moment the spec was revised.

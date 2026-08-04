@@ -1,0 +1,43 @@
+---
+title: "The Silicon Ceiling"
+description: "Physical and thermodynamic limits of hardware scaling."
+date: 2026-03-05
+readingTime: 6 min
+---
+
+# The Silicon Ceiling
+
+<Callout type="note">
+  For decades, software engineers relied on Moore's Law and Dennard scaling to automatically accelerate bloat. That era is over. The future of performance lies in algorithmic discipline and memory efficiency.
+</Callout>
+
+## The Breakdown of Free Scaling
+
+<Process>
+  <Step n={1} title="Dennard Scaling Collapse (2006)">
+    Power density increased exponentially as transistors shrank, capping clock speeds at ~5 GHz due to thermal dissipation limits.
+  </Step>
+  <Step n={2} title="The Memory Wall">
+    CPU compute capability outstripped DRAM access latency by orders of magnitude. Cache locality became more important than raw instruction count.
+  </Step>
+  <Step n={3} title="AmDahl's Law Constraints">
+    Adding more CPU cores yielded diminishing returns due to synchronization overhead and serial execution bottlenecks.
+  </Step>
+</Process>
+
+---
+
+## The Software Engineering Shift
+
+<Observation n={1}>
+  Modern software efficiency is rarely limited by FLOPS or CPU instructions. It is almost always limited by memory bandwidth, cache misses, and uncoordinated thread lock contention.
+</Observation>
+
+<Decision n={1} status="accepted">
+  **Data-Oriented Architecture:** Shift software design from deeply nested object hierarchies to cache-friendly contiguous arrays, mechanical sympathy, and zero-allocation data streams.
+</Decision>
+
+<Tradeoff
+  gain="Order-of-magnitude improvements in execution speed and memory efficiency on existing hardware."
+  cost="Requires engineers to understand memory layout, CPU cache lines, and low-level system mechanics."
+/>

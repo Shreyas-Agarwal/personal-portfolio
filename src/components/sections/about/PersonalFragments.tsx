@@ -118,19 +118,26 @@ function FlippableCard({
             <div className="relative flex h-full flex-col justify-between p-8 md:p-10">
               <div>
                 <div className="mb-6 flex items-center gap-3">
-                  <div className="h-2 w-2 rounded-full" style={{ backgroundColor: fragment.accentHex }} />
+                  <div
+                    className="h-2 w-2 rounded-full"
+                    style={{ backgroundColor: fragment.accentHex }}
+                  />
                   <span className="font-mono text-[10px] tracking-[0.18em] text-black/30">
                     {fragment.category}
                   </span>
                 </div>
 
-                <h3 className={`font-medium leading-tight tracking-tight text-black/90 ${titleSize} ${isLarge ? "max-w-2xl" : "max-w-sm"}`}>
+                <h3
+                  className={`font-medium leading-tight tracking-tight text-black/90 ${titleSize} ${isLarge ? "max-w-2xl" : "max-w-sm"}`}
+                >
                   {fragment.title}
                 </h3>
               </div>
 
               <div>
-                <p className={`leading-relaxed text-black/55 ${isLarge ? "text-base max-w-xl" : "text-sm"}`}>
+                <p
+                  className={`leading-relaxed text-black/55 ${isLarge ? "text-base max-w-xl" : "text-sm"}`}
+                >
                   {fragment.description}
                 </p>
                 <span className="mt-5 block font-mono text-[9px] tracking-[0.14em] text-black/20 uppercase">
@@ -149,9 +156,7 @@ function FlippableCard({
             transform: "rotateY(180deg)",
           }}
         >
-          <div
-            className="relative min-h-full overflow-hidden rounded-[inherit] border border-black/[0.06] bg-white/95 backdrop-blur-md"
-          >
+          <div className="relative min-h-full overflow-hidden rounded-[inherit] border border-black/[0.06] bg-white/95 backdrop-blur-md">
             {/* Tinted glow on back */}
             <div
               className="absolute right-0 top-0 h-40 w-40 rounded-full blur-3xl opacity-20 pointer-events-none"
@@ -161,19 +166,26 @@ function FlippableCard({
             <div className="relative flex h-full flex-col justify-between p-8 md:p-10">
               <div>
                 <div className="mb-5 flex items-center gap-3">
-                  <div className="h-2 w-2 rounded-full" style={{ backgroundColor: fragment.accentHex }} />
+                  <div
+                    className="h-2 w-2 rounded-full"
+                    style={{ backgroundColor: fragment.accentHex }}
+                  />
                   <span className="font-mono text-[10px] tracking-[0.18em] text-black/30">
                     {fragment.category}
                   </span>
                 </div>
 
                 {/* Hidden question — serif, the centrepiece */}
-                <h3 className={`font-serif font-normal leading-snug tracking-tight text-black/88 ${isLarge ? "text-2xl md:text-3xl max-w-xl" : "text-lg md:text-xl"}`}>
+                <h3
+                  className={`font-serif font-normal leading-snug tracking-tight text-black/88 ${isLarge ? "text-2xl md:text-3xl max-w-xl" : "text-lg md:text-xl"}`}
+                >
                   {fragment.backQuestion}
                 </h3>
 
                 {/* Narrative */}
-                <p className={`mt-5 font-light leading-relaxed text-black/55 ${isLarge ? "text-base max-w-xl" : "text-sm"}`}>
+                <p
+                  className={`mt-5 font-light leading-relaxed text-black/55 ${isLarge ? "text-base max-w-xl" : "text-sm"}`}
+                >
                   {fragment.backBody}
                 </p>
               </div>
@@ -225,14 +237,15 @@ export function PersonalFragmentsSection() {
             <p className="text-sm leading-relaxed text-black/48">
               Many of the ideas that shape how I think about architecture, coordination, and
               operational systems were formed outside software entirely.{" "}
-              <span className="italic text-black/30">Hover any card to find the question hiding inside it.</span>
+              <span className="italic text-black/30">
+                Hover any card to find the question hiding inside it.
+              </span>
             </p>
           </div>
         </div>
 
         {/* Fragment Layout */}
         <div className="grid gap-6 md:grid-cols-12">
-
           {/* Large Left Feature — PHILOSOPHY */}
           <FlippableCard
             fragment={fragments[0]}

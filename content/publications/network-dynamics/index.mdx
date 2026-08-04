@@ -1,0 +1,54 @@
+---
+title: "Network Dynamics in Distributed Systems"
+description: "Understanding cascading failures, backpressure, and load propagation."
+date: 2026-04-12
+readingTime: 5 min
+---
+
+# Network Dynamics in Distributed Systems
+
+<Callout type="note">
+  Distributed networks are nonlinear feedback systems. A minor latency spike on a single downstream microservice can cascade into global thread starvation across an entire platform.
+</Callout>
+
+## Anatomy of a Cascading Failure
+
+<Process>
+  <Step n={1} title="Localized Latency Spike">
+    A database index rebuild or network packet loss causes a downstream service to slow down response times from 10ms to 500ms.
+  </Step>
+  <Step n={2} title="Thread Pool Exhaustion">
+    Upstream API gateways hold connections open waiting for responses, filling worker thread pools.
+  </Step>
+  <Step n={3} title="Uncoordinated Retry Storms">
+    Clients timeout and immediately retry, multiplying incoming request traffic by 3x–5x.
+  </Step>
+  <Step n={4} title="Global System Blackout">
+    Health check endpoints fail due to CPU saturation; orchestrators restart healthy nodes, worsening the overload.
+  </Step>
+</Process>
+
+---
+
+## Defensive Engineering Patterns
+
+<Observation n={1}>
+  Naive retry loops without randomized exponential backoff and jitter behave like distributed denial-of-service attacks against your own infrastructure.
+</Observation>
+
+```typescript filename="backpressure-circuit-breaker.ts"
+interface CircuitBreakerConfig {
+  failureThreshold: number; // e.g. 50% failure rate over 10s
+  resetTimeoutMs: number; // e.g. 5000ms cool-down
+  jitterFactor: number; // e.g. 0.2 randomized spread
+}
+```
+
+<Decision n={1} status="accepted">
+  **Strict Backpressure & Adaptive Load Shedding:** Enforce mandatory circuit breakers, reactive backpressure signaling, and random jitter retry algorithms across all microservice transport boundaries.
+</Decision>
+
+<Tradeoff
+  gain="High cluster stability under adverse network conditions; instant shedding of excess load."
+  cost="Requires clients to gracefully handle degraded/partial responses when shedding load."
+/>

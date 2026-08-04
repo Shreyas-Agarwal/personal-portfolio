@@ -1,0 +1,64 @@
+---
+title: "The High Structural Cost of Generic Relationship Graphs"
+date: "2026-07-01"
+---
+
+# The High Structural Cost of Generic Relationship Graphs
+
+Instead of explicitly modeling a business domain, engineers are often tempted to build generic data structures capable of modeling *everything*: Entity-Attribute-Value (EAV) or generic node-edge tables.
+
+The promise is compelling: ultimate extensibility without schema migrations. The operational reality is query degradation and optimizer bypass.
+
+<Observation n={1}>
+  Generic schemas trade compile-time relational safety and database optimizer statistics for runtime flexibility. Every query turns into a multi-hop self-join across a single massive key-value table.
+</Observation>
+
+---
+
+## The EAV Anti-Pattern
+
+Consider representing a simple product with dynamic attributes:
+
+```sql filename="eav-example.sql"
+-- EAV Schema: Flexible but computationally brutal
+CREATE TABLE entity_attribute_value (
+    entity_id UUID NOT NULL,
+    attribute_name VARCHAR(255) NOT NULL,
+    attribute_value TEXT,
+    PRIMARY KEY (entity_id, attribute_name)
+);
+
+-- Querying three attributes requires three self-joins:
+SELECT 
+    e1.entity_id,
+    e1.attribute_value AS product_name,
+    e2.attribute_value AS price,
+    e3.attribute_value AS category
+FROM entity_attribute_value e1
+JOIN entity_attribute_value e2 ON e1.entity_id = e2.entity_id AND e2.attribute_name = 'price'
+JOIN entity_attribute_value e3 ON e1.entity_id = e3.entity_id AND e3.attribute_name = 'category'
+WHERE e1.attribute_name = 'name';
+```
+
+---
+
+## Why Optimizers Fail on Generic Schemas
+
+Relational query optimizers rely on column histograms, statistics, and typed indexes. In a generic EAV table:
+
+1. **Histograms are useless**: The database engine sees one `attribute_value` column containing strings, numbers, dates, and JSON.
+2. **Index selectivity collapses**: Standard B-Tree indexes cannot differentiate between high-cardinality IDs and low-cardinality status flags stored in the same column.
+3. **Type safety vanishes**: Type validation moves out of the engine and into fragile application code.
+
+<Tradeoff
+  gain="Zero DDL migrations when adding new domain fields or entity types."
+  cost="Bypasses query optimizer, eliminates column-level constraints, and scales joins quadratically."
+/>
+
+<Decision n={1} status="accepted">
+  Prefer explicit typed schemas with JSONB / variant columns for genuine sparse attributes over pure EAV relational models.
+</Decision>
+
+---
+
+*Next in Track 01: **[History as a First-Class Feature](history-as-feature)**.*

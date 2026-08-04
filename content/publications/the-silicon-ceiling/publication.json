@@ -1,0 +1,20 @@
+{
+  "id": "the-silicon-ceiling",
+  "type": "essay",
+  "title": "The Silicon Ceiling",
+  "subtitle": "Physical and thermodynamic limits of hardware scaling.",
+  "abstract": "Examining Dennard scaling failure, thermal throttling, and why future software performance depends on architectural efficiency rather than raw silicon speed.",
+  "volume": "Volume I",
+  "revision": "Revision 01",
+  "date": "2026-03-05",
+  "author": "Shreyas Agarwal",
+  "domains": ["Hardware Architecture", "Performance Engineering", "Systems Economics"],
+  "status": "published",
+  "sections": [
+    {
+      "id": "index",
+      "title": "The Silicon Ceiling",
+      "href": ""
+    }
+  ]
+}

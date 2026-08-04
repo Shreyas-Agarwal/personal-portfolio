@@ -1,0 +1,56 @@
+---
+title: "The Hidden Cost of Moving Data"
+date: "2026-07-01"
+---
+
+# The Hidden Cost of Moving Data
+
+Architects frequently design systems under the implicit assumption that moving data across network interfaces, process boundaries, and storage tiers is cheap.
+
+It is not. Data transport imposes taxes across three dimensions: serialization CPU overhead, network bandwidth limits, and deserialization/parsing latencies.
+
+<Observation n={1}>
+  Computing on data is order-of-magnitude faster than moving data to computation. Pushing computation down to where data lives (filter pushdown, predicate pushdown) dominates remote ETL extractions.
+</Observation>
+
+---
+
+## The Network & Serialization Tax
+
+When a microservice requests 100,000 rows from a database over JSON HTTP APIs:
+
+1. **Database engine** serializes native binary tuples into JSON text bytes.
+2. **Network interface** packetizes and transmits megabytes across TCP sockets.
+3. **Application memory** parses JSON text into language runtime objects (causing GC pressure).
+4. **Application logic** filters out 99% of the rows.
+
+```json filename="network-payload.json"
+// Transporting verbose text JSON over HTTP incurs severe bandwidth and parsing overhead
+[
+  { "id": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d", "status": "ACTIVE", "created_at": "2026-08-01T12:00:00Z" },
+  { "id": "4c2dfa1e-8e9a-4c2f-9a1b-3c4d5e6f7a8b", "status": "ACTIVE", "created_at": "2026-08-01T12:01:00Z" }
+]
+```
+
+---
+
+## Architectural Mitigations
+
+To minimize data movement costs:
+
+1. **Apache Arrow & Zero-Copy Deserialization**: Use columnar binary memory representations that avoid CPU deserialization loops when transferring data between processes.
+2. **Predicate Pushdown**: Apply SQL `WHERE` clauses and projection columns at the storage engine level so only matching bytes traverse the wire.
+3. **Parquet / Iceberg Compression**: Utilize columnar dictionary encoding, run-length encoding (RLE), and Snappy/ZSTD compression for analytical workloads.
+
+<Decision n={1} status="accepted">
+  Enforce predicate pushdown and binary serialization (e.g., Protobuf, Arrow, Parquet) for cross-service data pipelines rather than uncompressed JSON HTTP endpoints.
+</Decision>
+
+<Tradeoff
+  gain="Drastically reduces network egress costs, memory allocations, and query latency."
+  cost="Requires shared schema definitions (gRPC/Protobuf/Arrow) instead of ad-hoc JSON payloads."
+/>
+
+---
+
+*Next in Track 01: **[Cost of Random UUID Keys](random-uuids)**.*

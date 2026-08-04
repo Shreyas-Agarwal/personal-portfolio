@@ -1,6 +1,6 @@
+import type { Metadata } from "next";
 import { JournalIndex } from "@/components/journal/JournalIndex";
 import { getJournalEntries, getJournalFacets } from "@/lib/journal";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Journal",

@@ -1,0 +1,53 @@
+---
+title: "Semantic Metadata Registry"
+description: "Architecture, technical specification, and executive proposal for thin-projection analytics ontologies."
+date: 2026-08-04
+readingTime: 3 min
+---
+
+# Semantic Metadata Registry
+
+_Writing One Architecture at Four Altitudes: Vision Paper → Executive Proposal → Architecture Overview → Technical Specification._
+
+---
+
+The four documents in this collection describe a single piece of software architecture — a shared semantic layer sitting between raw analytical data and every feature that consumes it (dashboards, AI assistants, reporting tools, and future automation).
+
+What makes them worth presenting together isn't the architecture alone; it's that the same design is deliberately written four separate times, once for each of four audiences, each version answering a different question and containing almost none of the same sentences as the others.
+
+<Callout type="important">
+  "Explain this architecture" is not one task. It is four distinct tasks: Vision Paper, Executive Proposal, Architecture Overview, and Technical Specification. Conflating them into a single document means it serves no audience well.
+</Callout>
+
+---
+
+## The Four Altitudes
+
+| Document | Question It Answers | Primary Audience | What It Deliberately Omits |
+| :--- | :--- | :--- | :--- |
+| **[00 Vision Paper](00-vision-paper)** | Why does this problem exist in the world at all? | Architects & Product Strategy | Specific company or implementation details. |
+| **[01 Executive Proposal](01-executive-proposal)** | Why should we build this now, specifically? | Leadership & Budget Owners | Schemas, field names, and cache-key formats. |
+| **[02 Architecture Overview](02-architecture-overview)** | What is it, and how do the pieces talk to each other? | Senior & Systems Engineers | Exact field-level types and storage formats. |
+| **[03 Technical Specification](03-technical-specification)** | Exactly how does it work, field by field? | Implementation Engineers | Persuasion — moves straight to precision. |
+
+---
+
+## The Core Architectural Pattern
+
+Three fears sit underneath traditional semantic layers:
+
+<Process>
+  <Step n={1} title="Authoring Pain">
+    One giant object tries to serve everyone, resulting in dozens of required fields per column.
+  </Step>
+  <Step n={2} title="Context Overload">
+    Full objects are shipped to every consumer (LLMs, query planners, UI tools), overloading prompt limits.
+  </Step>
+  <Step n={3} title="Rigidity & Coupling">
+    Authoring schema == Runtime payload. Any schema change breaks five downstream consumers.
+  </Step>
+</Process>
+
+<Decision n={1} status="accepted">
+  **The Core Architectural Fix:** Author a rich ontology once in a stable storage format, then compile thin, purpose-built projections (Prompt View, Planner View, Resolver View, Tool Registry) for each consumer instead of shipping raw objects anywhere.
+</Decision>

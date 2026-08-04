@@ -108,11 +108,11 @@ export function ResearchProgrammeClient({ essays }: ResearchProgrammeClientProps
                 SERIES TRACKS // HOVER TO EXPLORE
               </span>
               <div className="space-y-4">
-                {[
+                {([
                   { id: "architecture", title: "Architecture of Information Systems", status: "Ongoing" },
                   { id: "physics", title: "Physics of Information Systems", status: "Active Research" },
                   { id: "laws", title: "Laws of Information Systems", status: "Research Notebook" },
-                ].map((track) => (
+                ] as const).map((track) => (
                   <div
                     key={track.id}
                     className={`cursor-pointer border-l-2 pl-4 py-2 transition-all ${
@@ -120,7 +120,7 @@ export function ResearchProgrammeClient({ essays }: ResearchProgrammeClientProps
                         ? "border-[#DE4B31] bg-[#E6E1D6]/[0.01]"
                         : "border-transparent hover:border-[#E6E1D6]/10"
                     }`}
-                    onMouseEnter={() => setHoveredTrack(track.id as any)}
+                    onMouseEnter={() => setHoveredTrack(track.id)}
                   >
                     <div className="flex justify-between items-baseline">
                       <span className={`${serif.className} text-lg font-medium text-[#E6E1D6]/90`}>

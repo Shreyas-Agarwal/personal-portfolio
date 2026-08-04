@@ -1,0 +1,85 @@
+---
+title: "0002 — Desktop Agent Responsibility Boundaries"
+description: "Defining the client/server responsibility boundary: thin agent vs. server-owned control plane."
+date: 2026-08-01
+readingTime: 7 min
+---
+
+# Desktop Agent Responsibility Boundaries
+
+<Callout type="note">
+  **Scope:** Defines which responsibilities belong on the client machine and which belong on the server. Does not cover specific transport/storage mechanics (see Note 0003) or language selection (see Note 0005).
+</Callout>
+
+## Context
+
+The existing desktop agent is implemented as a single monolithic module of approximately 1,300 lines of code. Within that one file, without internal package or module boundaries, 11 distinct responsibilities are combined into a single executable unit.
+
+<Observation n={1}>
+  Concentrating unrelated responsibilities (CLI parsing, credential storage, sync planning, extraction, upload, retry logic, logging, process locking) into one file means a change to any single concern requires touching and re-testing the entire module.
+</Observation>
+
+### Independent Reasons to Change
+
+Each of the responsibilities below has an independent reason to change:
+
+| Responsibility | Independent Reason to Change |
+| :--- | :--- |
+| **Synchronization planning** | Adopting change-token-based sync (Note 0001) |
+| **Upload destination** | Migrating from an intermediate document repository to direct object storage (Note 0003) |
+| **Credential model** | Migrating from a static shared secret to asymmetric signing (Note 0005) |
+| **Execution trigger** | Migrating from scheduled to user-triggered execution (Note 0004) |
+| **Extraction targets** | Adding any of the dozens of additional collection types in scope |
+
+### Credential and Destination Coupling
+
+The agent embeds an encrypted client secret and performs authentication against a vendor storage API directly. This produces two critical architectural liabilities:
+
+1. **Uncontained Credential Blast Radius:** A credential resident on client-owned hardware cannot be revoked or scoped per-installation without redistributing a binary.
+2. **Hardcoded API Surface:** Any change to the storage destination requires modifying and redistributing the desktop binary to every installed client machine.
+
+## Decision
+
+<Decision n={1} status="accepted">
+  Restructure the client/server responsibility boundary so that the desktop agent's sole responsibilities are reduced to four execution primitives: **Authenticate → Extract → Stream → Finish.**
+</Decision>
+
+<Process>
+  <Step n={1} title="Authenticate">
+    Sign requests with local asymmetric keypair (Ed25519) and send to server.
+  </Step>
+  <Step n={2} title="Extract">
+    Execute the exact parameterized job definition supplied by the server.
+  </Step>
+  <Step n={3} title="Stream">
+    Stream raw payload directly to the presigned `PUT` URL issued by the server.
+  </Step>
+  <Step n={4} title="Finish">
+    Report completion status, payload size, and checksums back to server.
+  </Step>
+</Process>
+
+### Responsibility Redistribution
+
+| Responsibility | Current Location | Proposed Location |
+| :--- | :--- | :--- |
+| **Synchronization window / watermark logic** | Client | Server (per Note 0001) |
+| **Collection/report definitions** | Client (hand-written per function) | Server-side catalog |
+| **Upload destination & credentials** | Client (embedded secrets) | Server (presigned URLs, per Note 0003) |
+| **Retry & backoff tuning** | Client (hardcoded constants) | Server-configurable, client-executed |
+| **Scheduling / trigger policy** | Client (OS task scheduler) | Execution model decision (per Note 0004) |
+
+## Consequences
+
+<Tradeoff
+  gain="Adding a new collection type becomes a server catalog entry rather than a binary release. Client attack surface and audit scope shrink significantly."
+  cost="Requires creating and operating a server-side job catalog and watermark store. Client becomes dependent on server reachability to obtain jobs."
+/>
+
+- **Adding a new collection type is a server-side catalog entry**, not a client binary release.
+- **Changing storage destinations or credentials requires zero client updates.**
+- **The client's attack surface shrinks** to executing signed server instructions and streaming output.
+
+## Alternatives Considered
+
+**Internal modularization without changing network architecture:** Splitting the monolithic file into internal packages while keeping job planning and storage credentials on the client was evaluated and rejected. Internal file organization does not fix client/server responsibility coupling.

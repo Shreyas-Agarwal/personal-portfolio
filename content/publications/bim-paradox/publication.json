@@ -1,0 +1,20 @@
+{
+  "id": "bim-paradox",
+  "type": "essay",
+  "title": "The BIM Paradox",
+  "subtitle": "Waterfall is what the client wants. Agile is what BIM needs.",
+  "abstract": "Most BIM implementations do not fail because of software limitations. They fail because organizations try to install BIM like software instead of adopting it like culture.",
+  "volume": "Volume I",
+  "revision": "Revision 01",
+  "date": "2026-08-01",
+  "author": "Shreyas Agarwal",
+  "domains": ["Systems Architecture", "AEC Industry", "Process Engineering"],
+  "status": "published",
+  "sections": [
+    {
+      "id": "index",
+      "title": "The BIM Paradox",
+      "href": ""
+    }
+  ]
+}

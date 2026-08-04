@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
+import { ConclusionSection } from "@/components/sections/about/Conclusion";
+import { ConfluenceSection } from "@/components/sections/about/Confluence";
 import { AboutHero } from "@/components/sections/about/Hero";
 import { PersonalFragmentsSection } from "@/components/sections/about/PersonalFragments";
-import { ConfluenceSection } from "@/components/sections/about/Confluence";
-import { ConclusionSection } from "@/components/sections/about/Conclusion";
 
 export const metadata: Metadata = {
   title: "About",
@@ -25,5 +25,3 @@ export default function Home() {
     </>
   );
 }
-
-

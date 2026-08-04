@@ -1,5 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
+import matter from "gray-matter";
+import type { Metadata } from "next";
 import { ArticleBody } from "@/components/journal/ArticleBody";
 import { ArticleFooterNav } from "@/components/journal/ArticleFooterNav";
 import { ArticleHeader } from "@/components/journal/ArticleHeader";
@@ -10,9 +12,6 @@ import { TableOfContents } from "@/components/journal/TableOfContents";
 import { getJournalEntries, type JournalEntry } from "@/lib/journal";
 import { getRelatedEntries } from "@/lib/related";
 import { parseTocHeadings } from "@/lib/toc";
-import matter from "gray-matter";
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
@@ -83,9 +82,7 @@ export async function generateStaticParams() {
     .readdirSync(JOURNAL_DIR)
     .filter((f) => f.endsWith(".md"))
     .map((filename) => {
-      const { data } = matter(
-        fs.readFileSync(path.join(JOURNAL_DIR, filename), "utf8"),
-      );
+      const { data } = matter(fs.readFileSync(path.join(JOURNAL_DIR, filename), "utf8"));
       return { slug: data.slug ?? filename.replace(/\.md$/, "") };
     });
 }
@@ -94,12 +91,50 @@ export async function generateStaticParams() {
 // Page
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default async function JournalEntryPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+import { notFound, redirect } from "next/navigation";
+
+const LEGACY_PUBLICATION_REDIRECTS: Record<string, string> = {
+  "data-1-oltp-vs-olap":
+    "/projects/publications/architecture-of-information-systems/data/oltp-vs-olap",
+  "data-2-canonical-business-model":
+    "/projects/publications/architecture-of-information-systems/data/canonical-business-model",
+  "data-3-generic-relationship-cost":
+    "/projects/publications/architecture-of-information-systems/data/generic-relationship-cost",
+  "data-4-history-as-feature":
+    "/projects/publications/architecture-of-information-systems/data/history-as-feature",
+  "data-5-cost-of-moving-data":
+    "/projects/publications/architecture-of-information-systems/data/cost-of-moving-data",
+  "data-6-random-uuids":
+    "/projects/publications/architecture-of-information-systems/data/random-uuids",
+  "infra-1-application-is-not-system":
+    "/projects/publications/architecture-of-information-systems/infrastructure/application-is-not-system",
+  "infra-2-dependency-bleed":
+    "/projects/publications/architecture-of-information-systems/infrastructure/dependency-bleed",
+  "infra-3-modern-memory-leak":
+    "/projects/publications/architecture-of-information-systems/infrastructure/modern-memory-leak",
+  "infra-4-session-state-has-a-cost":
+    "/projects/publications/architecture-of-information-systems/infrastructure/session-state-has-a-cost",
+  "infra-5-the-four-tuple":
+    "/projects/publications/architecture-of-information-systems/infrastructure/the-four-tuple",
+  "infra-6-the-reverse-proxy":
+    "/projects/publications/architecture-of-information-systems/infrastructure/the-reverse-proxy",
+  "bim-paradox": "/projects/publications/bim-paradox",
+  "context-systems": "/projects/publications/context-systems",
+  "ecology-and-ai": "/projects/publications/ecology-and-ai",
+  "evolution-vs-software": "/projects/publications/evolution-vs-software",
+  "mcp-context-rot": "/projects/publications/mcp-context-rot",
+  "network-dynamics": "/projects/publications/network-dynamics",
+  "the-silicon-ceiling": "/projects/publications/the-silicon-ceiling",
+  "transformer-vs-qubit": "/projects/publications/transformer-vs-qubit",
+};
+
+export default async function JournalEntryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+
+  if (LEGACY_PUBLICATION_REDIRECTS[slug]) {
+    redirect(LEGACY_PUBLICATION_REDIRECTS[slug]);
+  }
+
   const filePath = resolveFilePath(slug);
 
   if (!filePath) notFound();
@@ -168,7 +203,6 @@ export default async function JournalEntryPage({
       {/* ── Three-column reading layout ─────────────────────────────── */}
       <div className="mx-auto max-w-[1400px] px-6 py-8 md:px-12">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[220px_1fr_200px] xl:gap-16">
-
           {/* ── Left rail: Table of Contents (desktop only) ─────────── */}
           <div className="hidden lg:block">
             <div className="sticky top-24">
