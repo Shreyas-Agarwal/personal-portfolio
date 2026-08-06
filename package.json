@@ -11,6 +11,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@giscus/react": "^3.1.0",
     "@hookform/resolvers": "^5.2.2",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
@@ -54,7 +55,9 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.38.0",
     "gray-matter": "^4.0.3",
+    "html2canvas-pro": "^2.3.3",
     "input-otp": "^1.4.2",
+    "jspdf": "^4.2.1",
     "lucide-react": "^0.575.0",
     "mermaid": "^11.15.0",
     "next": "16.2.6",
