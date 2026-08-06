@@ -1,0 +1,26 @@
+---
+title: "Track 01 — Data Architecture"
+date: "2026-07-01"
+---
+
+# Track 01 — Data Architecture
+
+This track follows the information itself: how it's modeled, how it earns trust, how it moves, and how it's stored physically once the modeling is done. Ten articles, from the first schema decision an organization makes to the spatial infrastructure and maturity curve that close out the track.
+
+<Observation n={1}>
+  This track and Track 02 are not two independent series bundled under one title. They're one continuous argument, split across two shelves for navigability. Nearly every article on this shelf opens by recapping something a Track 02 article just established, and closes by handing the thread back across the aisle.
+</Observation>
+
+The split exists for the same reason a physical library separates fiction from reference — not because the two never inform each other, but because a reader looking for "how should this schema be shaped" shouldn't have to wade through socket exhaustion to find it, and vice versa. The tracks were split by *altitude of concern* — data semantics on this shelf, runtime survival on the other — not by chronology.
+
+<Callout type="note">
+  If you're reading straight through for the first time, the original pacing alternated Data and Infrastructure articles one at a time — Article 1 here, Article 2 on the other shelf, Article 3 back here, and so on through Article 20. Every article's opening and closing paragraphs link directly to whichever article actually precedes or follows it, on whichever shelf that happens to be — follow those inline links for the intended reading order. This shelf, read top to bottom, gives you the Data thread on its own.
+</Callout>
+
+## What's on This Shelf
+
+- **Articles 1–11 (odd):** the schema/warehouse arc — OLTP vs. OLAP, canonical business models, the cost of generic relationships, history as a feature, the physical tax of moving data, and why identifiers have physics.
+- **Articles 13, 15, 17 (odd):** the consumption arc — what makes a Gold table earn its layer, the transport fix that finally pays off Article 9's serialization tax, and spatial indexing for data that has no single native ordering.
+- **Article 19:** the synthesis — every article above, read as one five-stage maturity curve instead of nine separate lessons.
+
+Start at **[The Schema That Runs the Business Is Not the Schema That Explains It](oltp-vs-olap)**, or jump to the synthesis directly at **[The Analytics Platform Maturity Curve](analytics-maturity-curve)** if you've already read the rest.

@@ -5,7 +5,7 @@ date: "2026-07-01"
 
 # Why Analytics Platforms Require a Canonical Business Model
 
-In the previous article, we explored the hidden infrastructure layers that sit between users and applications: DNS, TLS, reverse proxies, routing rules. The broader lesson was simple.
+In the previous article, **[Your Application Code Is Not the System](../infrastructure/application-is-not-system)**, we explored the hidden infrastructure layers that sit between users and applications: DNS, TLS, reverse proxies, routing rules. The broader lesson was simple.
 
 > Your application is not the system.
 
@@ -169,7 +169,7 @@ This may appear more complicated. In reality, it reduces complexity. Business lo
 
 This article is not really about dashboards. Nor is it about Power BI. It is about a pattern that appears repeatedly throughout systems architecture: a component succeeds, more responsibility gets assigned to it, more responsibility gets assigned again, and eventually the component becomes a bottleneck because it is carrying work it was never designed to perform.
 
-In Week 1, transactional databases became analytical bottlenecks. In Week 2, application code became an architectural bottleneck for understanding production systems. Here, visualization platforms become bottlenecks for business modeling. The technologies differ. The pattern remains the same: architectures evolve when responsibilities become too large for a single layer to carry.
+In **[Article 1](oltp-vs-olap)**, transactional databases became analytical bottlenecks. In **[Article 2](../infrastructure/application-is-not-system)**, application code became an architectural bottleneck for understanding production systems. Here, visualization platforms become bottlenecks for business modeling. The technologies differ. The pattern remains the same: architectures evolve when responsibilities become too large for a single layer to carry.
 
 ---
 
@@ -177,7 +177,7 @@ In Week 1, transactional databases became analytical bottlenecks. In Week 2, app
 
 Canonical business models solve one important problem: they protect analytical systems from becoming entangled with operational definitions. But another challenge remains. Even with stable business entities, analytics platforms still depend on external systems — APIs fail, webhooks arrive late, rate limits appear unexpectedly, third-party services become unavailable.
 
-The next question is no longer about modeling data. It is about surviving dependency failures. How do you prevent external systems from dragging your own architecture down with them? That challenge leads directly into resilience patterns such as circuit breakers, bulkheads, and dependency isolation. And that is where we go next.
+The next question is no longer about modeling data. It is about surviving dependency failures. How do you prevent external systems from dragging your own architecture down with them? That challenge leads directly into resilience patterns such as circuit breakers, bulkheads, and dependency isolation — continue to **[Dependency Bleed](../infrastructure/dependency-bleed)**.
 
 ---
 

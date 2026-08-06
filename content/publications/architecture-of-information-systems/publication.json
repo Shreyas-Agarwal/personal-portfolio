@@ -19,6 +19,7 @@
       "id": "data-track",
       "title": "Data Architecture",
       "group": "Data Architecture",
+      "href": "data/overview",
       "children": [
         {
           "id": "oltp-vs-olap",
@@ -49,6 +50,26 @@
           "id": "random-uuids",
           "title": "Cost of Random UUID Keys",
           "href": "data/random-uuids"
+        },
+        {
+          "id": "dashboard-first-anti-pattern",
+          "title": "The Dashboard-First Anti-Pattern",
+          "href": "data/dashboard-first-anti-pattern"
+        },
+        {
+          "id": "modern-analytical-transport",
+          "title": "Arrow, ADBC & the Death of ODBC",
+          "href": "data/modern-analytical-transport"
+        },
+        {
+          "id": "spatial-intelligence",
+          "title": "Spatial Intelligence: Maps Are Not Tables",
+          "href": "data/spatial-intelligence"
+        },
+        {
+          "id": "analytics-maturity-curve",
+          "title": "The Analytics Platform Maturity Curve",
+          "href": "data/analytics-maturity-curve"
         }
       ]
     },
@@ -56,6 +77,7 @@
       "id": "infra-track",
       "title": "Infrastructure Systems",
       "group": "Infrastructure Systems",
+      "href": "infrastructure/overview",
       "children": [
         {
           "id": "application-is-not-system",
@@ -86,6 +108,26 @@
           "id": "the-reverse-proxy",
           "title": "The Reverse Proxy Gateway",
           "href": "infrastructure/the-reverse-proxy"
+        },
+        {
+          "id": "gateway-backpressure",
+          "title": "Backpressure & Graceful Degradation",
+          "href": "infrastructure/gateway-backpressure"
+        },
+        {
+          "id": "caches-are-harder-than-databases",
+          "title": "Caches Are Far Harder Than Databases",
+          "href": "infrastructure/caches-are-harder-than-databases"
+        },
+        {
+          "id": "unconditional-recovery",
+          "title": "Designing for Unconditional Recovery",
+          "href": "infrastructure/unconditional-recovery"
+        },
+        {
+          "id": "stability-is-a-core-constraint",
+          "title": "Stability Is a Core Constraint, Not a Post-Script",
+          "href": "infrastructure/stability-is-a-core-constraint"
         }
       ]
     }

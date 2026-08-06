@@ -1,0 +1,26 @@
+---
+title: "Track 02 — Infrastructure Systems"
+date: "2026-07-01"
+---
+
+# Track 02 — Infrastructure Systems
+
+This track follows the runtime: everything that has to keep information available, fast, and recoverable once Track 01's schemas and models are actually deployed and taking load. Ten articles, from the layers outside your application binary to the closing argument that resilience is a design-time constraint, not a backlog item.
+
+<Observation n={1}>
+  This track and Track 01 are not two independent series bundled under one title. They're one continuous argument, split across two shelves for navigability. Nearly every article on this shelf opens by recapping something a Track 01 article just established, and closes by handing the thread back across the aisle.
+</Observation>
+
+The split exists for the same reason a physical library separates fiction from reference — not because the two never inform each other, but because a reader looking for "why is my socket pool exhausted" shouldn't have to wade through canonical business models to find it, and vice versa. The tracks were split by *altitude of concern* — runtime survival on this shelf, data semantics on the other — not by chronology.
+
+<Callout type="note">
+  If you're reading straight through for the first time, the original pacing alternated Data and Infrastructure articles one at a time — Article 2 here, Article 1 on the other shelf, Article 4 back here, and so on through Article 20. Every article's opening and closing paragraphs link directly to whichever article actually precedes or follows it, on whichever shelf that happens to be — follow those inline links for the intended reading order. This shelf, read top to bottom, gives you the Infrastructure thread on its own.
+</Callout>
+
+## What's on This Shelf
+
+- **Articles 2–12 (even):** the survival arc — why application code isn't the system, containing dependency failure, the modern shape of a memory leak, why session state has a cost, socket exhaustion, and the reverse proxy as trust boundary.
+- **Articles 14, 16, 18 (even):** the pressure arc — teaching a gateway to say no before an unbounded queue does it instead, why caches are harder than the databases they front, and designing for recovery instead of only prevention.
+- **Article 20:** the synthesis — every article above, plus Track 01's own synthesis, read as one closing argument about when stability has to be designed in.
+
+Start at **[Your Application Code Is Not the System](application-is-not-system)**, or jump to the finale directly at **[Stability Is an Architectural Core Constraint, Not a Post-Script Feature](stability-is-a-core-constraint)** if you've already read the rest.

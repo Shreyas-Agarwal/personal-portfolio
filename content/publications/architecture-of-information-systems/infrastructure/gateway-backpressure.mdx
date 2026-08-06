@@ -1,0 +1,149 @@
+---
+title: "Backpressure: Teaching Your Gateway How to Say \"No\""
+date: "2026-07-01"
+---
+
+# Backpressure: Teaching Your Gateway How to Say "No"
+
+In the previous article, **[The Reverse Proxy Is Your Real Application Gateway](the-reverse-proxy)**, we established the reverse proxy as an architectural firewall — a checkpoint that decides which traffic is even allowed to reach the application, absorbing slow clients, malformed requests, and hostile scanners before they ever touch a worker process. That framing covered traffic the gateway needs to be defended *against*. It said nothing about the harder case: traffic the gateway should accept, that is entirely legitimate, and that is simply arriving faster than anything downstream can process.
+
+Earlier in this series, when **[a Gold layer started feeding automated actions instead of static dashboards](../data/dashboard-first-anti-pattern)**, we skipped over an assumption without naming it: that the pipeline behind those actions could always keep up with the events triggering them. It can't. Ingestion rates spike, workers stay fixed, and something has to give.
+
+<Observation n={1}>
+  A reverse proxy that only screens for malicious traffic is solving half the admission problem. The other half is legitimate traffic arriving at a rate the system was never sized to absorb — and unlike a hostile request, this traffic cannot simply be blocked. It has to be shaped.
+</Observation>
+
+---
+
+## The Optimistic Queue
+
+Most systems handle a burst of incoming work the same way, by default: they queue it. A webhook arrives, it's placed on a queue; an API request arrives, it's placed in a connection pool's waiting list; an event arrives, it's appended to a topic. Queueing feels safe, because nothing is rejected — every request is eventually going to be handled.
+
+The assumption hiding inside that sentence is that "eventually" is short enough not to matter. Under normal load, it is. Under sustained load, the queue simply keeps growing, because arrivals are outpacing departures, and a queue that grows without bound behaves exactly like the **[unbounded collections](modern-memory-leak)** this series has already diagnosed as a memory failure mode — a cache without expiration, a Map that never shrinks. A queue with no depth limit is the same anti-pattern wearing a messaging system's clothing.
+
+<Callout type="failure">
+  An unbounded queue does not prevent overload. It postpones the symptom and compounds the eventual failure. Every item waiting in the queue is retained state — memory, file descriptors, or broker disk — and retained state under sustained arrival pressure grows exactly like the connection pools and unresolved Promises examined earlier in this series.
+</Callout>
+
+---
+
+## Queue Pressure Is a Signal, Not a Side Effect
+
+The critical shift is treating queue depth as a first-class signal about system health, rather than an implementation detail hidden inside a broker. Call this **queue pressure**: the gap between the rate work is arriving and the rate it's being drained. When queue pressure is near zero, the system has headroom. When it climbs steadily, the system is telling you, well before anything crashes, that current demand exceeds current capacity.
+
+Most outages caused by ingestion overload are not sudden. They are queue pressure that nobody was watching, accumulating quietly until a downstream timeout, an out-of-memory kill, or a broker disk filling up turns a slow accumulation into a hard failure. The information needed to intervene was available far earlier — nothing was reading it.
+
+```typescript filename="bullmq-queue-pressure.ts"
+// BullMQ: treat queue depth as a health signal, not an implementation detail
+const queue = new Queue('webhook-ingest', { connection });
+
+const counts = await queue.getJobCounts('waiting', 'active', 'delayed');
+
+if (counts.waiting > INGESTION_THRESHOLD) {
+  // Queue pressure crossed the line — this is a system health event,
+  // not just a number to log.
+  emitDegradationSignal('webhook-ingest', counts.waiting);
+}
+```
+
+---
+
+## Two Ways to Respond, and Only One That Scales
+
+Once queue pressure is visible, a system has two structurally different responses available.
+
+The first is to add capacity — more workers, more consumers, a bigger cluster. This works, and it should be part of the answer, but it has a ceiling: capacity takes time to provision, costs money to keep idle for rare bursts, and cannot expand instantaneously in response to a spike that started ninety seconds ago.
+
+The second is to shape demand at the point of entry — to make the gateway itself capable of refusing or delaying work before it ever becomes a queued item. This is backpressure in the proper sense: not "handle everything, eventually," but "tell the caller now whether this request can be accepted," so that the decision about what to do with excess load moves from an overwhelmed worker fleet back to the edge, where it's cheap to make.
+
+<Decision n={1} status="accepted">
+  Implement defensive ingestion thresholds at the gateway — admission checks that reject or delay work before it is queued — rather than relying exclusively on horizontal scaling of downstream workers to absorb arrival spikes.
+</Decision>
+
+---
+
+## Ingestion Thresholds in Practice
+
+An **ingestion threshold** is an explicit watermark: a queue depth, an active-connection count, or a request rate beyond which the gateway stops accepting new work unconditionally and starts actively shedding or delaying it. The mechanism differs by tool, but the principle is identical — the check happens before the item enters the system's working memory, not after.
+
+RabbitMQ exposes this most directly through consumer prefetch and queue length limits. A consumer with a small, explicit prefetch count will only ever be handed a bounded number of unacknowledged messages, which caps how much unfinished work any single worker can be holding at once:
+
+```text filename="rabbitmq-prefetch.conf"
+# Cap unacknowledged messages per consumer — bounds in-flight work per worker
+channel.basic_qos(prefetch_count=20)
+
+# Queue-level max length: once full, publishes are rejected or the oldest
+# message is dropped, depending on overflow policy
+x-max-length: 50000
+x-overflow: reject-publish
+```
+
+BullMQ, being Redis-backed rather than broker-based, achieves the same effect through explicit concurrency limits and rate limiting on the queue itself, rather than per-message acknowledgment semantics:
+
+```typescript filename="bullmq-rate-limit.ts"
+// Cap how fast jobs are pulled off the queue, independent of how fast they arrive
+const worker = new Worker('webhook-ingest', processJob, {
+  connection,
+  concurrency: 10,
+  limiter: { max: 200, duration: 1000 }, // 200 jobs/sec ceiling
+});
+
+// Reject new work at the edge once pressure crosses the threshold, rather
+// than letting it queue silently
+app.post('/webhook', async (req, res) => {
+  const { waiting } = await queue.getJobCounts('waiting');
+  if (waiting > INGESTION_THRESHOLD) {
+    return res.status(503).set('Retry-After', '5').send();
+  }
+  await queue.add('event', req.body);
+  res.status(202).send();
+});
+```
+
+Both examples do the same job through different primitives: they convert an invisible, unbounded queue into a bounded one with an explicit, monitored ceiling, and they give the gateway a way to say no cheaply instead of accepting everything and failing expensively later, deep inside the system.
+
+---
+
+## Graceful Degradation Is a Ladder, Not a Switch
+
+The naive version of admission control is binary: accept everything, or reject everything once a single threshold is crossed. Mature systems treat **degradation** as a ladder with several rungs, each shedding a little more than the last, so that the system's behavior under load is a controlled slope rather than a cliff.
+
+<Process>
+  <Step n={1} title="Full service">
+    Queue pressure is low. Every request is accepted and processed on the normal path.
+  </Step>
+  <Step n={2} title="Shed non-critical work">
+    Pressure crosses the first watermark. Background enrichment, analytics logging, and non-essential webhooks are delayed or dropped; primary request paths remain unaffected — the same asynchronous decoupling this series covered when **[isolating dependencies](dependency-bleed)**.
+  </Step>
+  <Step n={3} title="Shed at the edge">
+    Pressure crosses a second, higher watermark. The gateway itself begins rejecting new ingestion with `503` and an explicit `Retry-After`, rather than accepting requests it already knows it cannot honor in time.
+  </Step>
+  <Step n={4} title="Circuit fully open">
+    Pressure remains critical. The ingestion endpoint stops accepting new work entirely until queue depth recovers below a defined floor, protecting whatever backlog already exists from being buried further.
+  </Step>
+</Process>
+
+<Tradeoff
+  gain="A gateway that sheds load predictably keeps the rest of the system inside its designed operating envelope, and gives callers an explicit, actionable signal — a status code and a retry hint — instead of an unbounded wait."
+  cost="Some legitimate requests get rejected or delayed during a genuine spike, and every caller of the ingestion endpoint now has to handle a 503/Retry-After response rather than assuming every request eventually succeeds."
+/>
+
+---
+
+## A More Important Lesson
+
+This article is not really about RabbitMQ or BullMQ. It is about where the decision to say no gets made. A system that only learns it's overloaded once a worker times out or a process is killed for exhausting memory has let the decision get made by the least convenient part of the stack, at the least convenient possible time. A system that watches queue pressure and enforces an ingestion threshold at the gateway has moved that same decision to the cheapest possible place to make it — the edge, before any resource has been committed.
+
+Every resilience pattern this series has covered shares this shape: contain the failure as close to the boundary as possible, rather than letting it propagate inward and become someone else's emergency.
+
+---
+
+## Looking Ahead
+
+Everything in this article has been about controlling how fast data comes *in*. There is a mirror question this series raised early on and never fully closed out: how fast can data go back *out*, once a system needs to read it — not for ingestion, but for analysis. **[Several articles ago](../data/cost-of-moving-data)**, moving data across a boundary was identified as a hidden, compounding tax, paid every time information was serialized, transmitted, and deserialized again. That tax was named. It was never actually paid down.
+
+It's time to go back and finish that conversation, in **[Modern Analytical Transport](../data/modern-analytical-transport)**.
+
+---
+
+*Next in Track 02: **[Caches Are Far Harder Than Databases](caches-are-harder-than-databases)**.*

@@ -5,7 +5,7 @@ date: "2026-07-01"
 
 # The Modern Memory Leak: Unbounded Connection & Context Pools
 
-In the previous article, we explored the hidden cost of flexibility. Generic relationship graphs and Entity-Attribute-Value models promise adaptability, but over time that flexibility becomes increasingly expensive: queries grow slower, execution plans become harder to optimize, and the system gradually accumulates performance debt. The important observation was that failure did not arrive suddenly — the architecture deteriorated progressively. Modern runtime failures often follow the same pattern. Applications rarely explode. They slowly suffocate.
+In the previous article, **[The High Structural Cost of Generic Relationship Graphs](../data/generic-relationship-cost)**, we explored the hidden cost of flexibility. Generic relationship graphs and Entity-Attribute-Value models promise adaptability, but over time that flexibility becomes increasingly expensive: queries grow slower, execution plans become harder to optimize, and the system gradually accumulates performance debt. The important observation was that failure did not arrive suddenly — the architecture deteriorated progressively. Modern runtime failures often follow the same pattern. Applications rarely explode. They slowly suffocate.
 
 ## The Old Memory Leak
 
@@ -140,7 +140,7 @@ This article is not really about JavaScript. Nor is it about Python. It is about
 
 ## Looking Ahead
 
-So far, this series has explored how complexity spreads through data models, infrastructure layers, dependencies, and runtimes. Next we return to the data layer, because most business systems share another architectural blind spot: they know what exists, but they do not know what changed. Traditional application tables are optimized around current state. Analytics systems increasingly require historical state. The distinction sounds subtle, but it fundamentally changes how data must be modeled, stored, and queried. And that is where we go next.
+So far, this series has explored how complexity spreads through data models, infrastructure layers, dependencies, and runtimes. Next we return to the data layer, because most business systems share another architectural blind spot: they know what exists, but they do not know what changed. Traditional application tables are optimized around current state. Analytics systems increasingly require historical state. The distinction sounds subtle, but it fundamentally changes how data must be modeled, stored, and queried — continue to **[History Is a First-Class Feature](../data/history-as-feature)**.
 
 ---
 

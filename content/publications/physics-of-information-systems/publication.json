@@ -1,0 +1,47 @@
+{
+  "id": "physics-of-information-systems",
+  "type": "research-series",
+  "title": "Physics of Information Systems",
+  "subtitle": "First-principles essays on the categorical gap between reality and its representations, and what that gap forces every information system to do.",
+  "abstract": "A multi-part publication exploring information systems from first principles — starting from the categorical difference between reality and the signs a system stores in its place, and building outward toward how information is captured, held, and acted on.",
+  "date": "2026-08-01",
+  "program": "Data & Information Systems",
+  "author": "Shreyas Agarwal",
+  "revision": "Revision 01",
+  "domains": ["Systems Theory", "Data Infrastructure", "Systems Architecture"],
+  "sections": [
+    {
+      "id": "index",
+      "title": "Overview",
+      "href": ""
+    },
+    {
+      "id": "reality-track",
+      "title": "Reality",
+      "group": "Reality",
+      "children": [
+        {
+          "id": "reality-monograph",
+          "title": "Reality",
+          "children": [
+            {
+              "id": "reality-exists-before-information",
+              "title": "Reality Exists Before Information",
+              "href": "reality/reality/reality-exists-before-information"
+            },
+            {
+              "id": "territory-exists-before-map",
+              "title": "The Territory Exists Before the Map",
+              "href": "reality/reality/territory-exists-before-map"
+            },
+            {
+              "id": "complexity-never-disappears",
+              "title": "Complexity Never Disappears",
+              "href": "reality/reality/complexity-never-disappears"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

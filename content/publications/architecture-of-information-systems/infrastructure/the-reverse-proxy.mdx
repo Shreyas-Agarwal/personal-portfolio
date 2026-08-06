@@ -5,7 +5,7 @@ date: "2026-07-01"
 
 # The Reverse Proxy Is Your Real Application Gateway
 
-In the previous article, we explored how something as simple as an identifier can influence database performance — UUIDs, B-Trees, page splits, disk topology. The lesson was that physical systems care about details we often treat as abstractions. Infrastructure follows the same pattern. Most developers think about applications: controllers, business logic, database queries. But before a request reaches any of those components, it encounters another system entirely — a gatekeeper, a checkpoint, a passport control desk for the Internet. The reverse proxy.
+In the previous article, **[The Hidden Cost of Random UUID Primary Keys](../data/random-uuids)**, we explored how something as simple as an identifier can influence database performance — UUIDs, B-Trees, page splits, disk topology. The lesson was that physical systems care about details we often treat as abstractions. Infrastructure follows the same pattern. Most developers think about applications: controllers, business logic, database queries. But before a request reaches any of those components, it encounters another system entirely — a gatekeeper, a checkpoint, a passport control desk for the Internet. The reverse proxy.
 
 In modern architecture, the reverse proxy (NGINX, Envoy, HAProxy, Caddy) is far more than a simple request router. It is the primary operational shield: terminating TLS, buffering slow client requests, enforcing rate limits, shielding application servers from DDoS attacks, and managing connection queues.
 
@@ -199,7 +199,7 @@ This article is not really about Nginx, nor is it about Caddy. It is about trust
 
 Over the past twelve articles, this series has steadily peeled away layers of abstraction. We started with dashboards and analytical systems, then moved through business models, data pipelines, memory management, network transport, operating systems, storage engines, and edge infrastructure. The journey has revealed a recurring pattern: every abstraction eventually collides with a physical constraint. Databases collide with storage. Applications collide with networks. Runtimes collide with memory. Distributed systems collide with latency.
 
-The underlying mechanics matter because they shape what architectures can realistically achieve. But understanding constraints is only half the story. The next phase of this series changes direction — instead of continuing downward through the stack, we begin building upward again. How should analytical platforms be designed once we understand their underlying realities? How do we prevent dashboards from becoming products without purpose? How do we move data efficiently across execution boundaries? How do we handle backpressure, recovery, caching, and operational intelligence? And ultimately:
+The underlying mechanics matter because they shape what architectures can realistically achieve. But understanding constraints is only half the story. The next phase of this series changes direction — instead of continuing downward through the stack, we begin building upward again. How should analytical platforms be designed once we understand their underlying realities? **[How do we prevent dashboards from becoming products without purpose?](../data/dashboard-first-anti-pattern)** **[How do we move data efficiently across execution boundaries?](../data/modern-analytical-transport)** How do we handle **[backpressure](gateway-backpressure)**, **[recovery](unconditional-recovery)**, **[caching](caches-are-harder-than-databases)**, and **[operational intelligence](../data/analytics-maturity-curve)**? And ultimately:
 
 > What does a mature information system actually look like?
 
@@ -207,4 +207,4 @@ That is where we go next.
 
 ---
 
-*Part 12 of the Architecture of Information Systems series. End of Track 02. Return to the **[Publication Overview](../../architecture-of-information-systems)**.*
+*Next in Track 02: **[Backpressure: Teaching Your Gateway How to Say "No"](gateway-backpressure)**.*

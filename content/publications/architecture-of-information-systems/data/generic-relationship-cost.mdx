@@ -7,7 +7,7 @@ date: "2026-07-01"
 
 *Why flexibility often becomes the most expensive feature in a data model.*
 
-In a previous article, we explored how mature analytics platforms eventually establish Canonical Business Models. The goal was not simply cleaner reporting — it was control: control over business definitions, control over transformations, control over how information moves through the system. But once teams begin building their own data models, a new temptation appears, and a seductive one at that. Instead of explicitly modeling the business, why not create a structure capable of modeling everything?
+In a previous article, **[Why Analytics Platforms Require a Canonical Business Model](canonical-business-model)**, we explored how mature analytics platforms eventually establish Canonical Business Models. The goal was not simply cleaner reporting — it was control: control over business definitions, control over transformations, control over how information moves through the system. But once teams begin building their own data models, a new temptation appears, and a seductive one at that. Instead of explicitly modeling the business, why not create a structure capable of modeling everything?
 
 ---
 
@@ -201,9 +201,9 @@ Most mature systems discover they cannot maximize both simultaneously.
 
 ## Looking Ahead
 
-So far, this series has explored how complexity spreads through systems. Operational databases became analytical bottlenecks. Visualization tools became business-model bottlenecks. Dependencies became reliability bottlenecks. Generic schemas became performance bottlenecks.
+So far, this series has explored how complexity spreads through systems. **[Operational databases became analytical bottlenecks](oltp-vs-olap)**. **[Visualization tools became business-model bottlenecks](canonical-business-model)**. **[Dependencies became reliability bottlenecks](../infrastructure/dependency-bleed)**. Generic schemas became performance bottlenecks.
 
-Next, we move from data structures to runtime behavior, because even perfectly designed schemas can bring down a system when memory management goes wrong. Modern failures rarely look like traditional crashes. More often, they look like healthy systems slowly suffocating under unresolved promises, blocked event loops, and unbounded memory growth. And that is where we go next.
+Next, we move from data structures to runtime behavior, because even perfectly designed schemas can bring down a system when memory management goes wrong. Modern failures rarely look like traditional crashes. More often, they look like healthy systems slowly suffocating under unresolved promises, blocked event loops, and unbounded memory growth — continue to **[The Modern Memory Leak](../infrastructure/modern-memory-leak)**.
 
 ---
 

@@ -7,7 +7,7 @@ date: "2026-07-01"
 
 High-throughput distributed microservices frequently run into mysterious connection failures under load (`EADDRNOTAVAIL` or socket connection timeouts). The root cause is almost always TCP socket 4-tuple exhaustion — but to understand why, it helps to step back to where this series left off.
 
-In the previous article, we explored the hidden cost of moving data: serialization, network transport, execution boundaries. The central lesson was that information becomes expensive whenever it must travel. That observation naturally leads to another question — how does information actually enter a machine?
+In the previous article, **[The Hidden Cost of Moving Data](../data/cost-of-moving-data)**, we explored the hidden cost of moving data: serialization, network transport, execution boundaries. The central lesson was that information becomes expensive whenever it must travel. That observation naturally leads to another question — how does information actually enter a machine?
 
 Most software engineers answer with abstractions: an API, a web server, a load balancer, a microservice. The operating system sees something much simpler. A socket. And every socket is ultimately defined by four values.
 
@@ -187,7 +187,7 @@ This article is not really about ports. Nor is it about Linux. It is about visib
 
 Modern software stacks are layered with abstractions. Each layer simplifies something. Each layer also hides something. The challenge for architects is knowing where those hidden constraints live.
 
-Week after week, this series has peeled away another abstraction. This time we arrived at the operating system itself — the place where network communication stops being conceptual and becomes physical. Four values. One connection. Millions of interactions. An entire Internet built on top of them.
+Article after article, this series has peeled away another abstraction. This time we arrived at the operating system itself — the place where network communication stops being conceptual and becomes physical. Four values. One connection. Millions of interactions. An entire Internet built on top of them.
 
 ---
 
@@ -201,7 +201,7 @@ And surprisingly, something as simple as choosing an identifier can dramatically
 
 > Even your primary keys have physics.
 
-And that is where we go next.
+And that is where we go next — continue to **[The Hidden Cost of Random UUID Primary Keys](../data/random-uuids)**.
 
 ---
 

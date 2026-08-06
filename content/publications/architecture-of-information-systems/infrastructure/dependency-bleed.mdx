@@ -5,7 +5,7 @@ date: "2026-07-01"
 
 # Dependency Bleed
 
-In the previous article, we introduced the idea of a Canonical Business Model. The goal was simple: protect analytical systems from becoming tightly coupled to operational schemas, vendor definitions, and reporting logic scattered across dashboards. Architecturally, this creates a much cleaner system — but it does not create an independent system. The analytics platform still depends on external services: CRMs, project management platforms, scheduling tools, authentication providers, payment processors, webhook sources, third-party APIs. Modern applications import dozens or hundreds of external libraries and SaaS APIs, and over time these dependencies bleed past their integration boundaries and dictate the operational characteristics of your core system.
+In the previous article, **[Why Analytics Platforms Require a Canonical Business Model](../data/canonical-business-model)**, we introduced the idea of a Canonical Business Model. The goal was simple: protect analytical systems from becoming tightly coupled to operational schemas, vendor definitions, and reporting logic scattered across dashboards. Architecturally, this creates a much cleaner system — but it does not create an independent system. The analytics platform still depends on external services: CRMs, project management platforms, scheduling tools, authentication providers, payment processors, webhook sources, third-party APIs. Modern applications import dozens or hundreds of external libraries and SaaS APIs, and over time these dependencies bleed past their integration boundaries and dictate the operational characteristics of your core system.
 
 Every one of those dependencies shares a common characteristic:
 
@@ -180,7 +180,7 @@ Next, we return to the data layer — specifically, one of the most common archi
 
 > How much flexibility can a data model absorb before it begins working against the database itself?
 
-And that is where we go next.
+And that is where we go next — continue to **[The High Structural Cost of Generic Relationship Graphs](../data/generic-relationship-cost)**.
 
 ---
 

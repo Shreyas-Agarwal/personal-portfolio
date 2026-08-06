@@ -1,0 +1,127 @@
+---
+title: "Designing for Unconditional Recovery"
+date: "2026-07-01"
+---
+
+# Designing for Unconditional Recovery
+
+**[Two articles ago](caches-are-harder-than-databases)**, a question got deferred rather than answered: once a layer starts lying about its own state, how does anyone actually find out? **[The article in between](../data/spatial-intelligence)** covered spatial indexing — R-Trees, quadtrees, H3 — as infrastructure for a system that ingests continuous vehicle telemetry and reconstructs routes in near real time. That system, and every system like it, is significantly more distributed and significantly more stateful in its working memory than anything else examined in this series, which means it has significantly more ways to partially fail. This is where the deferred question gets its real answer.
+
+Every resilience pattern this series has covered so far shares an unspoken assumption: that failure is something to be prevented. Circuit breakers isolate a failing dependency before it drags down everything else. Bounded connection pools and explicit cleanup prevent memory from growing without limit. Ingestion thresholds reject load a system can't absorb before it becomes an outage. Each of these is, in its own way, an argument for stopping a failure from happening in the first place.
+
+<Observation n={1}>
+  Prevention reduces the frequency of failure. It cannot reduce it to zero, and a system that has only ever been engineered to prevent failure has no defined behavior for the moment prevention wasn't enough. That moment always eventually arrives.
+</Observation>
+
+---
+
+## Crash Prevention and Crash Recovery Are Different Disciplines
+
+This distinction is easy to state and easy to under-invest in, because prevention is where all the interesting engineering work visibly happens — the circuit breaker logic, the bulkhead sizing, the backpressure watermark. Recovery, by contrast, is often left as an assumption: "the orchestrator will restart it," "the load balancer will route around it," phrases that describe what should happen without anyone having actually verified that it does.
+
+**Unconditional recovery** is the discipline of engineering a system so that every failure mode — a crash, a network partition, a corrupted piece of local state — has a defined, automatic path back to healthy service, without a human in the loop deciding what to do in the moment. Not "recovery in the common case." Unconditional: the path back exists regardless of which specific thing failed.
+
+---
+
+## Why Statelessness Was Always the Precondition
+
+**[Several articles ago](session-state-has-a-cost)**, this series argued that application runtimes should not own state — that session data, caches, and anything else worth keeping should live in a shared layer instead of inside a single process's memory. At the time, the argument was framed around horizontal scaling and server replaceability. It turns out to have been the precondition for unconditional recovery all along, and this is where that connection becomes explicit.
+
+A stateless instance can be killed and restarted with no recovery procedure at all, because there is nothing on that instance worth recovering — everything it needs to resume serving traffic lives somewhere else, and a freshly started replacement is, by construction, indistinguishable from the instance it replaced. This is why the stateless-compute argument belongs in a series about resilience, not just a series about scaling: the same property that makes horizontal scaling elegant is exactly the property that makes crash recovery trivial instead of an engineering project.
+
+<Callout type="important">
+  A system where "just restart it" is a complete recovery procedure has usually already paid the architectural cost of statelessness somewhere earlier in its design. A system where "just restart it" loses in-flight work has usually skipped that cost — and is paying a different one now, at the worst possible time, in the middle of an incident.
+</Callout>
+
+The **[route-reconstruction workers from the previous article](../data/spatial-intelligence)** are the counterexample worth sitting with. A worker mid-reconstruction is holding a partially assembled path — pings received, snapped to route segments, not yet committed anywhere durable. If that worker crashes and the partial reconstruction lived only in its memory, the work is gone, and whatever restarts it starts from zero rather than resuming. The fix is the same principle applied to a harder case: checkpoint reconstruction progress to the same shared, durable layer that already holds everything else this series has insisted doesn't belong inside a single process. A restarted worker doesn't need to remember what it was doing. It needs to be able to ask the shared layer what the last durable checkpoint was, and resume from there.
+
+<Decision n={1} status="accepted">
+  Treat in-progress, multi-step work — not just session state — as a candidate for the same externalized-state discipline already applied to sessions and caches. Checkpoint progress durably at defined intervals, so a crashed worker's replacement resumes from the last checkpoint rather than restarting from nothing or losing the work entirely.
+</Decision>
+
+---
+
+## Health Checks: Alive Is Not the Same as Ready
+
+This is also where the observability question from two chapters back gets its answer, and the answer is more structural than a monitoring dashboard. A **health-check probe** is a deliberate, narrow question a system asks of itself, repeatedly, so that failure gets discovered by the system before it gets discovered by a user.
+
+The distinction that matters most is between liveness and readiness, and conflating them is one of the most common mistakes in production orchestration. **Liveness** asks: is this process still running, and should it be killed and restarted if not. **Readiness** asks a much narrower question: is this specific instance currently able to serve traffic correctly, right now, independent of whether it's technically alive.
+
+A newly restarted instance is a clean illustration of why the two have to be separate checks. The process is alive the instant it starts. It is not ready until its local caches are warm, its connections to shared state are established, and — reusing a signal this series has already named — its queue pressure, if it's a consumer, has drained below a safe threshold. An instance marked ready too early doesn't crash. It serves slow or wrong answers to real traffic while it's still catching up, which is a worse failure than simply refusing traffic for a few extra seconds.
+
+```yaml filename="health-probes.yaml"
+livenessProbe:
+  httpGet: { path: /healthz, port: 8080 }
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet: { path: /readyz, port: 8080 }
+  periodSeconds: 5
+  failureThreshold: 2
+```
+
+```typescript filename="readiness-gating.ts"
+// Ready means more than "the process started." Gate readiness on the same
+// queue-pressure and cache-warmth signals already established elsewhere
+// in this series, not merely on process uptime.
+app.get('/readyz', async (req, res) => {
+  const cacheWarm = cache.hitRate() > MIN_WARM_HIT_RATE;
+  const { waiting } = await queue.getJobCounts('waiting');
+  const notOverloaded = waiting < INGESTION_THRESHOLD;
+
+  if (cacheWarm && notOverloaded) return res.status(200).send();
+  return res.status(503).send(); // alive, but not yet safe to route to
+});
+```
+
+<Evidence n={1}>
+  An instance that reports ready before its cache is warm is a direct instance of the thundering-herd risk described when **[this series covered cache stampedes](caches-are-harder-than-databases)** — except now it's self-inflicted by the orchestrator, routing production traffic to a node that is guaranteed to miss its cache on every request until it catches up.
+</Evidence>
+
+---
+
+## Circuit Breakers Trip Easily. Closing Them Again Is the Hard Part
+
+Circuit breakers were **[introduced earlier in this series](dependency-bleed)** as a way to stop calling a failing dependency, protecting the caller's own resources while the dependency recovers. That article covered tripping the breaker in real depth and treated resetting it as an implementation detail. It isn't, and unconditional recovery is exactly where that gap has to close.
+
+The naive reset strategy — try again after a fixed delay, and if it succeeds, resume normal traffic — has a failure mode of its own: if the dependency is only barely recovered, resuming full traffic immediately can re-overwhelm it, tripping the breaker again in a loop that never lets the dependency fully stabilize. The fix is a **half-open state**: after the cooldown period, the breaker allows a small number of canary requests through, and only transitions fully closed if those canaries succeed. If they fail, it goes straight back to open, with the cooldown period increasing on each failed attempt — the same exponential backoff discipline this series has already relied on elsewhere, applied to the breaker's own recovery rather than to a caller's retries.
+
+<Process>
+  <Step n={1} title="Open">
+    Failure rate crossed the threshold. All calls fail fast; the dependency receives zero traffic while it recovers.
+  </Step>
+  <Step n={2} title="Half-open">
+    Cooldown period has elapsed. A small, fixed number of canary requests are allowed through to test real recovery, not assumed recovery.
+  </Step>
+  <Step n={3} title="Closed">
+    Canary requests succeeded. Full traffic resumes, and the failure counter resets to zero.
+  </Step>
+  <Step n={4} title="Back to open">
+    A canary request failed. The breaker reopens immediately, and the next cooldown period is longer than the last.
+  </Step>
+</Process>
+
+<Tradeoff
+  gain="A half-open reset with canary requests and increasing backoff prevents a recovering dependency from being re-overwhelmed the instant a fixed timer expires, which is what causes breakers to flap open and closed under real recovery conditions."
+  cost="Requires tracking additional state per breaker — cooldown duration, canary count, backoff multiplier — rather than the simple boolean open/closed flag a naive implementation gets away with."
+/>
+
+---
+
+## A More Important Lesson
+
+This article is not really about health checks or circuit breakers. It is about which half of resilience engineering gets the attention. Nearly every article in this track so far — application boundaries, dependency isolation, memory bounds, session state, socket limits, ingestion thresholds, cache correctness — has been about preventing a specific failure from happening. This is the first one that starts from the premise that prevention will, eventually, not be enough, and asks what the system owes its operators at that exact moment.
+
+The answer turns out to be the same answer this series gave when it first separated compute from state: design the failure path in before you need it, not while you're standing in the middle of it.
+
+---
+
+## Looking Ahead
+
+This series is nearing the end of new ground to cover on either track, and the next two articles change shape accordingly. Rather than introducing a new mechanism, **[the next chapter turns backward](../data/analytics-maturity-curve)** — across every Data-track article this series has published, from the first schema decision to the spatial infrastructure two chapters ago — and asks what they add up to when read as one continuous argument rather than nine separate lessons.
+
+---
+
+*Next in Track 02: **[Stability Is an Architectural Core Constraint, Not a Post-Script Feature](stability-is-a-core-constraint)**.*

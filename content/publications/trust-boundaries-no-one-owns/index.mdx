@@ -1,0 +1,49 @@
+---
+title: "Trust Boundaries Nobody Owns"
+description: "A six-part series on the browser security model — CORS, CSP, SSRF, CSRF, clickjacking, and SameSite cookies — read as organizational trust decisions nobody was assigned to own."
+date: 2026-08-06
+readingTime: 4 min
+---
+
+# Trust Boundaries Nobody Owns
+
+_The browser security model treats a handful of implicit trust decisions as settled. They aren't — they're just unowned._
+
+---
+
+Every mechanism in this series exists because a browser, a server, or an internal network had to decide, implicitly, how much to trust something it couldn't fully verify — another origin, a request's true source, a cookie's intended scope, a pixel rendered inside someone else's frame. None of these decisions were made once, deliberately, by someone accountable for revisiting them. They were made by default, usually years ago, usually by whoever was unblocking a different problem at the time — and then never owned by anyone afterward.
+
+<Callout type="important">
+  Six mechanisms — CORS, CSP, SSRF, CSRF, clickjacking, SameSite cookies — read as six unrelated technical footguns if you only look at how each is exploited. Read as a set, they're six instances of the same organizational failure: a trust boundary got set implicitly, and nobody was ever assigned to keep it calibrated as the system around it changed.
+</Callout>
+
+---
+
+## The Six Boundaries
+
+| # | Mechanism | Title | What It's Really About |
+| :--- | :--- | :--- | :--- |
+| 1 | SSRF | **[Why Internal Networks Are the Most Trusted and Least Verified Part of Modern Infrastructure](01-ssrf)** | Trust that accumulated by default, inside a boundary nobody was assigned to guard. |
+| 2 | CSRF | **[When Browsers Become Deputies](02-csrf)** | The browser acting on your behalf, with your authority, at another site's request — an unexamined delegation of power. |
+| 3 | SameSite Cookies | **[The Browser Security Model Keeps Evolving Because Applications Keep Violating User Intent](03-samesite-cookies)** | Browser vendors as a slow, reactive proxy for actual harm — policy calibrating years behind the violations that provoked it. |
+| 4 | CORS | **[CORS Was Never a Security Boundary — Everyone Just Started Treating It Like One](04-cors)** | A header set once, under deadline pressure, and never revisited by anyone since. |
+| 5 | Clickjacking | **[Visual Trust Is Still Trust](05-clickjacking)** | The narrowest case in the series — what happens when the thing being spoofed is a person's own eyes, not a system. |
+| 6 | CSP | **[Content Security Policy Is Organizational Technical Debt](06-csp)** | The closing case — a control that decays specifically because no one owns updating it as the application changes underneath it. |
+
+---
+
+## Why a Series, and Not Six Unrelated Posts
+
+Each of these mechanisms gets written about constantly in isolation, almost always from the same angle: here's the exploit, here's the header or check that prevents it, ship it. That's a real and useful thing to explain, and each essay in this series still explains it. But taken one at a time, none of them answer a more interesting question: why does the same shape of failure — an implicit trust decision, set once, never revisited, eventually exploited — keep recurring across six mechanisms that have almost nothing to do with each other technically?
+
+<Decision n={1} status="accepted">
+  **Treat each mechanism as a case study in the same underlying failure, not six independent lessons.** CORS, CSP, SSRF, CSRF, clickjacking, and SameSite cookies are unrelated at the protocol level and identical at the organizational level: each is a trust boundary that was set implicitly, by whoever happened to be solving an adjacent problem, and then never assigned an owner responsible for checking whether it still held.
+</Decision>
+
+The series is sequenced deliberately rather than alphabetically. It opens with SSRF, which states the underlying pattern in its clearest form — trust in an internal network that nobody verifies precisely because nobody was ever asked to. It closes with CSP, the mechanism where "this decayed because no one owned it" is closest to the surface of the essay itself. The middle four — CSRF, SameSite cookies, CORS, clickjacking — sit between those two poles, each showing a different variant of the same missing ownership: delegated authority, reactive policy evolution, a config nobody revisits, and a boundary that fails at the level of human perception rather than code.
+
+## Why This Is a Durable Frame, Not a Security Trend Piece
+
+Specific exploits age. A given CSRF bypass, a particular CORS misconfiguration pattern, the exact browser version that changed SameSite defaults — all of that will be superseded, the way every piece of security tooling eventually is. What doesn't age is the underlying claim: any system complex enough to have implicit trust boundaries will eventually have some of them go stale, because staying calibrated requires an owner, and browsers, servers, and internal networks don't assign owners to trust decisions by default — organizations have to do that deliberately, and usually don't.
+
+That's the frame this series is actually arguing for, underneath six technical explanations: not "patch these six things," but "ask who owns each trust boundary in your system, because the honest answer, most of the time, is nobody."

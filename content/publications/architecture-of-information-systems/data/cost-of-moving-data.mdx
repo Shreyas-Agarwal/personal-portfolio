@@ -5,7 +5,7 @@ date: "2026-07-01"
 
 # The Hidden Cost of Moving Data
 
-In the previous article, we explored one of the defining architectural lessons of modern infrastructure: compute should be disposable, but state should not. Application runtimes became stateless, and historical information moved into dedicated storage systems. This separation unlocked horizontal scaling, resilience, and operational simplicity — but it also introduced a new problem. The moment state and compute become separate, information must move between them, and moving data turns out to be surprisingly expensive.
+In the previous article, **[Session State Has a Cost](../infrastructure/session-state-has-a-cost)**, we explored one of the defining architectural lessons of modern infrastructure: compute should be disposable, but state should not. Application runtimes became stateless, and historical information moved into dedicated storage systems. This separation unlocked horizontal scaling, resilience, and operational simplicity — but it also introduced a new problem. The moment state and compute become separate, information must move between them, and moving data turns out to be surprisingly expensive.
 
 Architects frequently design systems under the implicit assumption that moving data across network interfaces, process boundaries, and storage tiers is cheap. It is not. Data transport imposes taxes across three dimensions: serialization CPU overhead, network bandwidth limits, and deserialization/parsing latencies.
 
@@ -188,7 +188,7 @@ The modern data stack spends enormous effort transferring information between sy
 
 So far, this series has explored how complexity emerges from storage, state, memory, and data movement. The next challenge takes us even closer to the physical foundations of computing, because before information can travel across services, APIs, and databases, it must first enter the machine.
 
-Every network request ultimately arrives through a surprisingly simple construct: a socket. Four values. Two endpoints. One connection. And together they govern nearly every interaction on the modern Internet. That is where we go next.
+Every network request ultimately arrives through a surprisingly simple construct: a socket. Four values. Two endpoints. One connection. And together they govern nearly every interaction on the modern Internet — continue to **[The 4-Tuple Limit](../infrastructure/the-four-tuple)**.
 
 ---
 

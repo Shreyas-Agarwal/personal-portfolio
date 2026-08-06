@@ -5,7 +5,7 @@ date: "2026-07-01"
 
 # History Is a First-Class Feature
 
-In the previous article, we explored how excessive flexibility eventually collides with physical limits. Generic relationship models promise adaptability, but over time they obscure business structure, complicate query execution, and increase computational cost. Yet even perfectly modeled data contains another limitation — one most operational systems never attempt to solve: time. More specifically, the difference between knowing what exists and knowing what changed.
+In the previous article, **[The High Structural Cost of Generic Relationship Graphs](generic-relationship-cost)**, we explored how excessive flexibility eventually collides with physical limits. Generic relationship models promise adaptability, but over time they obscure business structure, complicate query execution, and increase computational cost. Yet even perfectly modeled data contains another limitation — one most operational systems never attempt to solve: time. More specifically, the difference between knowing what exists and knowing what changed.
 
 ---
 
@@ -204,7 +204,7 @@ The next architectural question becomes:
 
 > Where should state live when compute itself must remain disposable?
 
-That challenge leads directly into one of the most important ideas in modern infrastructure design: the hidden cost of session state. And that is where we go next.
+That challenge leads directly into one of the most important ideas in modern infrastructure design: the hidden cost of session state — continue to **[Session State Has a Cost](../infrastructure/session-state-has-a-cost)**.
 
 ---
 

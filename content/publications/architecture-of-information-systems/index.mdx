@@ -9,7 +9,7 @@ type: "research-series"
 
 Every production software system is constrained by the physics of information movement: how state is represented, where boundaries are drawn, how schemas evolve, and how underlying infrastructure responds to load.
 
-This publication collects twelve foundational essays organized across two complementary tracks: **Data Architecture** and **Infrastructure Systems**.
+This publication collects twenty foundational essays organized across two complementary tracks: **Data Architecture** and **Infrastructure Systems**. With Article 20, the series is complete — closing with two synthesis essays that read each track back across everything the other eighteen established.
 
 <Observation n={1}>
   An operational system is rarely constrained by computation alone. It is constrained by the movement of information between independent representations of reality — from the database record to the reverse proxy buffer.
@@ -31,6 +31,10 @@ Data modeling is not an implementation detail; it is the semantic definition of 
 - **04. History as a First-Class Feature** — Why overwriting state in place destroys auditability and temporal reasoning.
 - **05. The Hidden Cost of Moving Data** — The network, latency, and serialization taxes paid when state traverses boundaries.
 - **06. Cost of Random UUID Keys** — How random identifiers destroy index locality in B-Trees.
+- **07. The Dashboard-First Anti-Pattern** — Why Gold tables built from mockups instead of defined actions lead to metric hoarding.
+- **08. Modern Analytical Transport** — How Apache Arrow and ADBC eliminate the serialization tax that ODBC was quietly reintroducing.
+- **09. Spatial Intelligence: Maps Are Not Tables** — R-Trees, quadtrees, and H3 hexagonal indexing, and why relational joins fail on spatial vectors.
+- **10. The Analytics Platform Maturity Curve** — Synthesizing the full Data track into one enterprise maturity model, stage by citable stage.
 
 <Callout type="note">
   Start with **[Operational vs Analytical Schemas](./data/oltp-vs-olap)** if you are evaluating OLTP database bottlenecks or designing medallion architectures.
@@ -48,6 +52,10 @@ Your application code is only a fraction of the runtime system. The network stac
 - **04. Session State Costs** — The architectural trade-offs between stateful sessions and distributed token validation.
 - **05. The 4-Tuple Limit** — Port exhaustion, ephemeral socket limits, and NAT bottlenecks in microservices.
 - **06. The Reverse Proxy Gateway** — Why the reverse proxy is your actual application boundary.
+- **07. Backpressure & Graceful Degradation** — Teaching a gateway to reject legitimate load before an unbounded queue does it for you.
+- **08. Caches Are Far Harder Than Databases** — Invalidation fan-out, race conditions, and why stale caches fail silently where slow queries fail loudly.
+- **09. Designing for Unconditional Recovery** — Stateless restarts, liveness vs. readiness, and circuit-breaker reset logic for systems that must fail cleanly.
+- **10. Stability Is an Architectural Core Constraint, Not a Post-Script Feature** — The closing essay: why resilience, scalability, and security cannot be bolted on after the fact, across both tracks.
 
 <Tradeoff
   gain="Decoupling data semantics from infrastructure execution allows both layers to evolve independently."

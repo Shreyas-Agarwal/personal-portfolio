@@ -5,7 +5,7 @@ date: "2026-07-01"
 
 # Session State Has a Cost
 
-In the previous article, we explored why analytical systems eventually become temporal systems. Organizations stop asking "what exists?" and begin asking "what changed?" Answering that question requires preserving history: versioned records, append-only timelines, historical state transitions. The platform accumulates increasingly large volumes of information.
+In the previous article, **[History Is a First-Class Feature](../data/history-as-feature)**, we explored why analytical systems eventually become temporal systems. Organizations stop asking "what exists?" and begin asking "what changed?" Answering that question requires preserving history: versioned records, append-only timelines, historical state transitions. The platform accumulates increasingly large volumes of information.
 
 Naturally, this creates a new architectural temptation: if data is valuable, why not keep it close to the application? The answer turns out to be one of the defining lessons of modern infrastructure.
 
@@ -148,7 +148,7 @@ Earlier in this series we argued that dashboards should not own business logic, 
 
 So far, this series has explored how systems accumulate complexity through data, infrastructure, dependencies, memory, and state. Next we return to the data layer once again, because even when architectures become properly distributed, another invisible cost remains: moving data. Serialization. Network transport. Execution boundaries.
 
-The industry spent decades optimizing storage and computation. Increasingly, the bottleneck is neither. The bottleneck is the cost of moving information between them. And that is where we go next.
+The industry spent decades optimizing storage and computation. Increasingly, the bottleneck is neither. The bottleneck is the cost of moving information between them — continue to **[The Hidden Cost of Moving Data](../data/cost-of-moving-data)**.
 
 ---
 

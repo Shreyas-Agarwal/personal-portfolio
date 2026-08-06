@@ -5,7 +5,7 @@ date: "2026-07-01"
 
 # The Hidden Cost of Random UUID Primary Keys
 
-In the previous article, we peeled back another layer of abstraction: applications became sockets, and sockets became operating-system resources. The lesson was simple —
+In the previous article, **[The 4-Tuple Limit](../infrastructure/the-four-tuple)**, we peeled back another layer of abstraction: applications became sockets, and sockets became operating-system resources. The lesson was simple —
 
 > Every abstraction eventually collides with a physical constraint.
 
@@ -218,8 +218,8 @@ This article is not really about UUIDs. Nor is it about PostgreSQL. It is about 
 
 So far, this series has followed data all the way down to storage engines and disk structures. We have seen how schemas influence queries, how state influences memory, how transport influences performance, and now, how identifiers influence storage topology.
 
-Next, we return to infrastructure. Because before requests ever reach application code, they encounter another critical component sitting at the edge of the system — a component responsible for routing traffic, terminating TLS, serving static assets, and protecting runtimes from the public Internet. The reverse proxy. And despite being one of the most common pieces of modern infrastructure, many teams only appreciate its importance when it disappears. And that is where we go next.
+Next, we return to infrastructure. Because before requests ever reach application code, they encounter another critical component sitting at the edge of the system — a component responsible for routing traffic, terminating TLS, serving static assets, and protecting runtimes from the public Internet. The reverse proxy. And despite being one of the most common pieces of modern infrastructure, many teams only appreciate its importance when it disappears — continue to **[The Reverse Proxy Is Your Real Application Gateway](../infrastructure/the-reverse-proxy)**.
 
 ---
 
-*End of Track 01. Proceed to Track 02: **[Application Code Is Not the System](../infrastructure/application-is-not-system)**.*
+*Next in Track 01: **[When Not to Build Gold Tables: The Dashboard-First Anti-Pattern](dashboard-first-anti-pattern)**.*
