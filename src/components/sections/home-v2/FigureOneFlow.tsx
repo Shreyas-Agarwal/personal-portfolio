@@ -5,9 +5,12 @@ import { useEffect, useState } from "react";
 import { plexMono } from "@/lib/fonts";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
-/** This figure sits on the cream paper surface (#ECE5D4), not graphite, so its structural
- * ink is dark — same ink-on-cream convention as EditorialInterlude's prose. */
-const INK = "#1B1D1F";
+/** This figure normally sits on the cream paper surface (#ECE5D4), so its structural ink is
+ * dark by default — same ink-on-cream convention as EditorialInterlude's prose. When rendered
+ * directly on a dark hero (theme="dark"), the ink flips to a light value so it still reads as
+ * ink-on-surface rather than a light box floating on a dark page. */
+const INK_LIGHT = "#1B1D1F";
+const INK_DARK = "#E6E1D6";
 const ACCENT_INK = "#DE4B31";
 
 /** Packet colors — the one deliberately non-monochrome element on the page: this diagram
@@ -62,39 +65,47 @@ const DESKTOP_NODES: NodeSpec[] = [
   { id: "c4", label: "", kind: "compute", pos: { x: 670, y: 240 } },
 ];
 
+/** Every edge below corresponds to an actual conceptual relationship declared in
+ * `relatedConcepts` in src/data/concepts.ts (a node passed through a compute stop, e.g.
+ * signals -> c1 -> observations, still counts as one signals–observations relationship).
+ * Keep the two in sync: adding/removing a relation here should be mirrored there. */
 const DESKTOP_EDGES: EdgeSpec[] = [
-  // Core flow
+  // Core pipeline — reality is sensed, structured, and folded into state
   { id: "e1", from: "reality", to: "signals" },
   { id: "e2", from: "signals", to: "c1" },
   { id: "e3", from: "c1", to: "observations" },
   { id: "e4", from: "observations", to: "state" },
   { id: "e5", from: "observations", to: "context" },
-  { id: "e6", from: "state", to: "c2" },
-  { id: "e7", from: "context", to: "c2" },
-  { id: "e8", from: "c2", to: "models" },
-  { id: "e9", from: "memory", to: "models" },
-  { id: "e10", from: "history", to: "models" },
-  { id: "e11", from: "models", to: "c3" },
-  { id: "e12", from: "c3", to: "coordination" },
-  { id: "e13", from: "coordination", to: "decisions" },
-  { id: "e14", from: "decisions", to: "c4" },
-  { id: "e15", from: "c4", to: "reality" },
+  { id: "e6", from: "observations", to: "history" },
 
-  // Overlapping/colliding and direct bypass connections
-  { id: "e16", from: "signals", to: "state" },
-  { id: "e17", from: "reality", to: "memory" },
-  { id: "e18", from: "observations", to: "models" },
-  { id: "e19", from: "context", to: "memory" },
-  { id: "e20", from: "memory", to: "history" },
-  { id: "e21", from: "history", to: "coordination" },
-  { id: "e22", from: "state", to: "coordination" },
-  { id: "e23", from: "models", to: "decisions" },
-  { id: "e24", from: "coordination", to: "reality" },
-  { id: "e25", from: "decisions", to: "history" },
-  { id: "e26", from: "history", to: "state" },
-  { id: "e27", from: "c1", to: "c2" },
-  { id: "e28", from: "c2", to: "c3" },
-  { id: "e29", from: "c3", to: "c4" },
+  // State and context are synthesized into models
+  { id: "e7", from: "state", to: "c2" },
+  { id: "e8", from: "context", to: "c2" },
+  { id: "e9", from: "c2", to: "models" },
+  { id: "e10", from: "memory", to: "models" },
+  { id: "e11", from: "history", to: "models" },
+
+  // Models resolve into coordination, then decisions, which close the loop back into reality
+  { id: "e12", from: "models", to: "c3" },
+  { id: "e13", from: "c3", to: "coordination" },
+  { id: "e14", from: "coordination", to: "decisions" },
+  { id: "e15", from: "decisions", to: "c4" },
+  { id: "e16", from: "c4", to: "reality" },
+
+  // Direct relationships that don't run through the transformation pipeline
+  { id: "e17", from: "signals", to: "memory" },
+  { id: "e18", from: "state", to: "memory" },
+  { id: "e19", from: "state", to: "history" },
+  { id: "e20", from: "state", to: "coordination" },
+  { id: "e21", from: "state", to: "context" },
+  { id: "e22", from: "memory", to: "history" },
+  { id: "e23", from: "context", to: "decisions" },
+  { id: "e24", from: "models", to: "decisions" },
+
+  // Compute-plane wiring (visual only — connects the processing stops, not concepts)
+  { id: "e25", from: "c1", to: "c2" },
+  { id: "e26", from: "c2", to: "c3" },
+  { id: "e27", from: "c3", to: "c4" },
 ];
 
 const MOBILE_NODES: NodeSpec[] = [
@@ -173,10 +184,12 @@ function DiagramNode({
   node,
   isHovered,
   onHover,
+  ink,
 }: {
   node: NodeSpec;
   isHovered: boolean;
   onHover: (id: string | null) => void;
+  ink: string;
 }) {
   if (node.kind === "compute") {
     return (
@@ -187,7 +200,7 @@ function DiagramNode({
         height={12}
         transform={`rotate(45 ${node.pos.x} ${node.pos.y})`}
         fill="none"
-        stroke={isHovered ? ACCENT_INK : INK}
+        stroke={isHovered ? ACCENT_INK : ink}
         strokeOpacity={isHovered ? 0.9 : 0.55}
         strokeWidth={1}
       />
@@ -207,7 +220,7 @@ function DiagramNode({
         r={isHovered ? 9 : 7}
         fill={isHovered ? ACCENT_INK : "none"}
         fillOpacity={isHovered ? 0.15 : 0}
-        stroke={isHovered ? ACCENT_INK : INK}
+        stroke={isHovered ? ACCENT_INK : ink}
         strokeOpacity={isHovered ? 1 : 0.5}
         strokeWidth={isHovered ? 2 : 1}
         className="transition-all duration-300"
@@ -218,7 +231,7 @@ function DiagramNode({
         textAnchor={anchor}
         fontSize={isHovered ? 10 : 9}
         letterSpacing="0.08em"
-        fill={isHovered ? ACCENT_INK : INK}
+        fill={isHovered ? ACCENT_INK : ink}
         fillOpacity={isHovered ? 1 : 0.4}
         fontWeight={isHovered ? 500 : 400}
         className={`${plexMono.className} transition-all duration-300`}
@@ -236,6 +249,7 @@ function NetworkDiagram({
   reducedMotion,
   hoveredNode,
   onHoverNode,
+  ink,
 }: {
   nodes: NodeSpec[];
   edges: EdgeSpec[];
@@ -243,6 +257,7 @@ function NetworkDiagram({
   reducedMotion: boolean;
   hoveredNode: string | null;
   onHoverNode: (id: string | null) => void;
+  ink: string;
 }) {
   return (
     <svg
@@ -261,7 +276,7 @@ function NetworkDiagram({
           markerHeight="6"
           orient="auto-start-reverse"
         >
-          <path d="M 0 0 L 10 5 L 0 10 z" fill={INK} fillOpacity={0.45} />
+          <path d="M 0 0 L 10 5 L 0 10 z" fill={ink} fillOpacity={0.45} />
         </marker>
       </defs>
 
@@ -275,7 +290,7 @@ function NetworkDiagram({
           <path
             key={edge.id}
             d={d}
-            stroke={isConnected ? ACCENT_INK : INK}
+            stroke={isConnected ? ACCENT_INK : ink}
             strokeOpacity={isConnected ? 0.7 : 0.12}
             strokeWidth={isConnected ? 2 : 1}
             fill="none"
@@ -343,6 +358,7 @@ function NetworkDiagram({
           node={node}
           isHovered={hoveredNode === node.id}
           onHover={onHoverNode}
+          ink={ink}
         />
       ))}
     </svg>
@@ -352,9 +368,15 @@ function NetworkDiagram({
 interface FigureOneFlowProps {
   activeHoverNode?: string | null;
   onHoverNode?: (nodeId: string | null) => void;
+  theme?: "light" | "dark";
 }
 
-export function FigureOneFlow({ activeHoverNode, onHoverNode }: FigureOneFlowProps = {}) {
+export function FigureOneFlow({
+  activeHoverNode,
+  onHoverNode,
+  theme = "light",
+}: FigureOneFlowProps = {}) {
+  const ink = theme === "dark" ? INK_DARK : INK_LIGHT;
   const [reducedMotion, setReducedMotion] = useState(false);
   const [internalHover, setInternalHover] = useState<string | null>(null);
 
@@ -388,6 +410,7 @@ export function FigureOneFlow({ activeHoverNode, onHoverNode }: FigureOneFlowPro
           reducedMotion={reducedMotion}
           hoveredNode={currentHovered}
           onHoverNode={handleHover}
+          ink={ink}
         />
       </div>
       <div className="aspect-[220/420] w-full max-w-xs md:hidden">
@@ -398,6 +421,7 @@ export function FigureOneFlow({ activeHoverNode, onHoverNode }: FigureOneFlowPro
           reducedMotion={reducedMotion}
           hoveredNode={currentHovered}
           onHoverNode={handleHover}
+          ink={ink}
         />
       </div>
     </motion.div>

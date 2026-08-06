@@ -27,6 +27,7 @@ import {
   Tradeoff,
 } from "@/components/publication/blocks";
 import { CodeBlock } from "@/components/publication/blocks/CodeBlock";
+import { MermaidDiagram } from "@/components/ui/mermaid-diagram";
 
 /**
  * Components available to every publication MDX file without an explicit import.
@@ -46,6 +47,7 @@ export const publicationComponents = {
   Process,
   Step,
   CodeBlock,
+  MermaidDiagram,
 };
 
 /**

@@ -25,14 +25,14 @@ const LAYERS: LayerItem[] = [
     name: "Physics",
     subtitle: "System Dynamics",
     description:
-      "Physics describes how those fundamental truths interact under operational pressure and real-world constraints.",
+      "Physics describes how those fundamental truths interact under operational pressure and real-world constraints. Complexity rarely disappears here — it is redistributed across abstraction boundaries, deployment layers, and organizational process rather than eliminated.",
   },
   {
     id: "architecture",
     name: "Architecture",
     subtitle: "Structural Patterns",
     description:
-      "Architecture describes engineering patterns and structural boundaries that emerge from these physical interactions.",
+      "Architecture describes engineering patterns and structural boundaries that emerge from these physical interactions. Architecture is organizational: system boundaries frequently mirror communication structures, ownership, and operational accountability across teams.",
   },
   {
     id: "implementations",

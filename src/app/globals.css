@@ -92,6 +92,10 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* The sticky header's masthead animates its height on scroll; without this,
+       the browser's scroll anchoring compensates for that layout shift by
+       adjusting scrollY, which re-triggers the scroll handler and causes jitter. */
+    overflow-anchor: none;
   }
 
   body {

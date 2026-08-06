@@ -4,10 +4,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
 import { plexMono, serif } from "@/lib/fonts";
-import type { JournalEntry } from "@/lib/journal";
+
+export interface SelectedWork {
+  slug: string;
+  title: string;
+  part: number;
+  readingTime: string;
+}
 
 interface ResearchProgrammeClientProps {
-  essays: JournalEntry[];
+  essays: SelectedWork[];
 }
 
 function VisualElement() {
@@ -342,7 +348,7 @@ export function ResearchProgrammeClient({ essays }: ResearchProgrammeClientProps
                   {essays.map((essay) => (
                     <Link
                       key={essay.slug}
-                      href={`/journal/${essay.slug}`}
+                      href={`/works/publications/${essay.slug}`}
                       className="group block border-b border-[#E6E1D6]/5 pb-6 last:border-b-0 hover:border-b-[#DE4B31]/30 transition-colors"
                     >
                       <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-1 mb-2">
@@ -357,13 +363,6 @@ export function ResearchProgrammeClient({ essays }: ResearchProgrammeClientProps
                           PART {essay.part} // {essay.readingTime}
                         </span>
                       </div>
-                      {essay.abstract && (
-                        <p
-                          className={`${serif.className} text-sm text-[#E6E1D6]/60 leading-relaxed max-w-2xl`}
-                        >
-                          {essay.abstract}
-                        </p>
-                      )}
                     </Link>
                   ))}
                 </div>
@@ -571,10 +570,10 @@ export function ResearchProgrammeClient({ essays }: ResearchProgrammeClientProps
         {/* Teaser Ending */}
         <div className="mt-16 border-t border-[#E6E1D6]/10 pt-8 max-w-xs">
           <Link
-            href="/journal"
+            href="/works/publications"
             className={`${plexMono.className} group inline-flex items-center gap-2 text-xs uppercase tracking-widest text-[#E6E1D6]/80 transition-colors hover:text-[#DE4B31] border border-[#E6E1D6]/20 px-5 py-3 hover:bg-[#E6E1D6]/5`}
           >
-            Open the Research Notebook
+            Open the Engineering Library
             <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">
               →
             </span>

@@ -1,0 +1,19 @@
+---
+title: "Most architectural decisions are really organizational decisions"
+date: 2026-07-08
+tags: ["architecture", "org-design"]
+excerpt: "Conway's Law isn't a curiosity about org charts. It's the reason half of your architecture review meetings are actually negotiations."
+status: published
+---
+
+I've sat in enough architecture review meetings to notice a pattern: the technical disagreement on the table is rarely the real disagreement. Two teams arguing about whether a piece of functionality should live in a shared service or be duplicated locally are usually — underneath the diagrams — arguing about who owns what, who gets paged when it breaks, and whose roadmap has to accommodate whose changes going forward. The architecture diagram is a proxy for an organizational contract, and once you see it that way, a lot of "purely technical" debates stop being confusing.
+
+Conway's Law gets cited a lot, usually as trivia — "systems mirror the communication structure of the organizations that build them" — but I think people undersell how load-bearing it actually is as a design constraint, not just an observation. If two teams don't talk to each other easily, no amount of architectural elegance will produce a clean interface between their systems, because the interface has to be maintained by humans who need to coordinate, and the coordination cost is the real cost, not the API surface area. Conversely, if you draw a boundary that requires two teams to coordinate tightly and they're not structured to do that, you haven't designed a boundary — you've designed a recurring meeting.
+
+This reframes what "good architecture" even means in a lot of real organizations. The textbook answer is something like low coupling, high cohesion, clear separation of concerns. All true, but incomplete, because those properties are being evaluated against a system, and the system includes the people. A boundary that's technically clean but organizationally unenforceable — because the two teams on either side of it have misaligned incentives, different managers, and no shared on-call — will erode. Someone will take a shortcut across it under deadline pressure, and the shortcut will become the new normal, and eighteen months later someone will write a doc about "architectural drift" that's really a doc about incentive misalignment.
+
+The practical implication I keep coming back to: when a system's architecture doesn't match its org chart, one of the two is going to change, and it's worth being deliberate about which. Sometimes the right move is to re-draw the system boundaries to match how the org actually communicates today — accept the org chart as a constraint and design around it. Sometimes the right move is the opposite: change the org structure — merge teams, redraw ownership, put people in the same room — because the *desired* architecture is correct and the organization needs to catch up to it. What's almost never the right move is designing an architecture that assumes an org structure you wish you had but don't, and hoping the humans adapt to the diagram. They won't. The diagram will adapt to them, slowly and expensively, whether you planned for it or not.
+
+I've started asking, in any architecture proposal, "who has to talk to whom for this to stay clean," before asking whether the boundaries are technically correct. It's a more honest question, and it tends to surface the actual risk in the plan faster than a review of the diagram ever does.
+
+There's a related mechanism worth naming: when the people in an architecture review can't fully verify a technical claim on its substance, they fall back on whatever signal is easiest to check instead — confidence, seniority, how polished the diagram looks. [Organizations run on proxies](/works/publications/organizations-run-on-proxies) goes into why that substitution happens and where it quietly decides outcomes that get remembered as purely technical calls.

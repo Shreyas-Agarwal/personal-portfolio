@@ -5,6 +5,7 @@
   "subtitle": "Engineering principles on data modeling, state boundaries, operational vs analytical schemas, and infrastructure dynamics.",
   "abstract": "A multi-part publication exploring how information moves, transforms, and persists in production software systems — from normalized OLTP schemas and medallion architectures to connection pool memory leaks and 4-tuple TCP limits.",
   "date": "2026-07-01",
+  "program": "Data & Information Systems",
   "author": "Shreyas Agarwal",
   "revision": "Revision 02",
   "domains": ["Data Infrastructure", "Systems Architecture", "Infrastructure Engineering"],

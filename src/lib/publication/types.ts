@@ -64,6 +64,8 @@ export interface PublicationManifest {
   /** Short description for SEO and listing cards. */
   abstract?: string;
 
+  /** Research programme this publication belongs to, e.g. "Data & Information Systems". */
+  program?: string;
   /** e.g. "Volume I" — editorial volume label. */
   volume?: string;
   /** e.g. "Revision 03" */
@@ -81,6 +83,13 @@ export interface PublicationManifest {
   github?: string;
 
   status?: PublicationStatus;
+
+  /**
+   * Field Note slugs that evolved into this publication (observation →
+   * field note → publication pipeline). Forward-compatible field; not yet
+   * surfaced in the UI.
+   */
+  originFieldNotes?: string[];
 
   /** Ordered sidebar sections — defines navigation and URL structure. */
   sections: PublicationSection[];

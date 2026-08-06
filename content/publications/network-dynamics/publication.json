@@ -7,6 +7,7 @@
   "volume": "Volume I",
   "revision": "Revision 01",
   "date": "2026-04-12",
+  "program": "Distributed Systems",
   "author": "Shreyas Agarwal",
   "domains": ["Distributed Systems", "Network Architecture", "Reliability Engineering"],
   "status": "published",

@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { MetadataRoute } from "next";
 import { projects } from "@/data/projects";
+import { getAllPublications } from "@/lib/publication/loader";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://agarwal.systems";
@@ -11,8 +12,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "",
     "/about",
     "/systems",
-    "/projects",
-    "/journal",
+    "/works",
+    "/works/publications",
     "/systems/workflow-architecture",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
@@ -59,32 +60,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
         })
     : [];
 
-  // Dynamic journal entries (/journal/[slug])
-  const journalDir = path.join(process.cwd(), "content/journal");
-  const journalRoutes = fs.existsSync(journalDir)
-    ? fs
-        .readdirSync(journalDir)
-        .filter((file) => file.endsWith(".md"))
-        .map((file) => {
-          const slug = file.replace(/\.md$/, "");
-          const filePath = path.join(journalDir, file);
-          const stats = fs.statSync(filePath);
-          return {
-            url: `${baseUrl}/journal/${slug}`,
-            lastModified: stats.mtime,
-            changeFrequency: "monthly" as const,
-            priority: 0.7,
-          };
-        })
-    : [];
+  // Dynamic publications (/works/publications/[id])
+  const publicationRoutes = getAllPublications().map((pub) => ({
+    url: `${baseUrl}/works/publications/${pub.id}`,
+    lastModified: new Date(pub.date),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
 
-  // Dynamic project/case studies (/projects/[id])
+  // Dynamic project/case studies (/works/[id])
   const projectRoutes = projects.map((project) => ({
-    url: `${baseUrl}/projects/${project.id}`,
+    url: `${baseUrl}/works/${project.id}`,
     lastModified: new Date(), // These are defined in code/data
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...docRoutes, ...adrRoutes, ...journalRoutes, ...projectRoutes];
+  return [...staticRoutes, ...docRoutes, ...adrRoutes, ...publicationRoutes, ...projectRoutes];
 }

@@ -1,0 +1,22 @@
+---
+title: "Every integration eventually becomes an identity problem"
+date: 2026-03-24
+tags: ["integrations", "systems-design"]
+excerpt: "The hard part of connecting two systems is never the data format. It's deciding when two records are the same thing."
+status: published
+relatedPublication: null
+---
+
+Every time I've been pulled into an integration project — two systems that need to talk to each other, sync records, stay consistent — the kickoff conversation is always about formats. What's the schema on their side, what's ours, what transport, what auth. All legitimate questions, all solvable in an afternoon with enough documentation.
+
+The actual project never turns out to be about any of that. It turns out to be about identity: given a record from system A and a record from system B, how do you know they refer to the same real-world thing?
+
+This sounds like it should be trivial. Surely there's an ID. But there almost never is a shared ID, because if there were, you wouldn't need an integration — you'd need a join. The reason two systems need an integration layer at all is usually that they grew up independently, assigning their own identifiers to their own notion of "the same thing," and now someone wants those notions reconciled after the fact.
+
+So you end up building matching logic. Fuzzy string comparison on names. Normalized email addresses. Sometimes a probabilistic score across several fields with a threshold above which you call it a match. And here's where it gets uncomfortable: this logic is never really finished. It's a policy decision dressed up as an algorithm. Every threshold you pick is a tradeoff between false merges (treating two different things as one) and false splits (treating one thing as two), and there is no value of the threshold that makes both zero. Someone has to decide which failure mode is more expensive for the business, and that decision has to be revisited as the data — and the stakes — change.
+
+The other thing I've noticed: identity resolution is rarely one-shot. Systems that integrate over time need identity to be *durable*, not just computed once. A customer's name changes, an email gets updated, a company gets acquired and its accounts get merged. If your integration treats identity resolution as a one-time matching pass at sync time, you will eventually create duplicate records that silently diverge, and nobody notices until a customer gets two conflicting invoices. The fix is to treat identity as a first-class, versioned concept with its own lifecycle — not a side effect of the sync job.
+
+I've started treating "what constitutes sameness here" as the first design question in any integration, before touching a single field mapping. It changes the shape of the whole project. It also usually surfaces political questions that are more uncomfortable than technical ones — because "is this the same customer" often really means "whose customer is it," and that question has stakeholders on both sides of the integration with incentives that don't automatically align.
+
+The format questions get answered by documentation. The identity questions get answered by a decision someone has to own, in writing, and be willing to defend six months later when the edge cases show up.

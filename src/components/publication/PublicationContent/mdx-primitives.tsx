@@ -18,6 +18,7 @@
 import Link from "next/link";
 import { type ComponentPropsWithoutRef, isValidElement, type ReactNode } from "react";
 import { plexMono, serif } from "@/lib/fonts";
+import { MermaidDiagram } from "@/components/ui/mermaid-diagram";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Headings
@@ -236,6 +237,10 @@ export function PubPre({ children, ...props }: ComponentPropsWithoutRef<"pre">) 
   }
 
   const rawText = extractCodeText(children).trim();
+
+  if (language === "mermaid") {
+    return <MermaidDiagram code={rawText} />;
+  }
 
   return (
     <div className="group/pre my-8 overflow-hidden border border-[#D9D0BC] bg-[#ECE5D4] shadow-sm">

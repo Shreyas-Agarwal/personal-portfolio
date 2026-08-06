@@ -1,0 +1,21 @@
+---
+title: "Why mapping engines eventually become query planners"
+date: 2026-02-11
+tags: ["systems-design", "data"]
+excerpt: "Every mapping layer that survives long enough stops being a translator and starts being an optimizer."
+status: published
+---
+
+I keep running into the same shape of problem in different clothing. You start with a mapping engine — something that takes a record in shape A and produces the equivalent record in shape B. Field mappings, unit conversions, maybe a few conditional branches for edge cases. It feels like plumbing. Nobody thinks of it as a hard problem.
+
+Then the system grows. More source shapes, more destination shapes, more paths between them. And at some point, silently, the mapping engine stops being about translation and starts being about *routing*. Given this input shape and this desired output shape, which sequence of transformations gets me there most cheaply? That is not a mapping question. That is a query planning question.
+
+This happened to a system I worked on that started as a straightforward ETL layer between a handful of source formats and one canonical model. Early on, every mapping was written by hand: source field X maps to canonical field Y, with an explicit function in between. Fine. Then the canonical model needed to serve multiple downstream consumers, each wanting a slightly different shape. Now you have N sources and M destinations, and hand-writing N×M mappings is obviously wrong — you write N mappings into canonical form and M mappings out, and let the system compose them.
+
+That composition step is where the character of the system changes. Once you're composing transformations instead of writing them directly, you need something that decides *which* composition to use when there's more than one path — direct versus through an intermediate, cheap-but-lossy versus expensive-but-exact. That decision is exactly what a query planner does in a database: given multiple logically equivalent execution paths, pick the one with the lowest cost under some cost model.
+
+The tell, in retrospect, is always the moment someone adds a cache, or a shortcut, or a "fast path" for a common case. That's the system admitting it now has more than one way to get the same answer, and someone has to choose. Once that happens, you either build a real planner — with a cost model, a set of equivalence rules, and a way to reason about tradeoffs — or you accumulate an ad hoc pile of `if` statements that approximates one badly. I've seen both. The ad hoc pile always loses eventually, usually right when someone adds the fourth or fifth path and nobody can predict anymore which one will fire.
+
+What's interesting is that this isn't really about data mapping specifically. Any system that translates between representations, and that lives long enough to accumulate multiple representations and multiple paths between them, converges on needing a planner. API gateways that reshape requests across versions. Build systems that resolve dependency graphs. Even UI state managers that reconcile multiple sources of truth into one render — they all eventually need something that reasons about cost and equivalence rather than just executing a fixed transformation.
+
+I don't think this is avoidable by better upfront design. I think it's closer to a law of software gravity: translation systems accrete alternate paths as they age, and alternate paths demand a chooser. The only real decision is whether you build the chooser on purpose, early, when it's cheap and legible — or whether you let the system grow one organically, badly, one conditional at a time, until nobody can explain why it does what it does.

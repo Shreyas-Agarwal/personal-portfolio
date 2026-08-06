@@ -3,6 +3,9 @@ export interface ConceptData {
   num: string;
   title: string;
   oneLiner: string;
+  /** Optional field-tested corollary surfaced on the atlas card — evidence that this
+   * concept holds up under real operational pressure, not just as a theoretical stub. */
+  editorialNote?: string;
   runningHeader: string;
   category: string;
   status: string;
@@ -23,6 +26,8 @@ export const CONCEPTS: ConceptData[] = [
     title: "Reality",
     oneLiner:
       "The physical or external truth of an environment prior to observation or measurement.",
+    editorialNote:
+      "Complexity rarely disappears. Systems rarely eliminate it — they redistribute it across abstraction boundaries, moving the burden from implementation into coordination, deployment, and organizational process.",
     runningHeader: "THE PHYSICS OF REALITY",
     category: "FOUNDATIONAL CONCEPT",
     status: "MONOGRAPH STUB",
@@ -39,8 +44,7 @@ export const CONCEPTS: ConceptData[] = [
     ],
     relatedConcepts: [
       { slug: "signals", title: "Signals" },
-      { slug: "observations", title: "Observations" },
-      { slug: "context", title: "Context" },
+      { slug: "decisions", title: "Decisions" },
     ],
     referencedIn: [
       "Desktop Synchronization Architecture",
@@ -110,6 +114,8 @@ export const CONCEPTS: ConceptData[] = [
     title: "Observations",
     oneLiner:
       "Structured telemetry formed when raw signals are ingested across computational boundaries.",
+    editorialNote:
+      "Operational visibility shapes decision quality. Once a workflow becomes observable, hidden bottlenecks, state inconsistencies, and coordination failures stop being isolated incidents and start reading as architectural signals.",
     runningHeader: "THE PHYSICS OF OBSERVATIONS",
     category: "FOUNDATIONAL CONCEPT",
     status: "MONOGRAPH STUB",
@@ -127,6 +133,7 @@ export const CONCEPTS: ConceptData[] = [
     relatedConcepts: [
       { slug: "signals", title: "Signals" },
       { slug: "state", title: "State" },
+      { slug: "context", title: "Context" },
       { slug: "history", title: "History" },
     ],
     referencedIn: [
@@ -164,6 +171,8 @@ export const CONCEPTS: ConceptData[] = [
     ],
     relatedConcepts: [
       { slug: "observations", title: "Observations" },
+      { slug: "context", title: "Context" },
+      { slug: "models", title: "Models" },
       { slug: "memory", title: "Memory" },
       { slug: "history", title: "History" },
       { slug: "coordination", title: "Coordination" },
@@ -210,6 +219,7 @@ export const CONCEPTS: ConceptData[] = [
       "Hierarchical context prevents duplicate metadata transmission.",
     ],
     relatedConcepts: [
+      { slug: "observations", title: "Observations" },
       { slug: "state", title: "State" },
       { slug: "models", title: "Models" },
       { slug: "decisions", title: "Decisions" },
@@ -247,9 +257,10 @@ export const CONCEPTS: ConceptData[] = [
       "Memory locality dictates hardware execution throughput.",
     ],
     relatedConcepts: [
-      { slug: "state", title: "State" },
-      { slug: "history", title: "History" },
       { slug: "signals", title: "Signals" },
+      { slug: "state", title: "State" },
+      { slug: "models", title: "Models" },
+      { slug: "history", title: "History" },
     ],
     referencedIn: [
       "Desktop Synchronization Architecture",
@@ -284,9 +295,10 @@ export const CONCEPTS: ConceptData[] = [
       "Compaction strategies manage history growth without losing lineage.",
     ],
     relatedConcepts: [
-      { slug: "state", title: "State" },
       { slug: "observations", title: "Observations" },
+      { slug: "state", title: "State" },
       { slug: "memory", title: "Memory" },
+      { slug: "models", title: "Models" },
     ],
     referencedIn: [
       "Architecture of Information Systems",
@@ -322,7 +334,10 @@ export const CONCEPTS: ConceptData[] = [
       "Deterministic models yield identical results given identical state input.",
     ],
     relatedConcepts: [
+      { slug: "state", title: "State" },
       { slug: "context", title: "Context" },
+      { slug: "memory", title: "Memory" },
+      { slug: "history", title: "History" },
       { slug: "coordination", title: "Coordination" },
       { slug: "decisions", title: "Decisions" },
     ],
@@ -344,6 +359,8 @@ export const CONCEPTS: ConceptData[] = [
     num: "09",
     title: "Coordination",
     oneLiner: "Protocols and consensus mechanisms through which independent actors align on state.",
+    editorialNote:
+      "Architecture is organizational. System boundaries frequently mirror communication structures, ownership, and operational accountability across teams — coordination protocols are as much about people as they are about consensus.",
     runningHeader: "THE PHYSICS OF COORDINATION",
     category: "FOUNDATIONAL CONCEPT",
     status: "MONOGRAPH STUB",
@@ -382,6 +399,8 @@ export const CONCEPTS: ConceptData[] = [
     title: "Decisions",
     oneLiner:
       "Deterministically executed operations emitted back into reality to alter environmental state.",
+    editorialNote:
+      "Scaling changes the nature of problems. At small scale, decisions are implementation-focused; at large scale, the dominant concerns become coordination, governance, and operational architecture around how decisions get made.",
     runningHeader: "THE PHYSICS OF DECISIONS",
     category: "FOUNDATIONAL CONCEPT",
     status: "MONOGRAPH STUB",
@@ -397,6 +416,7 @@ export const CONCEPTS: ConceptData[] = [
       "The value of a decision decreases as the delay between observation and action increases.",
     ],
     relatedConcepts: [
+      { slug: "context", title: "Context" },
       { slug: "models", title: "Models" },
       { slug: "coordination", title: "Coordination" },
       { slug: "reality", title: "Reality" },

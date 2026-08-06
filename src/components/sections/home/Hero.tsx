@@ -75,7 +75,7 @@ export function Hero() {
               size="lg"
               className="h-12 rounded-none bg-white px-8 text-sm font-medium text-black transition-colors hover:bg-white/90"
             >
-              <Link href="/projects" className="flex items-center gap-2">
+              <Link href="/works" className="flex items-center gap-2">
                 View Projects <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>

@@ -115,7 +115,7 @@ export function TransitIntelligenceFeature() {
               <p
                 className={`${serif.className} text-lg md:text-xl leading-relaxed text-[#E6E1D6]/85`}
               >
-                Transit Intelligence is where the ideas explored in this journal become executable.
+                Transit Intelligence is where the ideas explored in this library become executable.
                 It began with public transport, but evolved into a broader investigation of how
                 operational systems preserve meaning while computation, infrastructure and time
                 continuously reshape reality.

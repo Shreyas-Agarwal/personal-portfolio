@@ -10,35 +10,44 @@ import { cn } from "@/lib/utils";
 import { useHeaderTitle } from "./HeaderContext";
 
 const nav = [
-  { to: "/projects", label: "Works" },
+  { to: "/works", label: "Works" },
+  { to: "/writing", label: "Writing" },
   { to: "/systems", label: "Systems" },
-  { to: "/journal", label: "Writing" },
   { to: "/about", label: "About" },
 ];
 
 const ROUTE_TITLE_MAP: Record<string, string> = {
   "/": "Collected Engineering Works",
-  "/projects": "Works & Case Studies",
+  "/works": "Works",
   "/systems": "Systems Architecture",
-  "/journal": "Technical Publications",
+  "/works/publications": "Engineering Library",
   "/about": "Author & Monograph",
-  "/projects/publications/architecture-of-information-systems":
+  "/works/publications/architecture-of-information-systems":
     "Architecture of Information Systems",
-  "/projects/publications/desktop-connector": "Desktop Synchronization Architecture",
-  "/projects/publications/bim-paradox": "The BIM Data Paradox",
-  "/projects/publications/semantic-models": "Canonical Semantic Models",
-  "/projects/publications/context-systems": "Context Systems & Memory Boundaries",
-  "/projects/publications/mcp-context-rot": "Context Rot in LLM Agents",
-  "/projects/publications/the-silicon-ceiling": "The Silicon Ceiling",
-  "/projects/publications/ecology-and-ai": "Ecology and AI Systems",
-  "/projects/publications/evolution-vs-software": "Software vs Biological Evolution",
-  "/projects/publications/transformer-vs-qubit": "Transformer vs Qubit Architectures",
-  "/projects/publications/network-dynamics": "Network Dynamics & Latency",
+  "/works/publications/desktop-connector": "Desktop Synchronization Architecture",
+  "/works/publications/bim-paradox": "The BIM Data Paradox",
+  "/works/publications/semantic-models": "Canonical Semantic Models",
+  "/works/publications/context-systems": "Context Systems & Memory Boundaries",
+  "/works/publications/mcp-context-rot": "Context Rot in LLM Agents",
+  "/works/publications/the-silicon-ceiling": "The Silicon Ceiling",
+  "/works/publications/ecology-and-ai": "Ecology and AI Systems",
+  "/works/publications/evolution-vs-software": "Software vs Biological Evolution",
+  "/works/publications/transformer-vs-qubit": "Transformer vs Qubit Architectures",
+  "/works/publications/network-dynamics": "Network Dynamics & Latency",
+  "/writing": "Writing",
+  "/writing/field-notes": "Field Notes",
 };
+
+function activeNavTo(pathname: string): string | undefined {
+  const matches = nav.filter((n) => pathname === n.to || pathname.startsWith(`${n.to}/`));
+  if (matches.length === 0) return undefined;
+  return matches.reduce((longest, n) => (n.to.length > longest.to.length ? n : longest)).to;
+}
 
 export function Header() {
   const pathname = usePathname();
   const { activeTitle } = useHeaderTitle();
+  const currentNavTo = activeNavTo(pathname);
   const [isMastheadVisible, setIsMastheadVisible] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
@@ -47,13 +56,17 @@ export function Header() {
   const resolvedWorkTitle =
     activeTitle ||
     ROUTE_TITLE_MAP[pathname] ||
-    (pathname.startsWith("/projects")
-      ? "Engineering Work"
-      : pathname.startsWith("/systems")
-        ? "Systems Architecture"
-        : pathname.startsWith("/journal")
-          ? "Technical Publication"
-          : "Engineering Systems");
+    (pathname.startsWith("/works/publications")
+      ? "Technical Publication"
+      : pathname.startsWith("/works")
+        ? "Engineering Work"
+        : pathname.startsWith("/writing/field-notes")
+          ? "Field Note"
+          : pathname.startsWith("/writing")
+            ? "Writing"
+            : pathname.startsWith("/systems")
+              ? "Systems Architecture"
+              : "Engineering Systems");
 
   // Editorial scroll choreography: hide masthead on scroll down, show on scroll up / top
   useEffect(() => {
@@ -120,7 +133,7 @@ export function Header() {
               {/* EDITORIAL NAVIGATION */}
               <nav className="hidden md:flex items-center gap-10">
                 {nav.map((n) => {
-                  const isActive = pathname === n.to || (n.to !== "/" && pathname.startsWith(n.to));
+                  const isActive = n.to === currentNavTo;
 
                   return (
                     <Link
@@ -162,8 +175,7 @@ export function Header() {
                 >
                   <nav className="flex flex-col gap-5">
                     {nav.map((n) => {
-                      const isActive =
-                        pathname === n.to || (n.to !== "/" && pathname.startsWith(n.to));
+                      const isActive = n.to === currentNavTo;
                       return (
                         <Link
                           key={n.to}

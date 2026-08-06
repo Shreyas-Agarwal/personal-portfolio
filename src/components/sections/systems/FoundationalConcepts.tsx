@@ -116,6 +116,14 @@ export function FoundationalConcepts() {
                 >
                   {item.oneLiner}
                 </p>
+
+                {item.editorialNote && (
+                  <p
+                    className={`${serif.className} mt-4 border-l border-[#DE4B31]/30 pl-4 text-sm italic leading-relaxed text-[#E6E1D6]/45 transition-colors group-hover:text-[#E6E1D6]/65 md:text-[0.95rem]`}
+                  >
+                    {item.editorialNote}
+                  </p>
+                )}
               </Link>
             </motion.div>
           ))}

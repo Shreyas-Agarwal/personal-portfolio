@@ -7,6 +7,7 @@
   "volume": "Volume I",
   "revision": "Revision 01",
   "date": "2025-11-15",
+  "program": "AI & Computation",
   "author": "Shreyas Agarwal",
   "github": "https://github.com/Shreyas-Agarwal/football-analytics",
   "domains": ["AI & Computation", "Systems Architecture", "Event Processing"],

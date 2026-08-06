@@ -58,7 +58,7 @@ export function InformationFlowFeature() {
             it.
           </p>
           <p>
-            That idea sits underneath every system documented in this journal. Transit Intelligence
+            That idea sits underneath every system documented in this library. Transit Intelligence
             is simply the first place where those ideas are explored at operational scale.
           </p>
         </div>

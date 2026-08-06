@@ -1,0 +1,21 @@
+{
+  "id": "organizations-run-on-proxies",
+  "type": "essay",
+  "title": "Organizations Run on Proxies",
+  "subtitle": "Judgment quality is invisible. Everything an organization does is an attempt to infer it anyway.",
+  "abstract": "Judgment quality can't be observed directly, so organizations infer it from proxies — confidence, seniority, documentation, consensus, credentials — that correlate with good judgment without being it. Drawing on bounded rationality, signaling theory, Goodhart's Law, and the caching patterns of software architecture, this essay names the proxy hierarchy each organization implicitly runs on, traces how it drifts and gets gamed, and shows where it silently decides technical arguments that read afterward as purely substantive.",
+  "volume": "Volume I",
+  "revision": "Revision 02",
+  "date": "2026-08-06",
+  "program": "Process & Practice",
+  "author": "Shreyas Agarwal",
+  "domains": ["Organizational Theory", "Systems Architecture", "Decision Science"],
+  "status": "published",
+  "sections": [
+    {
+      "id": "index",
+      "title": "Organizations Run on Proxies",
+      "href": ""
+    }
+  ]
+}

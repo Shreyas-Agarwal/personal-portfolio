@@ -43,12 +43,12 @@ export function HomeFooter({ gitHubCommits = 500 }: { gitHubCommits?: number }) 
           <h2
             className={`${serif.className} text-2xl md:text-3xl italic leading-tight text-[#1B1D1F]/90`}
           >
-            Field Journal // Vol. I · Revision 2026.07
+            Engineering Library // Vol. I · Revision 2026.07
           </h2>
           <p className={`${serif.className} text-base leading-relaxed text-[#1B1D1F]/65`}>
-            This journal is an ongoing exploration of systems, information, architecture, and the
+            This library is an ongoing exploration of systems, information, architecture, and the
             patterns that emerge when complexity begins coordinating itself. Some ideas become
-            software. Some become essays. Some remain open questions.
+            software. Some become publications. Some remain open questions.
           </p>
         </div>
 
@@ -70,16 +70,12 @@ export function HomeFooter({ gitHubCommits = 500 }: { gitHubCommits?: number }) 
                 </ColophonTooltip>
               </div>
               <div>
-                <ColophonTooltip note="3 core research tracks">
-                  <Link href="/journal" className="hover:text-[#DE4B31] transition-colors">
-                    Research
-                  </Link>
-                </ColophonTooltip>
-              </div>
-              <div>
-                <ColophonTooltip note="20 published essays & notes">
-                  <Link href="/journal" className="hover:text-[#DE4B31] transition-colors">
-                    Journal
+                <ColophonTooltip note="11 publications across 6 research programs">
+                  <Link
+                    href="/works/publications"
+                    className="hover:text-[#DE4B31] transition-colors"
+                  >
+                    Publications
                   </Link>
                 </ColophonTooltip>
               </div>
@@ -113,14 +109,20 @@ export function HomeFooter({ gitHubCommits = 500 }: { gitHubCommits?: number }) 
               </div>
               <div>
                 <ColophonTooltip note="Active writing series">
-                  <Link href="/journal" className="hover:text-[#DE4B31] transition-colors">
+                  <Link
+                    href="/works/publications/architecture-of-information-systems"
+                    className="hover:text-[#DE4B31] transition-colors"
+                  >
                     Architecture of Information
                   </Link>
                 </ColophonTooltip>
               </div>
               <div>
                 <ColophonTooltip note="Research active / Conceptual study">
-                  <Link href="/journal" className="hover:text-[#DE4B31] transition-colors">
+                  <Link
+                    href="/works/publications/ecology-and-ai"
+                    className="hover:text-[#DE4B31] transition-colors"
+                  >
                     Ecology as Computation
                   </Link>
                 </ColophonTooltip>
@@ -248,7 +250,7 @@ export function HomeFooter({ gitHubCommits = 500 }: { gitHubCommits?: number }) 
               </div>
             </div>
             <Link
-              href="/journal"
+              href="/works/publications"
               className={`${plexMono.className} inline-block text-[9px] uppercase tracking-widest text-[#DE4B31] mt-1 transition-colors hover:text-[#1B1D1F]`}
             >
               View complete history →
