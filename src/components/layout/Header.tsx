@@ -98,7 +98,7 @@ export function Header() {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#0B0D10] text-[#E6E1D6]">
+    <header className="sticky top-0 z-50 w-full bg-[#0B0D10] text-[#E6E1D6] print:hidden">
       {/* ── LAYER 1: PRIMARY MASTHEAD ── */}
       <AnimatePresence initial={false}>
         {isMastheadVisible && (

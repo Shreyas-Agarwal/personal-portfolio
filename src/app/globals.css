@@ -117,4 +117,19 @@
     background-color: color-mix(in oklab, var(--color-primary) 35%, transparent);
     color: var(--color-foreground);
   }
+
+  /* Manual browser printing (Ctrl+P) fallback — the actual "Download PDF"
+     button captures the page as an image instead (see .pdf-export-mode
+     below) so it isn't subject to the browser's own print pagination. The
+     editorial palette is pale text tuned for a dark background, which
+     prints unreadable on white paper — force plain black-on-transparent
+     text for every descendant instead of restyling each content component. */
+  @media print {
+    .publication-print-content,
+    .publication-print-content * {
+      color: #000 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+  }
 }

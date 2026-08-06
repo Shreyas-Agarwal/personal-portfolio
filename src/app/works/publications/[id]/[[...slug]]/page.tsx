@@ -38,16 +38,20 @@ import {
   PublicationContent,
   publicationComponents,
 } from "@/components/publication/PublicationContent/PublicationContent";
+import { PublicationDryRead } from "@/components/publication/PublicationDryRead";
 import { PublicationFooter } from "@/components/publication/PublicationFooter/PublicationFooter";
 import { PublicationHeader } from "@/components/publication/PublicationHeader/PublicationHeader";
 import { PublicationMetadata } from "@/components/publication/PublicationMetadata/PublicationMetadata";
 import { PublicationShell } from "@/components/publication/PublicationShell/PublicationShell";
 import { PublicationSidebar } from "@/components/publication/PublicationSidebar/PublicationSidebar";
 import { PublicationTOC } from "@/components/publication/PublicationTOC/PublicationTOC";
+import { Comments } from "@/components/shared/Comments";
 import { loadPublicationDocument, resolvePublicationSource } from "@/lib/publication/loader";
+import { blocksToPlainText, parsePublicationPlainText } from "@/lib/publication/plain-text";
 
 interface PageProps {
   params: Promise<{ id: string; slug?: string[] }>;
+  searchParams: Promise<{ view?: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -91,8 +95,9 @@ const MDX_COMPONENTS = {
   ...publicationComponents,
 } as const;
 
-export default async function ProjectPublicationPage({ params }: PageProps) {
+export default async function ProjectPublicationPage({ params, searchParams }: PageProps) {
   const { id, slug = [] } = await params;
+  const { view } = await searchParams;
 
   let doc: Awaited<ReturnType<typeof loadPublicationDocument>>;
   const source = resolvePublicationSource(id);
@@ -106,6 +111,22 @@ export default async function ProjectPublicationPage({ params }: PageProps) {
   }
 
   const { manifest, current, source: mdxSource, toc, prev, next } = doc;
+  const currentPath = current.href ? `${basePath}/${current.href}` : basePath;
+  const blocks = parsePublicationPlainText(mdxSource);
+  const plainText = blocksToPlainText(blocks);
+
+  if (view === "text") {
+    return (
+      <PublicationDryRead
+        manifest={manifest}
+        current={current}
+        basePath={basePath}
+        currentPath={currentPath}
+        blocks={blocks}
+        plainText={plainText}
+      />
+    );
+  }
 
   const { content } = await compileMDX({
     source: mdxSource,
@@ -130,11 +151,27 @@ export default async function ProjectPublicationPage({ params }: PageProps) {
       }
       document={
         <>
-          <PublicationHeader manifest={manifest} current={current} basePath={basePath} />
+          <div id="publication-pdf-source">
+            <PublicationHeader
+              manifest={manifest}
+              current={current}
+              basePath={basePath}
+              dryReadHref={`${currentPath}?view=text`}
+              plainText={plainText}
+              pdfTargetId="publication-pdf-source"
+            />
 
-          <PublicationContent>{content}</PublicationContent>
+            <PublicationContent>{content}</PublicationContent>
+          </div>
 
-          <PublicationFooter prev={prev} next={next} basePath={basePath} />
+          <div className="print:hidden">
+            <PublicationFooter prev={prev} next={next} basePath={basePath} />
+
+            <Comments
+              term={`publications/${id}${slug.length ? `/${slug.join("/")}` : ""}`}
+              className="mt-16 border-t border-[#2C2E32] pt-10"
+            />
+          </div>
         </>
       }
       rightRail={

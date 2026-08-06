@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 import { FieldNoteContent } from "@/components/field-notes/FieldNoteContent";
 import { FieldNoteFooter } from "@/components/field-notes/FieldNoteFooter";
 import { FieldNoteHeader } from "@/components/field-notes/FieldNoteHeader";
+import { Comments } from "@/components/shared/Comments";
 import {
   NoteA,
   NoteBlockquote,
@@ -92,6 +93,7 @@ export default async function FieldNotePage({ params }: PageProps) {
         <FieldNoteHeader note={note} />
         <FieldNoteContent>{content}</FieldNoteContent>
         <FieldNoteFooter prev={prev} next={next} />
+        <Comments term={`field-notes/${note.slug}`} className="mt-16 border-t border-[#33373B] pt-10" />
       </div>
     </main>
   );

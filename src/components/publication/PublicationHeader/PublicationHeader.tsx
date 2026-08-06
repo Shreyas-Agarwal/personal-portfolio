@@ -13,6 +13,7 @@
 
 import Link from "next/link";
 import { useHeaderTitle } from "@/components/layout/HeaderContext";
+import { DownloadActions } from "@/components/publication/DownloadActions";
 import { plexMono, serif } from "@/lib/fonts";
 import type { PublicationManifest, PublicationSection } from "@/lib/publication/types";
 
@@ -20,6 +21,9 @@ interface PublicationHeaderProps {
   manifest: PublicationManifest;
   current: PublicationSection;
   basePath: string;
+  dryReadHref: string;
+  plainText: string;
+  pdfTargetId: string;
 }
 
 function formatDate(iso: string): string {
@@ -34,7 +38,14 @@ function formatDate(iso: string): string {
   }
 }
 
-export function PublicationHeader({ manifest, current, basePath }: PublicationHeaderProps) {
+export function PublicationHeader({
+  manifest,
+  current,
+  basePath,
+  dryReadHref,
+  plainText,
+  pdfTargetId,
+}: PublicationHeaderProps) {
   const isIndex = (current.href ?? "") === "";
   useHeaderTitle(isIndex ? manifest.title : current.title);
 
@@ -131,6 +142,27 @@ export function PublicationHeader({ manifest, current, basePath }: PublicationHe
             <span>{manifest.author}</span>
           </>
         )}
+      </div>
+
+      {/* ── Read/download actions ── */}
+      <div
+        data-html2canvas-ignore="true"
+        className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 print:hidden"
+      >
+        <Link
+          href={dryReadHref}
+          className={`${plexMono.className} text-[10px] uppercase tracking-[0.18em] text-[#E6E1D6]/45 transition-colors hover:text-[#DE4B31]`}
+        >
+          Dry Read
+        </Link>
+        <span aria-hidden="true" className="text-[10px] text-[#E6E1D6]/15">
+          ·
+        </span>
+        <DownloadActions
+          plainText={plainText}
+          filenameBase={`${manifest.id}${isIndex ? "" : `-${current.id}`}`}
+          pdfTargetId={pdfTargetId}
+        />
       </div>
     </header>
   );

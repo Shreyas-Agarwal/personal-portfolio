@@ -62,10 +62,14 @@ export function FadingScrollContainer({
         }}
       />
 
-      {/* ── Scrollable Pane (Hidden Scrollbar) ── */}
+      {/* ── Scrollable Pane (Hidden Scrollbar) ──
+          `h-full` is load-bearing: without a bounded height this box just
+          grows to fit its content, so it never overflows itself and
+          `overflow-y-auto` never produces a scrollbar — the parent's
+          `overflow-hidden` would silently clip the excess instead. */}
       <div
         ref={containerRef}
-        className={`no-scrollbar overflow-y-auto ${className}`}
+        className={`no-scrollbar h-full overflow-y-auto ${className}`}
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",

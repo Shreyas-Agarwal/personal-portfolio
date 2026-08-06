@@ -7,11 +7,15 @@ import { HomeFooter } from "./HomeFooter";
 
 export function FooterRenderer({ gitHubCommits }: { gitHubCommits: number }) {
   const pathname = usePathname();
-  return pathname === "/" ? (
-    <PaperInsert>
-      <HomeFooter gitHubCommits={gitHubCommits} />
-    </PaperInsert>
-  ) : (
-    <DefaultFooter />
+  return (
+    <div className="print:hidden">
+      {pathname === "/" ? (
+        <PaperInsert>
+          <HomeFooter gitHubCommits={gitHubCommits} />
+        </PaperInsert>
+      ) : (
+        <DefaultFooter />
+      )}
+    </div>
   );
 }

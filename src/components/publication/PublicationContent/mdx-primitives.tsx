@@ -98,22 +98,46 @@ export function PubEm({ children }: { children?: ReactNode }) {
   return <em className="italic text-[#E6E1D6]/80">{children}</em>;
 }
 
-export function PubA({ href, children }: { href?: string; children?: ReactNode }) {
+export function PubA({
+  href,
+  id,
+  children,
+}: {
+  href?: string;
+  id?: string;
+  children?: ReactNode;
+}) {
   const cls =
     "border-b border-[#E6E1D6]/25 text-[#E6E1D6]/80 transition-colors hover:border-[#DE4B31]/60 hover:text-[#E6E1D6]";
 
   // External links → new tab
   if (!href || href.startsWith("http") || href.startsWith("mailto:")) {
     return (
-      <a href={href} className={cls} target="_blank" rel="noopener noreferrer">
+      <a id={id} href={href} className={cls} target="_blank" rel="noopener noreferrer">
         {children}
       </a>
     );
   }
 
-  // Internal links (relative, absolute path, or hash) → Next.js client navigation
+  // Pure same-page hash links (footnote refs/backrefs, TOC anchors) → plain <a>.
+  // next/link intercepts the click and does its own client-side routing even
+  // when the pathname is unchanged, which pre-empts the browser's native
+  // anchor-jump behavior — the URL hash updates but the page never scrolls.
+  // A plain anchor lets the browser handle the jump itself, unconditionally.
+  if (href.startsWith("#")) {
+    return (
+      <a id={id} href={href} className={cls}>
+        {children}
+      </a>
+    );
+  }
+
+  // Internal links (relative or absolute path) → Next.js client navigation
+  // Footnote refs/backrefs carry an `id` that the paired anchor jumps to
+  // (e.g. `#user-content-fn-1`) — dropping it here would silently break
+  // every footnote jump-link in both directions.
   return (
-    <Link href={href} className={cls}>
+    <Link id={id} href={href} className={cls}>
       {children}
     </Link>
   );
@@ -131,9 +155,10 @@ export function PubOl({ children }: { children?: ReactNode }) {
   return <ol className="mb-6 ml-0 list-none space-y-2 pl-0 [counter-reset:pub-ol]">{children}</ol>;
 }
 
-export function PubLi({ children }: { children?: ReactNode }) {
+export function PubLi({ id, children }: { id?: string; children?: ReactNode }) {
   return (
     <li
+      id={id}
       className={`${serif.className} relative flex gap-3 text-[16px] leading-[1.85] text-[#E6E1D6]/70`}
     >
       <span

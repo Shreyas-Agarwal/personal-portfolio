@@ -204,19 +204,43 @@ export function PublicationSidebar({ manifest, activeHref, basePath }: Publicati
     </nav>
   );
 
+  const backLink = (
+    <Link
+      href="/works/publications"
+      className={`${plexMono.className} flex shrink-0 items-center gap-2 pb-5 text-[10px] uppercase tracking-[0.18em] text-[#E6E1D6]/45 transition-colors hover:text-[#DE4B31]`}
+    >
+      <span aria-hidden="true">←</span>
+      <span>All Publications</span>
+    </Link>
+  );
+
   return (
     <>
-      {/* ── Desktop sidebar ── */}
-      <aside aria-label="Publication sidebar" className="hidden lg:block">
-        <div className="sticky top-24 max-h-[calc(100vh-7rem)]">
-          <FadingScrollContainer className="max-h-[calc(100vh-7rem)] pr-2 pb-6" fadeHeight={26}>
-            {nav}
-          </FadingScrollContainer>
+      {/* ── Desktop sidebar ──
+          `h-full` on the aside is load-bearing: it's a grid item's child, and
+          without an explicit height it shrink-wraps to the nav's own content
+          height instead of the full stretched row height. That short height
+          becomes the sticky div's containing block, so the sidebar detaches
+          and scrolls off screen partway down the document instead of
+          sticking for the full page. */}
+      <aside aria-label="Publication sidebar" className="hidden h-full lg:block">
+        {/* `h-[...]` (not `max-h-[...]`) is load-bearing: an auto-height box
+            clamped by max-height doesn't count as a definite size for
+            descendants, so the `flex-1`/`h-full` chain into the scrollable
+            pane below would collapse to its content size instead of the
+            available height, and never overflow enough to scroll. */}
+        <div className="sticky top-24 flex h-[calc(100vh-7rem)] flex-col">
+          {backLink}
+          <div className="min-h-0 flex-1">
+            <FadingScrollContainer className="pr-2 pb-6" fadeHeight={26}>
+              {nav}
+            </FadingScrollContainer>
+          </div>
         </div>
       </aside>
 
       {/* ── Mobile: floating button + drawer overlay ── */}
-      <div className="lg:hidden">
+      <div className="lg:hidden print:hidden">
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
@@ -260,6 +284,7 @@ export function PublicationSidebar({ manifest, activeHref, basePath }: Publicati
                   ✕
                 </button>
               </div>
+              {backLink}
               <div className="flex-1 overflow-y-auto">{nav}</div>
             </div>
           </div>

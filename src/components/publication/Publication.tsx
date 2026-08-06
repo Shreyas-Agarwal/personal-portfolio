@@ -14,6 +14,7 @@
  */
 
 import { loadPublicationDocument } from "@/lib/publication/loader";
+import { toPlainText } from "@/lib/publication/plain-text";
 import type { PublicationDocument } from "@/lib/publication/types";
 import { PublicationContent } from "./PublicationContent/PublicationContent";
 import { PublicationFooter } from "./PublicationFooter/PublicationFooter";
@@ -61,10 +62,13 @@ export async function Publication(props: PublicationProps) {
     doc = await loadPublicationDocument(props.source, props.slugPath ?? []);
   }
 
-  const { manifest, current, toc, prev, next } = doc;
+  const { manifest, current, source, toc, prev, next } = doc;
 
   // The base path for all section links. Defaults to /publication/<id>
   const basePath = props.basePath ?? `/publication/${manifest.id}`;
+  const currentPath = current.href ? `${basePath}/${current.href}` : basePath;
+  const plainText = toPlainText(source);
+  const pdfTargetId = `publication-pdf-source-${manifest.id}`;
 
   return (
     <PublicationShell
@@ -77,9 +81,18 @@ export async function Publication(props: PublicationProps) {
       }
       document={
         <>
-          <PublicationHeader manifest={manifest} current={current} basePath={basePath} />
+          <div id={pdfTargetId}>
+            <PublicationHeader
+              manifest={manifest}
+              current={current}
+              basePath={basePath}
+              dryReadHref={`${currentPath}?view=text`}
+              plainText={plainText}
+              pdfTargetId={pdfTargetId}
+            />
 
-          <PublicationContent>{props.children}</PublicationContent>
+            <PublicationContent>{props.children}</PublicationContent>
+          </div>
 
           <PublicationFooter prev={prev} next={next} basePath={basePath} />
         </>
