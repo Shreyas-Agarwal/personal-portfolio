@@ -207,7 +207,18 @@ export function Header() {
               "truncate text-right text-[10px] tracking-[0.15em] text-[#E6E1D6]/45 max-w-[60%] md:max-w-[70%]",
             )}
           >
-            {resolvedWorkTitle}
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={resolvedWorkTitle}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="inline-block"
+              >
+                {resolvedWorkTitle}
+              </motion.span>
+            </AnimatePresence>
           </div>
         </div>
       </div>

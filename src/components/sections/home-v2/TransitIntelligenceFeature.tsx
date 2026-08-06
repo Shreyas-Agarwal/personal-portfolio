@@ -1,9 +1,9 @@
-"use client"
-import { plexMono, serif } from "@/lib/fonts";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+"use client";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { useState, type ReactNode } from "react";
+import { type ReactNode, useState } from "react";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { plexMono, serif } from "@/lib/fonts";
 
 interface TermTooltipProps {
   term: string;
@@ -36,25 +36,27 @@ function TermTooltip({ term, note }: TermTooltipProps) {
   );
 }
 
+import { ArrowVisual } from "@/components/animations/ArrowVisual";
 // Animations Imports
 import { BackpressureVisual } from "@/components/animations/BackpressureVisual";
-import { OrderingVisual } from "@/components/animations/OrderingVisual";
-import { ReplayVisual } from "@/components/animations/ReplayVisual";
-import { ConcurrencyVisual } from "@/components/animations/ConcurrencyVisual";
 import { BenchmarkingVisual } from "@/components/animations/BenchmarkingVisual";
-import { ArrowVisual } from "@/components/animations/ArrowVisual";
-import { DuckDBVisual } from "@/components/animations/DuckDBVisual";
-import { PolarsVisual } from "@/components/animations/PolarsVisual";
-import { IcebergVisual } from "@/components/animations/IcebergVisual";
-import { HistoricalReplayVisual } from "@/components/animations/HistoricalReplayVisual";
-import { TemporalGraphVisual } from "@/components/animations/TemporalGraphVisual";
+import { ConcurrencyVisual } from "@/components/animations/ConcurrencyVisual";
 import { DelayPropagationVisual } from "@/components/animations/DelayPropagationVisual";
+import { DuckDBVisual } from "@/components/animations/DuckDBVisual";
+import { HistoricalReplayVisual } from "@/components/animations/HistoricalReplayVisual";
+import { IcebergVisual } from "@/components/animations/IcebergVisual";
+import { OrderingVisual } from "@/components/animations/OrderingVisual";
+import { PolarsVisual } from "@/components/animations/PolarsVisual";
+import { ReplayVisual } from "@/components/animations/ReplayVisual";
 import { RouteReconstructionVisual } from "@/components/animations/RouteReconstructionVisual";
+import { TemporalGraphVisual } from "@/components/animations/TemporalGraphVisual";
 
 export function TransitIntelligenceFeature() {
   const [hoveredNode, setHoveredNode] = useState<"operational" | "go" | "lakehouse">("operational");
   const [labsRevealed, setLabsRevealed] = useState(false);
-  const [mobileSystem, setMobileSystem] = useState<"operational" | "go" | "lakehouse" | null>("operational");
+  const [mobileSystem, setMobileSystem] = useState<"operational" | "go" | "lakehouse" | null>(
+    "operational",
+  );
 
   const toggleMobileSystem = (sys: "operational" | "go" | "lakehouse") => {
     setMobileSystem(mobileSystem === sys ? null : sys);
@@ -63,30 +65,41 @@ export function TransitIntelligenceFeature() {
   return (
     <section data-header-theme="dark" className="relative bg-[#1B1D1F] px-6 py-24 md:px-12">
       <div className="mx-auto max-w-5xl">
-
         {/* Title Block with Metadata beside it (matching Hero layout) */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-[1fr_220px] mb-16 pb-8 border-b border-[#E6E1D6]/10">
           <div>
-            <div className={`${plexMono.className} text-[9px] uppercase tracking-[0.22em] text-[#E6E1D6]/40 mb-4`}>
+            <div
+              className={`${plexMono.className} text-[9px] uppercase tracking-[0.22em] text-[#E6E1D6]/40 mb-4`}
+            >
               CASE STUDY 01
             </div>
-            <h2 className={`${serif.className} text-[3rem] italic leading-tight text-[#E6E1D6]/95 md:text-[3.5rem]`}>
+            <h2
+              className={`${serif.className} text-[3rem] italic leading-tight text-[#E6E1D6]/95 md:text-[3.5rem]`}
+            >
               Transit Intelligence
             </h2>
           </div>
 
           <div className="flex items-center">
-            <div className={`${plexMono.className} space-y-3 text-[11px] tracking-wide text-[#E6E1D6]/35`}>
+            <div
+              className={`${plexMono.className} space-y-3 text-[11px] tracking-wide text-[#E6E1D6]/35`}
+            >
               <div>
-                <span className="block text-[9px] uppercase tracking-[0.15em] text-[#E6E1D6]/20 mb-0.5">STATUS</span>
+                <span className="block text-[9px] uppercase tracking-[0.15em] text-[#E6E1D6]/20 mb-0.5">
+                  STATUS
+                </span>
                 <span className="text-[#E6E1D6]/70">Research & Development</span>
               </div>
               <div>
-                <span className="block text-[9px] uppercase tracking-[0.15em] text-[#E6E1D6]/20 mb-0.5">STARTED</span>
+                <span className="block text-[9px] uppercase tracking-[0.15em] text-[#E6E1D6]/20 mb-0.5">
+                  STARTED
+                </span>
                 <span className="text-[#E6E1D6]/70">2026</span>
               </div>
               <div>
-                <span className="block text-[9px] uppercase tracking-[0.15em] text-[#E6E1D6]/20 mb-0.5">REVISION</span>
+                <span className="block text-[9px] uppercase tracking-[0.15em] text-[#E6E1D6]/20 mb-0.5">
+                  REVISION
+                </span>
                 <span className="text-[#E6E1D6]/70">07.2026</span>
               </div>
             </div>
@@ -95,27 +108,34 @@ export function TransitIntelligenceFeature() {
 
         {/* Grid Layout: Main interactive tree on left, margin notes on right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
-
           {/* Left Column (Main content) */}
           <div className="lg:col-span-8 space-y-10">
             {/* Opening Thesis */}
             <div className="max-w-2xl">
-              <p className={`${serif.className} text-lg md:text-xl leading-relaxed text-[#E6E1D6]/85`}>
-                Transit Intelligence is where the ideas explored in this journal become executable. It began with public transport, but evolved into a broader investigation of how operational systems preserve meaning while computation, infrastructure and time continuously reshape reality.
+              <p
+                className={`${serif.className} text-lg md:text-xl leading-relaxed text-[#E6E1D6]/85`}
+              >
+                Transit Intelligence is where the ideas explored in this journal become executable.
+                It began with public transport, but evolved into a broader investigation of how
+                operational systems preserve meaning while computation, infrastructure and time
+                continuously reshape reality.
               </p>
             </div>
 
             {/* The Actual Problem */}
             <div className="border-l border-[#E6E1D6]/25 pl-5 py-2 max-w-2xl">
-              <div className={`${serif.className} text-base italic text-[#E6E1D6]/75 leading-relaxed space-y-3`}>
+              <div
+                className={`${serif.className} text-base italic text-[#E6E1D6]/75 leading-relaxed space-y-3`}
+              >
                 <p>A train departure isn’t a fact.</p>
                 <p>
-                  It is an evolving agreement between schedules, sensors, predictions, historical observations,
-                  operators, and passengers.
+                  It is an evolving agreement between schedules, sensors, predictions, historical
+                  observations, operators, and passengers.
                 </p>
                 <p>Every representation is partially true.</p>
                 <p>
-                  The engineering challenge is deciding which version of reality the system should trust, when, and why.
+                  The engineering challenge is deciding which version of reality the system should
+                  trust, when, and why.
                 </p>
               </div>
             </div>
@@ -126,7 +146,9 @@ export function TransitIntelligenceFeature() {
               className="hidden lg:block relative p-6 border border-[#E6E1D6]/5 bg-[#E6E1D6]/[0.01] rounded-sm select-none"
               onMouseEnter={() => setLabsRevealed(true)}
             >
-              <span className={`${plexMono.className} absolute top-3 right-3 text-[9px] text-[#E6E1D6]/25 uppercase tracking-widest`}>
+              <span
+                className={`${plexMono.className} absolute top-3 right-3 text-[9px] text-[#E6E1D6]/25 uppercase tracking-widest`}
+              >
                 Interactive Schematic // Hover to explore
               </span>
 
@@ -234,7 +256,9 @@ export function TransitIntelligenceFeature() {
                     exit={{ opacity: 0, height: 0 }}
                     className="mt-4 border-t border-[#E6E1D6]/5 pt-4 text-center"
                   >
-                    <p className={`${serif.className} text-base md:text-lg italic text-[#E6E1D6]/70 leading-relaxed max-w-xl mx-auto`}>
+                    <p
+                      className={`${serif.className} text-base md:text-lg italic text-[#E6E1D6]/70 leading-relaxed max-w-xl mx-auto`}
+                    >
                       These laboratories don’t exist because of Transit Intelligence.
                       <br />
                       Transit Intelligence exists because these laboratories do.
@@ -250,17 +274,24 @@ export function TransitIntelligenceFeature() {
 
             {/* Mobile interactive details list */}
             <div className="lg:hidden mt-8 space-y-6">
-              <span className={`${plexMono.className} text-[9px] text-[#E6E1D6]/35 uppercase tracking-widest block`}>
+              <span
+                className={`${plexMono.className} text-[9px] text-[#E6E1D6]/35 uppercase tracking-widest block`}
+              >
                 Lab Divisions // Tap to explore
               </span>
 
               {/* System 1: Operational Platform */}
               <div className="border border-[#E6E1D6]/10 p-5 bg-[#E6E1D6]/[0.02] rounded-sm">
-                <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleMobileSystem("operational")}>
+                <div
+                  className="flex justify-between items-center cursor-pointer"
+                  onClick={() => toggleMobileSystem("operational")}
+                >
                   <span className={`${plexMono.className} text-xs text-[#DE4B31] tracking-wider`}>
                     ◇ OPERATIONAL PLATFORM
                   </span>
-                  <span className="text-[#E6E1D6]/40 text-xs">{mobileSystem === "operational" ? "▲" : "▼"}</span>
+                  <span className="text-[#E6E1D6]/40 text-xs">
+                    {mobileSystem === "operational" ? "▲" : "▼"}
+                  </span>
                 </div>
                 <AnimatePresence>
                   {mobileSystem === "operational" && (
@@ -275,18 +306,25 @@ export function TransitIntelligenceFeature() {
                       </p>
                       <div className="space-y-3 pt-2">
                         <div>
-                          <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30`}>
+                          <span
+                            className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30`}
+                          >
                             Current focus
                           </span>
-                          <ul className={`${plexMono.className} text-[11px] text-[#E6E1D6]/80 mt-1 space-y-2`}>
+                          <ul
+                            className={`${plexMono.className} text-[11px] text-[#E6E1D6]/80 mt-1 space-y-2`}
+                          >
                             <li className="flex items-center gap-1">
                               ✓{" "}
                               <TermTooltip
                                 term="Temporal Graph"
                                 note={
                                   <div className="space-y-2">
-                                    <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                      Current research direction. Evaluating whether topology changes should themselves become events.
+                                    <p
+                                      className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                    >
+                                      Current research direction. Evaluating whether topology
+                                      changes should themselves become events.
                                     </p>
                                     <TemporalGraphVisual />
                                   </div>
@@ -299,8 +337,11 @@ export function TransitIntelligenceFeature() {
                                 term="Delay propagation"
                                 note={
                                   <div className="space-y-2">
-                                    <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                      Integrated into the platform to simulate how upstream vehicle delays cascade through downstream stops.
+                                    <p
+                                      className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                    >
+                                      Integrated into the platform to simulate how upstream vehicle
+                                      delays cascade through downstream stops.
                                     </p>
                                     <DelayPropagationVisual />
                                   </div>
@@ -313,8 +354,11 @@ export function TransitIntelligenceFeature() {
                                 term="Route reconstruction"
                                 note={
                                   <div className="space-y-2">
-                                    <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                      Designed to stitch sparse GPS coordinate pings together into continuous, schedule-aligned paths.
+                                    <p
+                                      className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                    >
+                                      Designed to stitch sparse GPS coordinate pings together into
+                                      continuous, schedule-aligned paths.
                                     </p>
                                     <RouteReconstructionVisual />
                                   </div>
@@ -324,7 +368,9 @@ export function TransitIntelligenceFeature() {
                           </ul>
                         </div>
                         <div>
-                          <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30`}>
+                          <span
+                            className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30`}
+                          >
                             Status
                           </span>
                           <span className={`${plexMono.className} text-xs text-[#E6E1D6]/80`}>
@@ -332,7 +378,10 @@ export function TransitIntelligenceFeature() {
                           </span>
                         </div>
                         <div className="pt-2">
-                          <Link href="/systems/transit-intelligence" className={`${plexMono.className} text-[11px] text-[#DE4B31] uppercase tracking-wider`}>
+                          <Link
+                            href="/systems/transit-intelligence"
+                            className={`${plexMono.className} text-[11px] text-[#DE4B31] uppercase tracking-wider`}
+                          >
                             Open system →
                           </Link>
                         </div>
@@ -344,11 +393,18 @@ export function TransitIntelligenceFeature() {
 
               {/* System 2: Go Event Lab */}
               <div className="border border-[#E6E1D6]/10 p-5 bg-[#E6E1D6]/[0.02] rounded-sm">
-                <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleMobileSystem("go")}>
-                  <span className={`${plexMono.className} text-xs text-[#E6E1D6]/60 tracking-wider`}>
+                <div
+                  className="flex justify-between items-center cursor-pointer"
+                  onClick={() => toggleMobileSystem("go")}
+                >
+                  <span
+                    className={`${plexMono.className} text-xs text-[#E6E1D6]/60 tracking-wider`}
+                  >
                     ◇ GO EVENT LAB
                   </span>
-                  <span className="text-[#E6E1D6]/40 text-xs">{mobileSystem === "go" ? "▲" : "▼"}</span>
+                  <span className="text-[#E6E1D6]/40 text-xs">
+                    {mobileSystem === "go" ? "▲" : "▼"}
+                  </span>
                 </div>
                 <AnimatePresence>
                   {mobileSystem === "go" && (
@@ -362,7 +418,9 @@ export function TransitIntelligenceFeature() {
                         Understanding what event systems actually do under pressure.
                       </p>
                       <div className="space-y-2 pt-2">
-                        <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30`}>
+                        <span
+                          className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30`}
+                        >
                           Core Focus areas
                         </span>
                         <div className="flex flex-wrap gap-x-2 gap-y-1">
@@ -371,8 +429,12 @@ export function TransitIntelligenceFeature() {
                               term="Backpressure"
                               note={
                                 <div className="space-y-2">
-                                  <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                    Learned while benchmarking bounded Go channels under increasing producer rates. Eventually informed the ingestion layer of Transit Intelligence.
+                                  <p
+                                    className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                  >
+                                    Learned while benchmarking bounded Go channels under increasing
+                                    producer rates. Eventually informed the ingestion layer of
+                                    Transit Intelligence.
                                   </p>
                                   <BackpressureVisual />
                                 </div>
@@ -385,8 +447,11 @@ export function TransitIntelligenceFeature() {
                               term="Ordering"
                               note={
                                 <div className="space-y-2">
-                                  <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                    Proven in Go Event Lab to ensure distributed event streams execute deterministically.
+                                  <p
+                                    className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                  >
+                                    Proven in Go Event Lab to ensure distributed event streams
+                                    execute deterministically.
                                   </p>
                                   <OrderingVisual />
                                 </div>
@@ -399,8 +464,11 @@ export function TransitIntelligenceFeature() {
                               term="Replay"
                               note={
                                 <div className="space-y-2">
-                                  <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                    Tested under synthetic load to verify how historical system state can be reliably reconstructed from immutable logs.
+                                  <p
+                                    className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                  >
+                                    Tested under synthetic load to verify how historical system
+                                    state can be reliably reconstructed from immutable logs.
                                   </p>
                                   <ReplayVisual />
                                 </div>
@@ -413,8 +481,11 @@ export function TransitIntelligenceFeature() {
                               term="Concurrency"
                               note={
                                 <div className="space-y-2">
-                                  <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                    Analyzed under lock-free constraints in Go Event Lab to avoid operational thread contention.
+                                  <p
+                                    className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                  >
+                                    Analyzed under lock-free constraints in Go Event Lab to avoid
+                                    operational thread contention.
                                   </p>
                                   <ConcurrencyVisual />
                                 </div>
@@ -427,8 +498,11 @@ export function TransitIntelligenceFeature() {
                               term="Benchmarking"
                               note={
                                 <div className="space-y-2">
-                                  <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                    Executed in the Go lab to measure throughput and memory overhead under peak simulated pressure.
+                                  <p
+                                    className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                  >
+                                    Executed in the Go lab to measure throughput and memory overhead
+                                    under peak simulated pressure.
                                   </p>
                                   <BenchmarkingVisual />
                                 </div>
@@ -444,11 +518,18 @@ export function TransitIntelligenceFeature() {
 
               {/* System 3: Lakehouse Engineering Lab */}
               <div className="border border-[#E6E1D6]/10 p-5 bg-[#E6E1D6]/[0.02] rounded-sm">
-                <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleMobileSystem("lakehouse")}>
-                  <span className={`${plexMono.className} text-xs text-[#E6E1D6]/60 tracking-wider`}>
+                <div
+                  className="flex justify-between items-center cursor-pointer"
+                  onClick={() => toggleMobileSystem("lakehouse")}
+                >
+                  <span
+                    className={`${plexMono.className} text-xs text-[#E6E1D6]/60 tracking-wider`}
+                  >
                     ◇ LAKEHOUSE LAB
                   </span>
-                  <span className="text-[#E6E1D6]/40 text-xs">{mobileSystem === "lakehouse" ? "▲" : "▼"}</span>
+                  <span className="text-[#E6E1D6]/40 text-xs">
+                    {mobileSystem === "lakehouse" ? "▲" : "▼"}
+                  </span>
                 </div>
                 <AnimatePresence>
                   {mobileSystem === "lakehouse" && (
@@ -462,7 +543,9 @@ export function TransitIntelligenceFeature() {
                         Understanding how meaning survives across decades of historical computation.
                       </p>
                       <div className="space-y-2 pt-2">
-                        <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30`}>
+                        <span
+                          className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30`}
+                        >
                           Stack & Focus
                         </span>
                         <div className="flex flex-wrap gap-x-2 gap-y-1">
@@ -471,8 +554,11 @@ export function TransitIntelligenceFeature() {
                               term="Arrow"
                               note={
                                 <div className="space-y-2">
-                                  <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                    Chosen as the common columnar transport layout to enable zero-copy transfers between computation layers.
+                                  <p
+                                    className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                  >
+                                    Chosen as the common columnar transport layout to enable
+                                    zero-copy transfers between computation layers.
                                   </p>
                                   <ArrowVisual />
                                 </div>
@@ -485,8 +571,11 @@ export function TransitIntelligenceFeature() {
                               term="DuckDB"
                               note={
                                 <div className="space-y-2">
-                                  <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                    Selected after benchmarking analytical workloads against Polars and Pandas.
+                                  <p
+                                    className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                  >
+                                    Selected after benchmarking analytical workloads against Polars
+                                    and Pandas.
                                   </p>
                                   <DuckDBVisual />
                                 </div>
@@ -499,8 +588,11 @@ export function TransitIntelligenceFeature() {
                               term="Polars"
                               note={
                                 <div className="space-y-2">
-                                  <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                    Evaluated alongside DuckDB to compare vectorized in-memory compute speeds.
+                                  <p
+                                    className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                  >
+                                    Evaluated alongside DuckDB to compare vectorized in-memory
+                                    compute speeds.
                                   </p>
                                   <PolarsVisual />
                                 </div>
@@ -513,8 +605,11 @@ export function TransitIntelligenceFeature() {
                               term="Iceberg"
                               note={
                                 <div className="space-y-2">
-                                  <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                    Implemented in the Lakehouse lab to establish queryable historical state snapshots as the schema evolves.
+                                  <p
+                                    className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                  >
+                                    Implemented in the Lakehouse lab to establish queryable
+                                    historical state snapshots as the schema evolves.
                                   </p>
                                   <IcebergVisual />
                                 </div>
@@ -527,8 +622,11 @@ export function TransitIntelligenceFeature() {
                               term="Historical replay"
                               note={
                                 <div className="space-y-2">
-                                  <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                    Evaluated to check how long-term drift analysis queries execute against deep Parquet stores.
+                                  <p
+                                    className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                  >
+                                    Evaluated to check how long-term drift analysis queries execute
+                                    against deep Parquet stores.
                                   </p>
                                   <HistoricalReplayVisual />
                                 </div>
@@ -544,7 +642,8 @@ export function TransitIntelligenceFeature() {
 
               {/* Mobile text-reveal statement */}
               <p className={`${serif.className} text-sm italic text-[#E6E1D6]/60 pt-2`}>
-                These laboratories don’t exist because of Transit Intelligence. Transit Intelligence exists because these laboratories do.
+                These laboratories don’t exist because of Transit Intelligence. Transit Intelligence
+                exists because these laboratories do.
                 <br />
                 <span className="text-[#DE4B31] not-italic block mt-1">
                   The project changes. The engineering questions remain.
@@ -554,41 +653,94 @@ export function TransitIntelligenceFeature() {
 
             {/* Working Principle (Renamed from Field Note) */}
             <div className="border border-[#DE4B31]/30 bg-[#DE4B31]/[0.03] p-6 max-w-2xl my-12 relative">
-              <div className={`${plexMono.className} text-[9px] uppercase tracking-[0.14em] text-[#DE4B31] mb-3`}>
+              <div
+                className={`${plexMono.className} text-[9px] uppercase tracking-[0.14em] text-[#DE4B31] mb-3`}
+              >
                 WORKING PRINCIPLE
               </div>
               <div className={`${serif.className} text-base leading-relaxed text-[#E6E1D6]/80`}>
-                <p>
-                  Stable applications emerge when modelling begins at the semantic layer.
-                </p>
+                <p>Stable applications emerge when modelling begins at the semantic layer.</p>
               </div>
 
               {/* Architectural Sketch Imagery */}
               <div className="flex flex-col items-center pt-6 border-t border-[#E6E1D6]/10 mt-6 select-none">
                 {/* Stable: Semantic Model First */}
                 <div className="flex flex-col items-center p-4 border border-[#E6E1D6]/5 bg-[#E6E1D6]/[0.01] rounded-sm max-w-[200px] w-full">
-                  <span className={`${plexMono.className} text-[9px] text-[#E6E1D6]/70 uppercase tracking-wider mb-4`}>
+                  <span
+                    className={`${plexMono.className} text-[9px] text-[#E6E1D6]/70 uppercase tracking-wider mb-4`}
+                  >
                     Data-First (Stable)
                   </span>
                   <svg viewBox="0 0 160 100" className="w-full max-w-[140px] h-auto">
                     {/* Small UI Sitting on top */}
-                    <rect x="50" y="10" width="60" height="20" fill="none" stroke="#E6E1D6" strokeWidth={0.75} strokeOpacity={0.4} />
-                    <text x="80" y="22" textAnchor="middle" className={`${plexMono.className} text-[8px] fill-[#E6E1D6]/60`}>
+                    <rect
+                      x="50"
+                      y="10"
+                      width="60"
+                      height="20"
+                      fill="none"
+                      stroke="#E6E1D6"
+                      strokeWidth={0.75}
+                      strokeOpacity={0.4}
+                    />
+                    <text
+                      x="80"
+                      y="22"
+                      textAnchor="middle"
+                      className={`${plexMono.className} text-[8px] fill-[#E6E1D6]/60`}
+                    >
                       UI Layer
                     </text>
 
                     {/* Broad, solid Semantic & Data foundation below */}
-                    <rect x="15" y="45" width="130" height="42" fill="none" stroke="#E6E1D6" strokeWidth={1} strokeOpacity={0.8} />
-                    <text x="80" y="65" textAnchor="middle" className={`${plexMono.className} text-[9px] fill-[#E6E1D6] font-semibold`}>
+                    <rect
+                      x="15"
+                      y="45"
+                      width="130"
+                      height="42"
+                      fill="none"
+                      stroke="#E6E1D6"
+                      strokeWidth={1}
+                      strokeOpacity={0.8}
+                    />
+                    <text
+                      x="80"
+                      y="65"
+                      textAnchor="middle"
+                      className={`${plexMono.className} text-[9px] fill-[#E6E1D6] font-semibold`}
+                    >
                       SEMANTIC MODEL
                     </text>
-                    <text x="80" y="77" textAnchor="middle" className={`${plexMono.className} text-[7px] fill-[#E6E1D6]/40`}>
+                    <text
+                      x="80"
+                      y="77"
+                      textAnchor="middle"
+                      className={`${plexMono.className} text-[7px] fill-[#E6E1D6]/40`}
+                    >
                       Immutable Schema
                     </text>
 
                     {/* Solid support lines */}
-                    <line x1="45" y1="30" x2="45" y2="45" stroke="#E6E1D6" strokeWidth={0.5} strokeDasharray="2 2" strokeOpacity={0.3} />
-                    <line x1="115" y1="30" x2="115" y2="45" stroke="#E6E1D6" strokeWidth={0.5} strokeDasharray="2 2" strokeOpacity={0.3} />
+                    <line
+                      x1="45"
+                      y1="30"
+                      x2="45"
+                      y2="45"
+                      stroke="#E6E1D6"
+                      strokeWidth={0.5}
+                      strokeDasharray="2 2"
+                      strokeOpacity={0.3}
+                    />
+                    <line
+                      x1="115"
+                      y1="30"
+                      x2="115"
+                      y2="45"
+                      stroke="#E6E1D6"
+                      strokeWidth={0.5}
+                      strokeDasharray="2 2"
+                      strokeOpacity={0.3}
+                    />
                   </svg>
                 </div>
               </div>
@@ -596,7 +748,9 @@ export function TransitIntelligenceFeature() {
 
             {/* Open Questions Checklist (Visible Uncertainty) */}
             <div className="my-10 max-w-md border-t border-[#E6E1D6]/10 pt-6">
-              <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/35 mb-4`}>
+              <span
+                className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/35 mb-4`}
+              >
                 OPEN QUESTIONS & REVISIONS
               </span>
               <ul className={`${plexMono.className} text-xs text-[#E6E1D6]/60 space-y-3`}>
@@ -610,7 +764,9 @@ export function TransitIntelligenceFeature() {
                 </li>
                 <li className="flex items-start gap-2.5">
                   <span className="text-emerald-500 font-semibold">✓</span>
-                  <span className="line-through text-[#E6E1D6]/40">Realtime Event ingestion and processing complete</span>
+                  <span className="line-through text-[#E6E1D6]/40">
+                    Realtime Event ingestion and processing complete
+                  </span>
                 </li>
               </ul>
             </div>
@@ -619,7 +775,9 @@ export function TransitIntelligenceFeature() {
           {/* Right Column: Margin notes display (Desktop only) */}
           <div className="lg:col-span-4 hidden lg:block relative">
             <div className="sticky top-28 space-y-6">
-              <span className={`${plexMono.className} block text-[9px] text-[#E6E1D6]/30 uppercase tracking-widest border-b border-[#E6E1D6]/10 pb-2`}>
+              <span
+                className={`${plexMono.className} block text-[9px] text-[#E6E1D6]/30 uppercase tracking-widest border-b border-[#E6E1D6]/10 pb-2`}
+              >
                 System Blueprint
               </span>
 
@@ -633,29 +791,42 @@ export function TransitIntelligenceFeature() {
                     transition={{ duration: 0.3 }}
                     className="border border-[#E6E1D6]/10 p-6 bg-[#E6E1D6]/[0.02]"
                   >
-                    <div className={`${plexMono.className} text-[10px] font-semibold uppercase tracking-wider text-[#DE4B31] mb-2`}>
+                    <div
+                      className={`${plexMono.className} text-[10px] font-semibold uppercase tracking-wider text-[#DE4B31] mb-2`}
+                    >
                       ◇ OPERATIONAL PLATFORM
                     </div>
-                    <span className={`${plexMono.className} block text-[9px] text-[#E6E1D6]/40 uppercase mb-3`}>
+                    <span
+                      className={`${plexMono.className} block text-[9px] text-[#E6E1D6]/40 uppercase mb-3`}
+                    >
                       Production Platform
                     </span>
-                    <p className={`${serif.className} text-xs text-[#E6E1D6]/70 leading-relaxed mb-4`}>
+                    <p
+                      className={`${serif.className} text-xs text-[#E6E1D6]/70 leading-relaxed mb-4`}
+                    >
                       Where research becomes software.
                     </p>
                     <div className="space-y-4 pt-2">
                       <div>
-                        <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30`}>
+                        <span
+                          className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30`}
+                        >
                           Current focus
                         </span>
-                        <ul className={`${plexMono.className} text-[11px] text-[#E6E1D6]/80 mt-1.5 space-y-2`}>
+                        <ul
+                          className={`${plexMono.className} text-[11px] text-[#E6E1D6]/80 mt-1.5 space-y-2`}
+                        >
                           <li className="flex items-center gap-1">
                             ✓{" "}
                             <TermTooltip
                               term="Temporal Graph"
                               note={
                                 <div className="space-y-2">
-                                  <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                    Current research direction. Evaluating whether topology changes should themselves become events.
+                                  <p
+                                    className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                  >
+                                    Current research direction. Evaluating whether topology changes
+                                    should themselves become events.
                                   </p>
                                   <TemporalGraphVisual />
                                 </div>
@@ -668,8 +839,11 @@ export function TransitIntelligenceFeature() {
                               term="Delay propagation"
                               note={
                                 <div className="space-y-2">
-                                  <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                    Integrated into the platform to simulate how upstream vehicle delays cascade through downstream stops.
+                                  <p
+                                    className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                  >
+                                    Integrated into the platform to simulate how upstream vehicle
+                                    delays cascade through downstream stops.
                                   </p>
                                   <DelayPropagationVisual />
                                 </div>
@@ -682,8 +856,11 @@ export function TransitIntelligenceFeature() {
                               term="Route reconstruction"
                               note={
                                 <div className="space-y-2">
-                                  <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                    Designed to stitch sparse GPS coordinate pings together into continuous, schedule-aligned paths.
+                                  <p
+                                    className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                  >
+                                    Designed to stitch sparse GPS coordinate pings together into
+                                    continuous, schedule-aligned paths.
                                   </p>
                                   <RouteReconstructionVisual />
                                 </div>
@@ -693,7 +870,9 @@ export function TransitIntelligenceFeature() {
                         </ul>
                       </div>
                       <div>
-                        <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30`}>
+                        <span
+                          className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30`}
+                        >
                           Status
                         </span>
                         <span className={`${plexMono.className} text-xs text-[#E6E1D6]/80`}>
@@ -713,17 +892,25 @@ export function TransitIntelligenceFeature() {
                     transition={{ duration: 0.3 }}
                     className="border border-[#E6E1D6]/10 p-6 bg-[#E6E1D6]/[0.02]"
                   >
-                    <div className={`${plexMono.className} text-[10px] font-semibold uppercase tracking-wider text-[#E6E1D6]/80 mb-2`}>
+                    <div
+                      className={`${plexMono.className} text-[10px] font-semibold uppercase tracking-wider text-[#E6E1D6]/80 mb-2`}
+                    >
                       ◇ GO EVENT LAB
                     </div>
-                    <span className={`${plexMono.className} block text-[9px] text-[#E6E1D6]/40 uppercase mb-3`}>
+                    <span
+                      className={`${plexMono.className} block text-[9px] text-[#E6E1D6]/40 uppercase mb-3`}
+                    >
                       Engineering Laboratory
                     </span>
-                    <p className={`${serif.className} text-xs text-[#E6E1D6]/70 leading-relaxed mb-4`}>
+                    <p
+                      className={`${serif.className} text-xs text-[#E6E1D6]/70 leading-relaxed mb-4`}
+                    >
                       Understanding what event systems actually do under pressure.
                     </p>
                     <div>
-                      <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30 mb-2`}>
+                      <span
+                        className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30 mb-2`}
+                      >
                         Core Focus Areas
                       </span>
                       <div className="flex flex-col gap-2 mt-1">
@@ -732,8 +919,12 @@ export function TransitIntelligenceFeature() {
                             term="Backpressure"
                             note={
                               <div className="space-y-2">
-                                <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                  Learned while benchmarking bounded Go channels under increasing producer rates. Eventually informed the ingestion layer of Transit Intelligence.
+                                <p
+                                  className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                >
+                                  Learned while benchmarking bounded Go channels under increasing
+                                  producer rates. Eventually informed the ingestion layer of Transit
+                                  Intelligence.
                                 </p>
                                 <BackpressureVisual />
                               </div>
@@ -745,8 +936,11 @@ export function TransitIntelligenceFeature() {
                             term="Ordering"
                             note={
                               <div className="space-y-2">
-                                <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                  Proven in Go Event Lab to ensure distributed event streams execute deterministically.
+                                <p
+                                  className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                >
+                                  Proven in Go Event Lab to ensure distributed event streams execute
+                                  deterministically.
                                 </p>
                                 <OrderingVisual />
                               </div>
@@ -758,8 +952,11 @@ export function TransitIntelligenceFeature() {
                             term="Replay"
                             note={
                               <div className="space-y-2">
-                                <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                  Tested under synthetic load to verify how historical system state can be reliably reconstructed from immutable logs.
+                                <p
+                                  className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                >
+                                  Tested under synthetic load to verify how historical system state
+                                  can be reliably reconstructed from immutable logs.
                                 </p>
                                 <ReplayVisual />
                               </div>
@@ -771,8 +968,11 @@ export function TransitIntelligenceFeature() {
                             term="Concurrency"
                             note={
                               <div className="space-y-2">
-                                <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                  Analyzed under lock-free constraints in Go Event Lab to avoid operational thread contention.
+                                <p
+                                  className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                >
+                                  Analyzed under lock-free constraints in Go Event Lab to avoid
+                                  operational thread contention.
                                 </p>
                                 <ConcurrencyVisual />
                               </div>
@@ -784,8 +984,11 @@ export function TransitIntelligenceFeature() {
                             term="Benchmarking"
                             note={
                               <div className="space-y-2">
-                                <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                  Executed in the Go lab to measure throughput and memory overhead under peak simulated pressure.
+                                <p
+                                  className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                >
+                                  Executed in the Go lab to measure throughput and memory overhead
+                                  under peak simulated pressure.
                                 </p>
                                 <BenchmarkingVisual />
                               </div>
@@ -806,17 +1009,25 @@ export function TransitIntelligenceFeature() {
                     transition={{ duration: 0.3 }}
                     className="border border-[#E6E1D6]/10 p-6 bg-[#E6E1D6]/[0.02]"
                   >
-                    <div className={`${plexMono.className} text-[10px] font-semibold uppercase tracking-wider text-[#E6E1D6]/80 mb-2`}>
+                    <div
+                      className={`${plexMono.className} text-[10px] font-semibold uppercase tracking-wider text-[#E6E1D6]/80 mb-2`}
+                    >
                       ◇ LAKEHOUSE LAB
                     </div>
-                    <span className={`${plexMono.className} block text-[9px] text-[#E6E1D6]/40 uppercase mb-3`}>
+                    <span
+                      className={`${plexMono.className} block text-[9px] text-[#E6E1D6]/40 uppercase mb-3`}
+                    >
                       Data Engineering Laboratory
                     </span>
-                    <p className={`${serif.className} text-xs text-[#E6E1D6]/70 leading-relaxed mb-4`}>
+                    <p
+                      className={`${serif.className} text-xs text-[#E6E1D6]/70 leading-relaxed mb-4`}
+                    >
                       Understanding how meaning survives across decades of historical computation.
                     </p>
                     <div>
-                      <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30 mb-2`}>
+                      <span
+                        className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#E6E1D6]/30 mb-2`}
+                      >
                         Stack & Focus
                       </span>
                       <div className="flex flex-col gap-2 mt-1">
@@ -825,8 +1036,11 @@ export function TransitIntelligenceFeature() {
                             term="Arrow"
                             note={
                               <div className="space-y-2">
-                                <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                  Chosen as the common columnar transport layout to enable zero-copy transfers between computation layers.
+                                <p
+                                  className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                >
+                                  Chosen as the common columnar transport layout to enable zero-copy
+                                  transfers between computation layers.
                                 </p>
                                 <ArrowVisual />
                               </div>
@@ -838,8 +1052,11 @@ export function TransitIntelligenceFeature() {
                             term="DuckDB"
                             note={
                               <div className="space-y-2">
-                                <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                  Selected after benchmarking analytical workloads against Polars and Pandas.
+                                <p
+                                  className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                >
+                                  Selected after benchmarking analytical workloads against Polars
+                                  and Pandas.
                                 </p>
                                 <DuckDBVisual />
                               </div>
@@ -851,8 +1068,11 @@ export function TransitIntelligenceFeature() {
                             term="Polars"
                             note={
                               <div className="space-y-2">
-                                <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                  Evaluated alongside DuckDB to compare vectorized in-memory compute speeds.
+                                <p
+                                  className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                >
+                                  Evaluated alongside DuckDB to compare vectorized in-memory compute
+                                  speeds.
                                 </p>
                                 <PolarsVisual />
                               </div>
@@ -864,8 +1084,11 @@ export function TransitIntelligenceFeature() {
                             term="Iceberg"
                             note={
                               <div className="space-y-2">
-                                <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                  Implemented in the Lakehouse lab to establish queryable historical state snapshots as the schema evolves.
+                                <p
+                                  className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                >
+                                  Implemented in the Lakehouse lab to establish queryable historical
+                                  state snapshots as the schema evolves.
                                 </p>
                                 <IcebergVisual />
                               </div>
@@ -877,8 +1100,11 @@ export function TransitIntelligenceFeature() {
                             term="Historical replay"
                             note={
                               <div className="space-y-2">
-                                <p className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}>
-                                  Evaluated to check how long-term drift analysis queries execute against deep Parquet stores.
+                                <p
+                                  className={`${plexMono.className} text-[11px] leading-relaxed text-[#E6E1D6]/80`}
+                                >
+                                  Evaluated to check how long-term drift analysis queries execute
+                                  against deep Parquet stores.
                                 </p>
                                 <HistoricalReplayVisual />
                               </div>
@@ -892,7 +1118,6 @@ export function TransitIntelligenceFeature() {
               </AnimatePresence>
             </div>
           </div>
-
         </div>
 
         {/* Teaser Ending */}
@@ -907,7 +1132,6 @@ export function TransitIntelligenceFeature() {
             </span>
           </Link>
         </div>
-
       </div>
     </section>
   );

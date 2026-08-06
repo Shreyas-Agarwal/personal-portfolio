@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
 import Link from "next/link";
-import { plexMono, serif } from "@/lib/fonts";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { plexMono, serif } from "@/lib/fonts";
 
 interface ColophonTooltipProps {
   children: React.ReactNode;
@@ -33,48 +33,61 @@ export function HomeFooter({ gitHubCommits = 500 }: { gitHubCommits?: number }) 
   return (
     <footer className="space-y-16 select-none text-[#1B1D1F]">
       <div className="space-y-16">
-
         {/* Section Title & Opening (Closing Notes style) */}
         <div className="space-y-6 max-w-2xl border-b border-[#1B1D1F]/[0.08] pb-10">
-          <span className={`${plexMono.className} text-[10px] tracking-[0.22em] text-[#1B1D1F]/40 block`}>
+          <span
+            className={`${plexMono.className} text-[10px] tracking-[0.22em] text-[#1B1D1F]/40 block`}
+          >
             § CLOSING NOTES
           </span>
-          <h2 className={`${serif.className} text-2xl md:text-3xl italic leading-tight text-[#1B1D1F]/90`}>
+          <h2
+            className={`${serif.className} text-2xl md:text-3xl italic leading-tight text-[#1B1D1F]/90`}
+          >
             Field Journal // Vol. I · Revision 2026.07
           </h2>
           <p className={`${serif.className} text-base leading-relaxed text-[#1B1D1F]/65`}>
-            This journal is an ongoing exploration of systems, information, architecture, and the patterns that emerge
-            when complexity begins coordinating itself. Some ideas become software. Some become essays. Some remain open questions.
+            This journal is an ongoing exploration of systems, information, architecture, and the
+            patterns that emerge when complexity begins coordinating itself. Some ideas become
+            software. Some become essays. Some remain open questions.
           </p>
         </div>
 
         {/* Four Asymmetric Columns Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 md:gap-8 border-b border-[#1B1D1F]/[0.08] pb-12">
-
           {/* Column 1: CONTENTS */}
           <div className="space-y-4">
-            <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#1B1D1F]/35`}>
+            <span
+              className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#1B1D1F]/35`}
+            >
               CONTENTS
             </span>
             <div className={`${serif.className} flex flex-col gap-2.5 text-sm`}>
               <div>
                 <ColophonTooltip note="8 active systems cataloged">
-                  <Link href="/systems" className="hover:text-[#DE4B31] transition-colors">Systems</Link>
+                  <Link href="/systems" className="hover:text-[#DE4B31] transition-colors">
+                    Systems
+                  </Link>
                 </ColophonTooltip>
               </div>
               <div>
                 <ColophonTooltip note="3 core research tracks">
-                  <Link href="/journal" className="hover:text-[#DE4B31] transition-colors">Research</Link>
+                  <Link href="/journal" className="hover:text-[#DE4B31] transition-colors">
+                    Research
+                  </Link>
                 </ColophonTooltip>
               </div>
               <div>
                 <ColophonTooltip note="20 published essays & notes">
-                  <Link href="/journal" className="hover:text-[#DE4B31] transition-colors">Journal</Link>
+                  <Link href="/journal" className="hover:text-[#DE4B31] transition-colors">
+                    Journal
+                  </Link>
                 </ColophonTooltip>
               </div>
               <div>
                 <ColophonTooltip note="Identity & portfolio index">
-                  <Link href="/about" className="hover:text-[#DE4B31] transition-colors">Identity</Link>
+                  <Link href="/about" className="hover:text-[#DE4B31] transition-colors">
+                    Identity
+                  </Link>
                 </ColophonTooltip>
               </div>
             </div>
@@ -82,23 +95,34 @@ export function HomeFooter({ gitHubCommits = 500 }: { gitHubCommits?: number }) 
 
           {/* Column 2: CURRENTLY */}
           <div className="space-y-4">
-            <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#DE4B31]`}>
+            <span
+              className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#DE4B31]`}
+            >
               CURRENTLY
             </span>
             <div className={`${serif.className} flex flex-col gap-2.5 text-sm`}>
               <div>
                 <ColophonTooltip note="R&D Active / Operational platform">
-                  <Link href="/systems/transit-intelligence" className="hover:text-[#DE4B31] transition-colors">Transit Intelligence</Link>
+                  <Link
+                    href="/systems/transit-intelligence"
+                    className="hover:text-[#DE4B31] transition-colors"
+                  >
+                    Transit Intelligence
+                  </Link>
                 </ColophonTooltip>
               </div>
               <div>
                 <ColophonTooltip note="Active writing series">
-                  <Link href="/journal" className="hover:text-[#DE4B31] transition-colors">Architecture of Information</Link>
+                  <Link href="/journal" className="hover:text-[#DE4B31] transition-colors">
+                    Architecture of Information
+                  </Link>
                 </ColophonTooltip>
               </div>
               <div>
                 <ColophonTooltip note="Research active / Conceptual study">
-                  <Link href="/journal" className="hover:text-[#DE4B31] transition-colors">Ecology as Computation</Link>
+                  <Link href="/journal" className="hover:text-[#DE4B31] transition-colors">
+                    Ecology as Computation
+                  </Link>
                 </ColophonTooltip>
               </div>
             </div>
@@ -106,23 +130,44 @@ export function HomeFooter({ gitHubCommits = 500 }: { gitHubCommits?: number }) 
 
           {/* Column 3: ELSEWHERE */}
           <div className="space-y-4">
-            <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#1B1D1F]/35`}>
+            <span
+              className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#1B1D1F]/35`}
+            >
               ELSEWHERE
             </span>
             <div className={`${serif.className} flex flex-col gap-2.5 text-sm`}>
               <div>
                 <ColophonTooltip note={`${gitHubCommits} contributions in the last year`}>
-                  <a href="https://github.com/Shreyas-Agarwal" target="_blank" rel="noopener noreferrer" className="hover:text-[#DE4B31] transition-colors">GitHub</a>
+                  <a
+                    href="https://github.com/Shreyas-Agarwal"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-[#DE4B31] transition-colors"
+                  >
+                    GitHub
+                  </a>
                 </ColophonTooltip>
               </div>
               <div>
                 <ColophonTooltip note="Usually active / Shreyas Agarwal">
-                  <a href="https://www.linkedin.com/in/shreyasagarwal01/" target="_blank" rel="noopener noreferrer" className="hover:text-[#DE4B31] transition-colors">LinkedIn</a>
+                  <a
+                    href="https://www.linkedin.com/in/shreyasagarwal01/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-[#DE4B31] transition-colors"
+                  >
+                    LinkedIn
+                  </a>
                 </ColophonTooltip>
               </div>
               <div>
                 <ColophonTooltip note="Replies within a business day">
-                  <a href="mailto:shreyas.agarwal31@gmail.com" className="hover:text-[#DE4B31] transition-colors">Email</a>
+                  <a
+                    href="mailto:shreyas.agarwal31@gmail.com"
+                    className="hover:text-[#DE4B31] transition-colors"
+                  >
+                    Email
+                  </a>
                 </ColophonTooltip>
               </div>
             </div>
@@ -130,10 +175,14 @@ export function HomeFooter({ gitHubCommits = 500 }: { gitHubCommits?: number }) 
 
           {/* Column 4: PUBLICATION */}
           <div className="space-y-4">
-            <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#1B1D1F]/35`}>
+            <span
+              className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#1B1D1F]/35`}
+            >
               PUBLICATION
             </span>
-            <div className={`${plexMono.className} flex flex-col gap-2 text-[10px] text-[#1B1D1F]/50 tracking-wide`}>
+            <div
+              className={`${plexMono.className} flex flex-col gap-2 text-[10px] text-[#1B1D1F]/50 tracking-wide`}
+            >
               <div>
                 <span className="text-[#1B1D1F]/30">Volume:</span> I
               </div>
@@ -147,7 +196,9 @@ export function HomeFooter({ gitHubCommits = 500 }: { gitHubCommits?: number }) 
                 <span className="text-[#1B1D1F]/30">Status:</span> Living
               </div>
               <div className="pt-2 leading-relaxed">
-                <span className="block text-[8px] uppercase tracking-wider text-[#1B1D1F]/35 mb-0.5">Written with</span>
+                <span className="block text-[8px] uppercase tracking-wider text-[#1B1D1F]/35 mb-0.5">
+                  Written with
+                </span>
                 Next.js · TypeScript · Tailwind
               </div>
             </div>
@@ -156,10 +207,14 @@ export function HomeFooter({ gitHubCommits = 500 }: { gitHubCommits?: number }) 
 
         {/* Open Questions Block */}
         <div className="space-y-4 border-b border-[#1B1D1F]/[0.08] pb-12 max-w-2xl">
-          <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#DE4B31]`}>
+          <span
+            className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#DE4B31]`}
+          >
             OPEN QUESTIONS
           </span>
-          <div className={`${serif.className} text-base italic leading-relaxed text-[#1B1D1F]/75 space-y-3.5`}>
+          <div
+            className={`${serif.className} text-base italic leading-relaxed text-[#1B1D1F]/75 space-y-3.5`}
+          >
             <p>· How should meaning propagate through isolated coordinate pings?</p>
             <p>· Can biological coordination principles inform software systems architecture?</p>
             <p>· What belongs inside a truly stable semantic schema layer?</p>
@@ -168,10 +223,11 @@ export function HomeFooter({ gitHubCommits = 500 }: { gitHubCommits?: number }) 
 
         {/* Footer Bottom: Revision Log & Technical Colophon */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-4 pt-4 items-start">
-
           {/* Revision Log (Bottom Left) */}
           <div className="space-y-3.5 max-w-xs">
-            <span className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#1B1D1F]/35`}>
+            <span
+              className={`${plexMono.className} block text-[9px] uppercase tracking-wider text-[#1B1D1F]/35`}
+            >
               REVISION LOG
             </span>
             <div className={`${plexMono.className} text-[10px] text-[#1B1D1F]/45 space-y-1.5`}>
@@ -208,17 +264,19 @@ export function HomeFooter({ gitHubCommits = 500 }: { gitHubCommits?: number }) 
             </div>
 
             <div className="border-t border-[#1B1D1F]/10 pt-4 inline-block md:text-right">
-              <span className={`${plexMono.className} block text-[10px] tracking-[0.25em] font-semibold text-[#1B1D1F]/80 leading-none`}>
+              <span
+                className={`${plexMono.className} block text-[10px] tracking-[0.25em] font-semibold text-[#1B1D1F]/80 leading-none`}
+              >
                 BUILT AS A SYSTEM,
               </span>
-              <span className={`${plexMono.className} block text-[10px] tracking-[0.25em] font-semibold text-[#1B1D1F]/80 mt-1.5 leading-none`}>
+              <span
+                className={`${plexMono.className} block text-[10px] tracking-[0.25em] font-semibold text-[#1B1D1F]/80 mt-1.5 leading-none`}
+              >
                 NOT A PORTFOLIO.
               </span>
             </div>
           </div>
-
         </div>
-
       </div>
     </footer>
   );

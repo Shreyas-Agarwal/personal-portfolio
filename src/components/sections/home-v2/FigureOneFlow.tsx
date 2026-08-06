@@ -8,6 +8,7 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 /** This figure sits on the cream paper surface (#ECE5D4), not graphite, so its structural
  * ink is dark — same ink-on-cream convention as EditorialInterlude's prose. */
 const INK = "#1B1D1F";
+const ACCENT_INK = "#DE4B31";
 
 /** Packet colors — the one deliberately non-monochrome element on the page: this diagram
  * is meant to read as "the actual internet," not the site's usual drafting-desk palette. */
@@ -98,85 +99,61 @@ const DESKTOP_EDGES: EdgeSpec[] = [
 
 const MOBILE_NODES: NodeSpec[] = [
   { id: "m-reality", label: "REALITY", kind: "io", pos: { x: 40, y: 40 }, labelSide: "right" },
-  { id: "m-signals", label: "SIGNALS", kind: "io", pos: { x: 180, y: 75 }, labelSide: "left" },
+  { id: "m-signals", label: "SIGNALS", kind: "io", pos: { x: 180, y: 70 }, labelSide: "left" },
   {
-    id: "m-observations",
+    id: "m-obs",
     label: "OBSERVATIONS",
     kind: "io",
-    pos: { x: 90, y: 115 },
+    pos: { x: 60, y: 150 },
     labelSide: "right",
   },
-  { id: "m-state", label: "STATE", kind: "io", pos: { x: 170, y: 160 }, labelSide: "left" },
-  { id: "m-context", label: "CONTEXT", kind: "io", pos: { x: 45, y: 195 }, labelSide: "right" },
-  { id: "m-memory", label: "MEMORY", kind: "io", pos: { x: 130, y: 235 }, labelSide: "right" },
-  { id: "m-history", label: "HISTORY", kind: "io", pos: { x: 40, y: 280 }, labelSide: "right" },
+  { id: "m-state", label: "STATE", kind: "io", pos: { x: 170, y: 190 }, labelSide: "left" },
+  { id: "m-context", label: "CONTEXT", kind: "io", pos: { x: 50, y: 260 }, labelSide: "right" },
+  { id: "m-models", label: "MODELS", kind: "io", pos: { x: 180, y: 290 }, labelSide: "left" },
   {
-    id: "m-coordination",
+    id: "m-[#1B1D1F]",
     label: "COORDINATION",
     kind: "io",
-    pos: { x: 180, y: 315 },
-    labelSide: "left",
+    pos: { x: 60, y: 350 },
+    labelSide: "right",
   },
-  { id: "m-models", label: "MODELS", kind: "io", pos: { x: 80, y: 360 }, labelSide: "right" },
-  { id: "m-decisions", label: "DECISIONS", kind: "io", pos: { x: 170, y: 395 }, labelSide: "left" },
-  { id: "m-c1", label: "", kind: "compute", pos: { x: 110, y: 55 } },
-  { id: "m-c2", label: "", kind: "compute", pos: { x: 120, y: 180 } },
-  { id: "m-c3", label: "", kind: "compute", pos: { x: 100, y: 260 } },
-  { id: "m-c4", label: "", kind: "compute", pos: { x: 130, y: 345 } },
+  { id: "m-decisions", label: "DECISIONS", kind: "io", pos: { x: 170, y: 390 }, labelSide: "left" },
+  { id: "m-c1", label: "", kind: "compute", pos: { x: 110, y: 100 } },
+  { id: "m-c2", label: "", kind: "compute", pos: { x: 110, y: 220 } },
+  { id: "m-c3", label: "", kind: "compute", pos: { x: 110, y: 320 } },
 ];
 
 const MOBILE_EDGES: EdgeSpec[] = [
-  // Core flow
-  { id: "me1", from: "m-reality", to: "m-signals" },
-  { id: "me2", from: "m-signals", to: "m-c1" },
-  { id: "me3", from: "m-c1", to: "m-observations" },
-  { id: "me4", from: "m-observations", to: "m-state" },
-  { id: "me5", from: "m-state", to: "m-c2" },
-  { id: "me6", from: "m-c2", to: "m-context" },
-  { id: "me7", from: "m-context", to: "m-memory" },
-  { id: "me8", from: "m-memory", to: "m-c3" },
-  { id: "me9", from: "m-c3", to: "m-history" },
-  { id: "me10", from: "m-history", to: "m-coordination" },
-  { id: "me11", from: "m-coordination", to: "m-c4" },
-  { id: "me12", from: "m-c4", to: "m-models" },
-  { id: "me13", from: "m-models", to: "m-decisions" },
-  { id: "me14", from: "m-decisions", to: "m-reality" },
-
-  // Direct and crossing lines
-  { id: "me15", from: "m-reality", to: "m-state" },
-  { id: "me16", from: "m-signals", to: "m-context" },
-  { id: "me17", from: "m-observations", to: "m-memory" },
-  { id: "me18", from: "m-state", to: "m-history" },
-  { id: "me19", from: "m-context", to: "m-coordination" },
-  { id: "me20", from: "m-memory", to: "m-models" },
-  { id: "me21", from: "m-history", to: "m-decisions" },
-  { id: "me22", from: "m-coordination", to: "m-reality" },
+  { id: "m-e1", from: "m-reality", to: "m-signals" },
+  { id: "m-e2", from: "m-signals", to: "m-c1" },
+  { id: "m-e3", from: "m-c1", to: "m-obs" },
+  { id: "m-e4", from: "m-obs", to: "m-state" },
+  { id: "m-e5", from: "m-state", to: "m-context" },
+  { id: "m-e6", from: "m-context", to: "m-c2" },
+  { id: "m-e7", from: "m-c2", to: "m-models" },
+  { id: "m-e8", from: "m-models", to: "m-[#1B1D1F]" },
+  { id: "m-e9", from: "m-[#1B1D1F]", to: "m-c3" },
+  { id: "m-e10", from: "m-c3", to: "m-decisions" },
+  { id: "m-e11", from: "m-decisions", to: "m-reality" },
 ];
 
+function curvedPath(from: Vec, to: Vec, offset: number): string {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const cx = (from.x + to.x) / 2 - dy * offset;
+  const cy = (from.y + to.y) / 2 + dx * offset;
+  return `M ${from.x} ${from.y} Q ${cx} ${cy} ${to.x} ${to.y}`;
+}
+
+function edgeOffset(index: number): number {
+  const table = [0.18, -0.22, 0.15, -0.19, 0.24, -0.16];
+  return table[index % table.length];
+}
+
 function findNode(nodes: NodeSpec[], id: string): NodeSpec {
-  const node = nodes.find((n) => n.id === id);
-  if (!node) throw new Error(`Unknown node id: ${id}`);
-  return node;
-}
-
-/** Deterministic scatter — every path bows a different amount/direction so the network
- * reads as tangled rather than a clean wiring diagram, without relying on Math.random(). */
-function edgeOffset(i: number) {
-  const sign = i % 2 === 0 ? 1 : -1;
-  return sign * (18 + ((i * 13) % 42));
-}
-
-function curvedPath(a: Vec, b: Vec, offset: number) {
-  const mx = (a.x + b.x) / 2;
-  const my = (a.y + b.y) / 2;
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  const len = Math.hypot(dx, dy) || 1;
-  const nx = -dy / len;
-  const ny = dx / len;
-  const cx = mx + nx * offset;
-  const cy = my + ny * offset;
-  return `M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`;
+  const n = nodes.find((item) => item.id === id);
+  if (n) return n;
+  return { id, label: "", kind: "compute", pos: { x: 0, y: 0 } };
 }
 
 function labelOffset(side: NodeSpec["labelSide"]) {
@@ -192,7 +169,15 @@ function labelOffset(side: NodeSpec["labelSide"]) {
   }
 }
 
-function DiagramNode({ node }: { node: NodeSpec }) {
+function DiagramNode({
+  node,
+  isHovered,
+  onHover,
+}: {
+  node: NodeSpec;
+  isHovered: boolean;
+  onHover: (id: string | null) => void;
+}) {
   if (node.kind === "compute") {
     return (
       <rect
@@ -202,8 +187,8 @@ function DiagramNode({ node }: { node: NodeSpec }) {
         height={12}
         transform={`rotate(45 ${node.pos.x} ${node.pos.y})`}
         fill="none"
-        stroke={INK}
-        strokeOpacity={0.55}
+        stroke={isHovered ? ACCENT_INK : INK}
+        strokeOpacity={isHovered ? 0.9 : 0.55}
         strokeWidth={1}
       />
     );
@@ -211,25 +196,32 @@ function DiagramNode({ node }: { node: NodeSpec }) {
 
   const { dx, dy, anchor } = labelOffset(node.labelSide);
   return (
-    <g>
+    <g
+      className="cursor-pointer transition-all duration-300"
+      onMouseEnter={() => onHover(node.id)}
+      onMouseLeave={() => onHover(null)}
+    >
       <circle
         cx={node.pos.x}
         cy={node.pos.y}
-        r={7}
-        fill="none"
-        stroke={INK}
-        strokeOpacity={0.5}
-        strokeWidth={1}
+        r={isHovered ? 9 : 7}
+        fill={isHovered ? ACCENT_INK : "none"}
+        fillOpacity={isHovered ? 0.15 : 0}
+        stroke={isHovered ? ACCENT_INK : INK}
+        strokeOpacity={isHovered ? 1 : 0.5}
+        strokeWidth={isHovered ? 2 : 1}
+        className="transition-all duration-300"
       />
       <text
         x={node.pos.x + dx}
         y={node.pos.y + dy}
         textAnchor={anchor}
-        fontSize={9}
+        fontSize={isHovered ? 10 : 9}
         letterSpacing="0.08em"
-        fill={INK}
-        fillOpacity={0.4}
-        className={plexMono.className}
+        fill={isHovered ? ACCENT_INK : INK}
+        fillOpacity={isHovered ? 1 : 0.4}
+        fontWeight={isHovered ? 500 : 400}
+        className={`${plexMono.className} transition-all duration-300`}
       >
         {node.label}
       </text>
@@ -242,11 +234,15 @@ function NetworkDiagram({
   edges,
   viewBox,
   reducedMotion,
+  hoveredNode,
+  onHoverNode,
 }: {
   nodes: NodeSpec[];
   edges: EdgeSpec[];
   viewBox: string;
   reducedMotion: boolean;
+  hoveredNode: string | null;
+  onHoverNode: (id: string | null) => void;
 }) {
   return (
     <svg
@@ -274,24 +270,22 @@ function NetworkDiagram({
         const from = findNode(nodes, edge.from);
         const to = findNode(nodes, edge.to);
         const d = curvedPath(from.pos, to.pos, edgeOffset(i));
+        const isConnected = hoveredNode && (edge.from === hoveredNode || edge.to === hoveredNode);
         return (
           <path
             key={edge.id}
             d={d}
-            stroke={INK}
-            strokeOpacity={0.12}
-            strokeWidth={1}
+            stroke={isConnected ? ACCENT_INK : INK}
+            strokeOpacity={isConnected ? 0.7 : 0.12}
+            strokeWidth={isConnected ? 2 : 1}
             fill="none"
             markerEnd={reducedMotion ? "url(#fig01-arrow)" : undefined}
+            className="transition-all duration-300"
           />
         );
       })}
 
-      {/* colored packets — traveling line segments, not dots. Speed varies with an
-          ease-in-out timing curve per segment (accelerate, cruise, decelerate) rather
-          than constant velocity, and each path gets its own duration so the network
-          never falls into visible lockstep. Perpetual, per the named exception below:
-          this figure never pauses while off-screen, unlike everything else on the site. */}
+      {/* colored packets */}
       {!reducedMotion &&
         edges.map((edge, i) => {
           const from = findNode(nodes, edge.from);
@@ -344,27 +338,25 @@ function NetworkDiagram({
         })}
 
       {nodes.map((node) => (
-        <DiagramNode key={node.id} node={node} />
+        <DiagramNode
+          key={node.id}
+          node={node}
+          isHovered={hoveredNode === node.id}
+          onHover={onHoverNode}
+        />
       ))}
     </svg>
   );
 }
 
-/**
- * Named exception to the site's visibility-scoped motion rule: this diagram
- * IS the system, in miniature — data keeps moving through real
- * infrastructure whether or not anyone is looking at a dashboard. It runs
- * continuously regardless of scroll position, unlike every other animated
- * element on the page. Do not add an IntersectionObserver pause here; that
- * would be "fixing" the one deliberate exception on the site.
- *
- * This is also the one deliberately non-monochrome element on the page —
- * the packets are colored on purpose, standing in for how genuinely tangled
- * and constantly-in-motion real network architecture is, in contrast to the
- * otherwise chalk/graphite drafting-desk palette used everywhere else.
- */
-export function FigureOneFlow() {
+interface FigureOneFlowProps {
+  activeHoverNode?: string | null;
+  onHoverNode?: (nodeId: string | null) => void;
+}
+
+export function FigureOneFlow({ activeHoverNode, onHoverNode }: FigureOneFlowProps = {}) {
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [internalHover, setInternalHover] = useState<string | null>(null);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -373,6 +365,12 @@ export function FigureOneFlow() {
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
+
+  const currentHovered = activeHoverNode !== undefined ? activeHoverNode : internalHover;
+  const handleHover = (id: string | null) => {
+    setInternalHover(id);
+    onHoverNode?.(id);
+  };
 
   return (
     <motion.div
@@ -388,6 +386,8 @@ export function FigureOneFlow() {
           edges={DESKTOP_EDGES}
           viewBox="0 0 810 340"
           reducedMotion={reducedMotion}
+          hoveredNode={currentHovered}
+          onHoverNode={handleHover}
         />
       </div>
       <div className="aspect-[220/420] w-full max-w-xs md:hidden">
@@ -396,6 +396,8 @@ export function FigureOneFlow() {
           edges={MOBILE_EDGES}
           viewBox="0 0 220 420"
           reducedMotion={reducedMotion}
+          hoveredNode={currentHovered}
+          onHoverNode={handleHover}
         />
       </div>
     </motion.div>
