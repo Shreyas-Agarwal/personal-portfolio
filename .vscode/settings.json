@@ -1,0 +1,11 @@
+{
+  "editor.wordWrap": "bounded",
+"editor.wordWrapColumn": 100,
+"editor.rulers": [100],
+"[markdown]": {
+  "editor.wordWrap": "bounded"
+},
+"[mdx]": {
+  "editor.wordWrap": "bounded"
+}
+}
