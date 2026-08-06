@@ -161,6 +161,7 @@ export function TransitIntelligenceFeature() {
                   dominantBaseline="middle"
                   className={`${serif.className} text-lg fill-[#E6E1D6] transition-colors cursor-pointer select-none`}
                   fillOpacity={hoveredNode === "go" ? 1 : 0.5}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: labsRevealed ? 1 : 0, y: labsRevealed ? 30 : 15 }}
                   transition={{ duration: 0.5 }}
                   onMouseEnter={() => setHoveredNode("go")}
@@ -176,6 +177,7 @@ export function TransitIntelligenceFeature() {
                   dominantBaseline="middle"
                   className={`${serif.className} text-lg fill-[#E6E1D6] transition-colors cursor-pointer select-none`}
                   fillOpacity={hoveredNode === "lakehouse" ? 1 : 0.5}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: labsRevealed ? 1 : 0, y: labsRevealed ? 30 : 15 }}
                   transition={{ duration: 0.5 }}
                   onMouseEnter={() => setHoveredNode("lakehouse")}
@@ -227,6 +229,7 @@ export function TransitIntelligenceFeature() {
                   textAnchor="middle"
                   dominantBaseline="middle"
                   className={`${plexMono.className} text-sm fill-[#DE4B31] select-none`}
+                  initial={{ opacity: 0 }}
                   animate={{ opacity: labsRevealed ? 1 : 0 }}
                   transition={{ duration: 0.4, delay: 0.6 }}
                 >

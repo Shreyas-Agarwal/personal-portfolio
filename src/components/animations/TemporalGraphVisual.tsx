@@ -18,6 +18,7 @@ export function TemporalGraphVisual() {
         fill="none"
         stroke="#DE4B31"
         strokeWidth={1}
+        initial={{ opacity: 0.2 }}
         animate={{ opacity: [0.2, 1, 0.2] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -33,6 +34,7 @@ export function TemporalGraphVisual() {
         fill="none"
         stroke="#DE4B31"
         strokeWidth={1}
+        initial={{ opacity: 1 }}
         animate={{ opacity: [1, 0.1, 1] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
