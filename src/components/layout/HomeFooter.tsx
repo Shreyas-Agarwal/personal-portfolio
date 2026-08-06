@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { changelog } from "@/lib/changelog";
 import { plexMono, serif } from "@/lib/fonts";
 
 interface ColophonTooltipProps {
@@ -233,24 +234,16 @@ export function HomeFooter({ gitHubCommits = 500 }: { gitHubCommits?: number }) 
               REVISION LOG
             </span>
             <div className={`${plexMono.className} text-[10px] text-[#1B1D1F]/45 space-y-1.5`}>
-              <div className="flex justify-between">
-                <span>r07</span>
-                <span className="text-[#1B1D1F]/30">·</span>
-                <span>Biology section added</span>
-              </div>
-              <div className="flex justify-between">
-                <span>r06</span>
-                <span className="text-[#1B1D1F]/30">·</span>
-                <span>Research programme expanded</span>
-              </div>
-              <div className="flex justify-between">
-                <span>r05</span>
-                <span className="text-[#1B1D1F]/30">·</span>
-                <span>Information flow figure</span>
-              </div>
+              {changelog.slice(0, 3).map((entry) => (
+                <div key={entry.revision} className="flex justify-between gap-2">
+                  <span className="shrink-0">{entry.revision}</span>
+                  <span className="text-[#1B1D1F]/30">·</span>
+                  <span className="text-right">{entry.title}</span>
+                </div>
+              ))}
             </div>
             <Link
-              href="/works/publications"
+              href="/changelog"
               className={`${plexMono.className} inline-block text-[9px] uppercase tracking-widest text-[#DE4B31] mt-1 transition-colors hover:text-[#1B1D1F]`}
             >
               View complete history →
