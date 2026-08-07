@@ -1,0 +1,97 @@
+---
+title: "Models Predict More than they Describe"
+description: "Simulation, forecasting, and operational planning. On a cone drawn across the ocean, and the reason Newton wasn't actually trying to describe an apple."
+date: "TBD"
+readingTime: "14 min"
+series: "Physics of Information Systems"
+track: "Computation"
+monograph: "Models"
+order: 4
+coreQuestion: "Why do models exist at all — to describe what's true, or to say something about what hasn't happened yet?"
+---
+
+Every time a hurricane approaches a coastline, the US National Hurricane Center publishes one of the most consequential graphics in operational meteorology: the forecast cone of uncertainty, a shaded region widening steadily outward from the storm's current, known position, representing the range within which the storm's center is most likely to track over the coming days. The cone does not describe where the hurricane currently is — that's a separate, precisely plotted point, already covered by everything this series established under Observations and State. The cone is entirely about what hasn't happened yet, and its entire operational value comes from exactly that fact: evacuation orders, school closures, and shipping route changes are triggered by where the cone says the storm is *likely to go*, not by where it currently sits, because by the time the storm's current position becomes directly relevant to a coastal community, evacuation would already be too late to matter.
+
+This is worth taking as more than an illustrative example, because it points to something this chapter needs to state as a genuine, corrective claim rather than a passing observation: **description is not the primary purpose of a model. Prediction is. Description, where a model happens to provide it, is closer to a side effect of having built something that predicts well, not the actual reason the model exists in the first place.** Isaac Newton did not develop his laws of motion and universal gravitation because he was curious to describe, with more elegant language, why an apple falls from a tree. He developed them because he needed to predict where a comet would appear in the sky on a future date, and where a moon would be relative to a planet months from now — problems that mattered enormously to navigation, astronomy, and, not incidentally, to demonstrating that his physics actually worked. The famous apple, whatever role it played anecdotally, was never the point. Predicting Mars's position was.
+
+<Callout type="architectural-tension">
+A model that only describes what's already true is, in an important sense, unfinished — it hasn't yet done the thing models exist to do. Description is a byproduct that falls out naturally once a model is good enough to predict correctly; treating description as the model's actual purpose gets the entire relationship backward, and risks judging a model's value by how well it explains the past rather than by how well it anticipates what hasn't happened yet.
+</Callout>
+
+## Three words that get confused constantly, and shouldn't be
+
+It's worth pausing here to separate three closely related activities this chapter's subject depends on distinguishing carefully, because the confusion between them causes real, practical mistakes. Measurement is the act, covered extensively in this series' Observations monograph, of capturing what is currently or was previously true — a hurricane's present position, a patient's current vital signs, a spacecraft's last known location. Measurement's entire value lies in its correspondence to something that actually happened or is actually happening; a measurement that doesn't correspond to reality is simply wrong. Prediction takes a model, built from patterns in past measurements, and extrapolates forward to claim something specific about a real future state that hasn't happened yet but will — the hurricane's forecast cone, a specific claim about where an actual, singular storm will actually go. A prediction, unlike a measurement, can be evaluated after the fact against what really happened, and a model that predicts badly, repeatedly, has a real, demonstrable problem.
+
+Simulation is different from both, and the difference matters more than it might first appear: a simulation runs a model forward not necessarily to make a specific claim about the one real future that will actually occur, but to explore what *would* happen under some hypothetical, sometimes deliberately counterfactual, set of conditions — what if the storm barrier were built two feet higher; what if the evacuation began six hours earlier; what if this particular bridge failed under this specific hypothetical load. A simulation doesn't have to correspond to the one real future the way a prediction does, and it isn't wrong simply because the specific hypothetical it explored never actually happens — its value lies in mapping out a range of possible outcomes under conditions that may never be tested in reality at all, which is precisely why simulations are the tool of choice for planning around scenarios too rare, too expensive, or too dangerous to simply wait for and observe directly.
+
+## The machinery that makes real-time prediction possible
+
+The National Hurricane Center's forecast cone isn't produced once and left static. It updates continuously as new observations arrive — satellite imagery, reconnaissance aircraft readings, buoy data — in exactly the predict-correct rhythm this series examined at length under Observations, through the lens of the Kalman filter guiding Apollo's spacecraft. A hurricane forecast model predicts the storm's likely track forward from its current trajectory and known atmospheric conditions, and then corrects that prediction as fresh observations arrive, narrowing or occasionally shifting the cone in response to what the storm actually does next — the identical two-step loop, running on an atmospheric system instead of a spacecraft, still never fully closing, still always describing a present the model can only approach through continuous correction rather than direct access.
+
+Fitting a model well enough to make these predictions useful in the first place — determining exactly which combination of atmospheric variables, historical storm-track patterns, and physical assumptions produces a model whose forecasts actually track reality — is a problem of [optimization theory](#optimization): systematically searching across a model's possible parameter settings to find the combination that minimizes the gap between the model's past predictions and what storms actually did, across a large historical record of prior hurricanes. This is the machinery underneath every good predictive model this series has examined, going back to Beaufort's scale and the actuarial life table: fitting parameters against historical data isn't a separate concern from prediction, it's the literal mechanism by which a model earns the right to predict anything at all.
+
+<Callout type="unresolved">
+A model can only be evaluated honestly on the specific job it was built for — measurement, prediction, or simulation — and judging it against a different one of the three produces a category error, not a fair critique. A simulation exploring a hypothetical storm-barrier height isn't "wrong" because that exact scenario never occurs in reality; a prediction that consistently misses where storms actually go is wrong, in the fullest and most consequential sense, regardless of how elegant or well-constructed the underlying model appears.
+</Callout>
+
+## Acting on a prediction, not merely making one
+
+None of this matters, practically, unless a prediction actually changes what someone does — and formalizing exactly how a prediction should translate into action is the specific job of [decision theory](#decision-theory): a framework for combining a model's probabilistic prediction with the actual costs and benefits of each possible response, to determine the action that makes the most sense given genuine uncertainty about the future. A coastal official deciding whether to order an evacuation isn't simply reading the forecast cone and reacting instinctively — implicitly or explicitly, they're weighing the cost of evacuating unnecessarily against the cost of failing to evacuate when the storm does, in fact, strike, using the cone's stated probabilities as the actual input to that calculation. This is the precise point where a model stops being an academic exercise in prediction and becomes something with direct operational consequences: prediction was always the model's real purpose, and decision theory is the formal bridge connecting that purpose to something a person actually does because of it.
+
+This leaves the final, hardest question this monograph has been building toward, and it's the one every model, no matter how carefully built, how well-calibrated, or how successfully it has predicted the past, eventually has to confront. A hurricane model trained on decades of historical storm behavior assumes, implicitly, that storms in the future will behave enough like storms in the past for that history to remain useful. What happens when that assumption quietly stops holding — not because the model was built badly, but because the world it was built to predict has genuinely, irreversibly changed underneath it? That is the subject of this monograph's final chapter, and it begins at a geyser whose predictions, for a while, worked perfectly.
+
+<Figure n={1} title="Measurement, Prediction, Simulation" caption="Three activities that use the same models but answer three different questions — and get evaluated against three different, non-interchangeable standards.">
+
+| | Answers | Evaluated by |
+| --- | --- | --- |
+| Measurement | What is (or was) true, right now? | Correspondence to what actually happened |
+| Prediction | What will happen, at this one real future moment? | Accuracy against the single future that occurs |
+| Simulation | What would happen, under this hypothetical? | Usefulness for planning — never "did it come true" |
+
+</Figure>
+
+<FormalNote>
+<a id="optimization"></a>
+**Optimization / parameter fitting.** Fitting any predictive model — a hurricane track model, a
+regression, anything — means choosing parameters $\theta$ to minimize a loss function $L$ measuring
+the gap between what the model would have predicted and what actually happened, across a historical
+record:
+
+$$\hat{\theta} = \arg\min_{\theta} \sum_i L\!\left(f_\theta(x_i), y_i\right)$$
+
+The standard method for searching this space is gradient descent: repeatedly nudge $\theta$ in the
+direction that most reduces the loss, $\theta \leftarrow \theta - \eta \nabla L(\theta)$, where $\eta$
+is a step size controlling how large each nudge is. This is the literal mechanism, running underneath
+every model this monograph has named — Beaufort's implicit fit to sailors' judgment, the life table's
+regression against mortality data, a hurricane model's fit against decades of storm tracks — by which
+a model earns any right to predict anything at all: it is, quite literally, the parameters that made
+the past look right.
+
+<a id="decision-theory"></a>
+**Decision theory / expected utility.** Once a model produces a probability $P(s)$ over possible
+future states $s$, decision theory names the rule for turning that distribution into an action:
+choose the action $a$ that maximizes expected utility,
+
+$$a^{*} = \arg\max_{a} \sum_{s} P(s)\, U(a, s)$$
+
+where $U(a,s)$ is the payoff — however costly or beneficial — of taking action $a$ if state $s$ turns
+out to be the one that actually happens. For a coastal official, $s$ ranges over where the storm
+actually goes, $P(s)$ is the forecast cone's own stated probabilities, and $U$ encodes the cost of an
+unnecessary evacuation against the cost of a missed one. The formula doesn't remove the uncertainty
+about which $s$ will occur. It specifies, precisely, how to act well despite never getting to know
+$s$ in advance.
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+The predict-correct rhythm named here in prose is the Kalman filter this series builds formally in
+[Every Observation Is Already History](../../reality/observations/every-observation-is-already-history)
+— a hurricane track model runs the identical predict/correct loop on atmospheric state instead of a
+spacecraft's position. Decision theory's expected-utility rule is the same shape as the
+constrained-optimization framing that closes
+[Observability Is a Budget](../../reality/observations/observability-is-a-budget): both weigh a
+probability-weighted benefit against an explicit cost before committing to spend anything. The next
+chapter, [Every Model Eventually Becomes Wrong](./every-model-eventually-becomes-wrong), asks what
+happens to a fitted $\hat{\theta}$ once the reality it was fitted against stops holding still.
+</Callout>

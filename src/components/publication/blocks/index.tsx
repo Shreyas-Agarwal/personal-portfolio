@@ -11,6 +11,17 @@ import type { ReactNode } from "react";
 import { plexMono, serif } from "@/lib/fonts";
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Shared overrides — every block below renders on the cream paper-insert
+// surface, but its children come straight from the dark-theme MDX primitives
+// (mdx-primitives.tsx), which style tables and links for the charcoal desk
+// background. Without these overrides, table headers/cells and links render
+// in near-invisible light tones against the cream card.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const PAPER_CHILD_OVERRIDES =
+  "[&_table]:!text-[#1B1D1F] [&_thead]:!border-[#D9D0BC] [&_tr]:!border-[#D9D0BC] [&_th]:!text-[#1B1D1F] [&_td]:!text-[#1B1D1F] [&_a]:!text-[#DE4B31] [&_a]:!border-[#DE4B31]/40 [&_a:hover]:!text-[#DE4B31] [&_a:hover]:!border-[#DE4B31]";
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Base block primitive — Paper Insert style
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -26,7 +37,7 @@ interface BlockProps {
 function SemanticBlock({ label, marker, accentColor, borderColor, children, number }: BlockProps) {
   return (
     <div
-      className={`my-10 border-l-4 ${borderColor} bg-[#ECE5D4] p-6 shadow-sm border border-[#D9D0BC] text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_em]:!text-[#1B1D1F] [&_li]:!text-[#1B1D1F] [&_code]:!bg-[#E5DCCB] [&_code]:!text-[#DE4B31] [&_code]:border [&_code]:border-[#D9D0BC] [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5`}
+      className={`my-10 border-l-4 ${borderColor} bg-[#ECE5D4] p-6 shadow-sm border border-[#D9D0BC] text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_em]:!text-[#1B1D1F] [&_li]:!text-[#1B1D1F] [&_code]:!bg-[#E5DCCB] [&_code]:!text-[#DE4B31] [&_code]:border [&_code]:border-[#D9D0BC] [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5 ${PAPER_CHILD_OVERRIDES}`}
     >
       <div className="mb-3 flex items-center gap-2">
         <span
@@ -37,7 +48,7 @@ function SemanticBlock({ label, marker, accentColor, borderColor, children, numb
         </span>
       </div>
       <div
-        className={`${serif.className} text-[16px] leading-[1.85] text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_em]:!text-[#1B1D1F]`}
+        className={`${serif.className} text-[16px] leading-[1.85] text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_em]:!text-[#1B1D1F] ${PAPER_CHILD_OVERRIDES}`}
       >
         {children}
       </div>
@@ -59,7 +70,7 @@ export function Process({ children }: { children: ReactNode }) {
 
 export function Step({ title, children, n }: { title?: string; children: ReactNode; n?: number }) {
   return (
-    <div className="my-4 border border-[#D9D0BC] bg-[#ECE5D4] p-5 shadow-sm text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_code]:!bg-[#E5DCCB] [&_code]:!text-[#DE4B31] [&_code]:border [&_code]:border-[#D9D0BC] [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5">
+    <div className={`my-4 border border-[#D9D0BC] bg-[#ECE5D4] p-5 shadow-sm text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_code]:!bg-[#E5DCCB] [&_code]:!text-[#DE4B31] [&_code]:border [&_code]:border-[#D9D0BC] [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5 ${PAPER_CHILD_OVERRIDES}`}>
       {title && (
         <div className="mb-2 flex items-center gap-2">
           <span
@@ -115,7 +126,7 @@ export function Decision({
   const statusLabel = status ? ` · ${status.toUpperCase()}` : "";
 
   return (
-    <div className="my-10 border border-[#D9D0BC] bg-[#ECE5D4] p-6 shadow-sm border-l-4 border-violet-800 text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_em]:!text-[#1B1D1F] [&_code]:!bg-[#E5DCCB] [&_code]:!text-[#DE4B31] [&_code]:border [&_code]:border-[#D9D0BC] [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5">
+    <div className={`my-10 border border-[#D9D0BC] bg-[#ECE5D4] p-6 shadow-sm border-l-4 border-violet-800 text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_em]:!text-[#1B1D1F] [&_code]:!bg-[#E5DCCB] [&_code]:!text-[#DE4B31] [&_code]:border [&_code]:border-[#D9D0BC] [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5 ${PAPER_CHILD_OVERRIDES}`}>
       <div className="mb-4 flex items-center justify-between">
         <span
           className={`${plexMono.className} text-[9px] font-bold uppercase tracking-[0.22em] !text-[#1B1D1F]`}
@@ -137,7 +148,7 @@ export function Decision({
         )}
       </div>
       <div
-        className={`${serif.className} text-[16px] leading-[1.85] text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_em]:!text-[#1B1D1F]`}
+        className={`${serif.className} text-[16px] leading-[1.85] text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_em]:!text-[#1B1D1F] ${PAPER_CHILD_OVERRIDES}`}
       >
         {children}
       </div>
@@ -177,7 +188,7 @@ export function Tradeoff({
   cost?: string;
 }) {
   return (
-    <div className="my-10 border border-[#D9D0BC] bg-[#ECE5D4] p-6 shadow-sm border-l-4 border-[#1B1D1F] text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_em]:!text-[#1B1D1F] [&_code]:!bg-[#E5DCCB] [&_code]:!text-[#DE4B31] [&_code]:border [&_code]:border-[#D9D0BC] [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5">
+    <div className={`my-10 border border-[#D9D0BC] bg-[#ECE5D4] p-6 shadow-sm border-l-4 border-[#1B1D1F] text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_em]:!text-[#1B1D1F] [&_code]:!bg-[#E5DCCB] [&_code]:!text-[#DE4B31] [&_code]:border [&_code]:border-[#D9D0BC] [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5 ${PAPER_CHILD_OVERRIDES}`}>
       <span
         className={`${plexMono.className} mb-4 block text-[9px] font-bold uppercase tracking-[0.22em] !text-[#1B1D1F]`}
       >
@@ -207,7 +218,7 @@ export function Tradeoff({
 
       {children && (
         <div
-          className={`${serif.className} text-[16px] leading-[1.85] text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_em]:!text-[#1B1D1F]`}
+          className={`${serif.className} text-[16px] leading-[1.85] text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_strong]:!text-[#1B1D1F] [&_em]:!text-[#1B1D1F] ${PAPER_CHILD_OVERRIDES}`}
         >
           {children}
         </div>
@@ -286,7 +297,7 @@ export function Figure({
   children: ReactNode;
 }) {
   return (
-    <figure className="my-12 border border-[#D9D0BC] bg-[#ECE5D4] p-6 shadow-sm text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_code]:!bg-[#E5DCCB] [&_code]:!text-[#DE4B31] [&_code]:border [&_code]:border-[#D9D0BC] [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5">
+    <figure className={`my-12 border border-[#D9D0BC] bg-[#ECE5D4] p-6 shadow-sm text-[#1B1D1F] [&_p]:!text-[#1B1D1F] [&_span]:!text-[#1B1D1F] [&_code]:!bg-[#E5DCCB] [&_code]:!text-[#DE4B31] [&_code]:border [&_code]:border-[#D9D0BC] [&_code]:rounded [&_code]:px-1.5 [&_code]:py-0.5 ${PAPER_CHILD_OVERRIDES}`}>
       <div className="mb-4 border-b border-[#D9D0BC] pb-3">
         <span
           className={`${plexMono.className} text-[10px] font-bold uppercase tracking-[0.22em] !text-[#1B1D1F]`}
@@ -319,7 +330,9 @@ export function Reference({
   year?: string | number;
 }) {
   return (
-    <div className="my-4 border border-[#D9D0BC] bg-[#ECE5D4] p-4 text-xs text-[#1B1D1F] [&_p]:!text-[#1B1D1F]">
+    <div
+      className={`my-4 border border-[#D9D0BC] bg-[#ECE5D4] p-4 text-xs text-[#1B1D1F] [&_p]:!text-[#1B1D1F] ${PAPER_CHILD_OVERRIDES}`}
+    >
       <span className={`${serif.className} font-bold !text-[#1B1D1F]`}>{title}</span>
       {author && <span className={`${plexMono.className} ml-2 !text-[#1B1D1F]`}>by {author}</span>}
       {year && <span className={`${plexMono.className} ml-2 !text-[#1B1D1F]`}>({year})</span>}
@@ -345,9 +358,43 @@ export function Citation({ children }: { children: ReactNode }) {
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// FormalNote — the equation an argument depends on, set apart from the argument
+//
+// Deliberately styled unlike every other block above: no cream fill, no solid
+// border, no number. A dashed rule and a quiet glyph instead — closer to a
+// footnote than a figure. The intent is that after two or three chapters, a
+// reader recognizes this shape on sight as the part carrying the formal
+// statement behind the prose, safe to skim or skip without losing the
+// argument, without the page ever having to say so in words.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export function FormalNote({ children }: { children: ReactNode }) {
+  return (
+    <div className="my-10 border border-dashed border-[#3A3D41] p-6 [&_p]:text-[#E6E1D6]/60 [&_p]:mb-4 [&_p:last-child]:mb-0 [&_strong]:text-[#E6E1D6]/80 [&_em]:text-[#E6E1D6]/70 [&_li]:text-[#E6E1D6]/60">
+      <div className="mb-4 flex items-center gap-2.5">
+        <span aria-hidden="true" className="text-[13px] leading-none text-[#DE4B31]/55">
+          ∴
+        </span>
+        <span
+          className={`${plexMono.className} shrink-0 text-[9px] font-bold uppercase tracking-[0.24em] text-[#E6E1D6]/35`}
+        >
+          In formal terms
+        </span>
+        <div className="h-px flex-1 bg-[#2C2E32]" aria-hidden="true" />
+      </div>
+      <div className={`${serif.className} text-[15px] leading-[1.85] text-[#E6E1D6]/60`}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export function InteractiveDemo({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <div className="my-10 border border-[#D9D0BC] bg-[#ECE5D4] p-6 shadow-sm text-[#1B1D1F] [&_p]:!text-[#1B1D1F]">
+    <div
+      className={`my-10 border border-[#D9D0BC] bg-[#ECE5D4] p-6 shadow-sm text-[#1B1D1F] [&_p]:!text-[#1B1D1F] ${PAPER_CHILD_OVERRIDES}`}
+    >
       {title && (
         <div className="mb-4 border-b border-[#D9D0BC] pb-2">
           <span

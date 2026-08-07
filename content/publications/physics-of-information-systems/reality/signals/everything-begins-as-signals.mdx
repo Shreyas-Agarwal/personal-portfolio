@@ -35,3 +35,43 @@ This has a sharp implication for anything built to interpret signals systematica
 It might seem almost too obvious to warrant its own chapter — of course a cry means nothing on its own; of course smoke needs a code to become a message. But this is precisely the fact that gets forgotten most easily once systems get sophisticated enough to feel authoritative. A sensor reading, a log line, a spike on a graph — these have a way of arriving dressed in the appearance of meaning, as though the number itself were announcing what it signifies, when in fact every one of them is doing exactly what the newborn's cry does: emitting a raw physical event and leaving the harder, separate work of interpretation to whatever receives it.
 
 This is the ground the rest of this monograph is built on. If a signal exists before and independent of meaning, then a genuinely important question opens up immediately: how, exactly, does anything go about *capturing* that signal in the first place — and what happens to the parts of it that don't get captured, simply because nobody, or nothing, was watching closely enough, or often enough, at the moment it occurred? That is a question about sampling, and it is where the next chapter begins.
+
+<Figure n={1} title="Shannon's Channel, and the Meaning It Doesn't Carry" caption="The engineering problem — did the signal arrive intact — and the interpretive problem — what does the arrived signal mean — are solved by different layers, and only one of them is a wiring diagram.">
+
+```mermaid
+graph LR
+    Src["Source\n(troop movement)"] --> Enc["Encoder\n(number of fires)"]
+    Enc --> Ch["Channel\n(night air, line of sight)"]
+    N["Noise"] -.-> Ch
+    Ch --> Dec["Decoder\n(count the flames)"]
+    Dec --> Dst["Destination\n(tower keeper)"]
+    Dst -.->|"requires a convention\nShannon's model doesn't supply"| M["Meaning"]
+
+    style Src fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style Enc fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style Ch fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style Dec fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style Dst fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style M fill:#DE4B31,color:#fff,stroke:#1B1D1F
+    style N fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+```
+
+</Figure>
+
+<FormalNote>
+Claude Shannon's 1948 model of communication names the diagram above: a *source* produces a message,
+an *encoder* turns it into a signal, a *channel* carries it while *noise* is added, a *decoder*
+recovers a message, and a *destination* receives it. The model covers getting a signal from one place
+to another intact — and says nothing about whether the destination assigns the same meaning the
+source intended. That silence isn't an omission; meaning was never this model's question to answer.
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+The signal/meaning split this chapter opens with is the same categorical gap
+[Reality Exists Before Information](../reality/reality-exists-before-information) names for signs in
+general — a signal is simply what a sign is made of before a convention has been agreed on top of it.
+The next chapter, [Sampling Reality](./sampling-reality), picks up the encoder's other job: not just
+carrying a signal, but catching enough of it, often enough, to have anything to encode at all.
+</Callout>

@@ -19,6 +19,7 @@ import {
   Decision,
   Evidence,
   Figure,
+  FormalNote,
   InteractiveDemo,
   Observation,
   Process,
@@ -46,6 +47,7 @@ export const publicationComponents = {
   InteractiveDemo,
   Process,
   Step,
+  FormalNote,
   CodeBlock,
   MermaidDiagram,
 };

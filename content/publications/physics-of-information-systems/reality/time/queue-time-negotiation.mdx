@@ -37,3 +37,42 @@ What makes this genuinely useful, rather than merely elegant, is what it implies
 This is the sense in which every queue — a ramp meter, a phone switchboard, a hospital triage line, a network buffer — is a negotiation rather than an obstacle. Delay, once volume exceeds instantaneous capacity, is not optional. Something has to wait; the only real question is which specific decisions engineers get to make about that waiting. Do arrivals wait invisibly, uncontrolled, in a queue with no limit, risking a much larger collapse if the surge is bigger than expected? Or do they wait visibly, in a bounded queue with a known maximum, with some arrivals turned away entirely once that bound is reached, in exchange for a guarantee that the rest of the system never falls into an uncontrolled cascade? Neither answer eliminates delay. Both are explicit, deliberate choices about *where* delay is allowed to live, *how much* of it is tolerated, and *who* absorbs it — a driver held at a red light for thirty seconds, a caller on hold for two minutes, a network request queued for a few milliseconds behind others ahead of it.
 
 This is the answer this chapter's core question was actually asking for. Once delay becomes structurally unavoidable — and the previous chapters in this monograph have already established that it always eventually does, whether from the finite speed of light, the absence of a shared universal now, or simply more arrivals than a system can serve at once — engineers do not get the option of eliminating it. What they get, if they do the work properly, is the option of *choosing* it: deciding exactly how much delay to accept, exactly where in the system it should sit, and exactly who it should be visible to, rather than leaving that choice to be made by accident, invisibly, at the worst possible moment. Ramp meters make this choice in traffic. Erlang's formulas made this choice possible for telephone networks. Little's Law makes the tradeoff impossible to ignore in any system built since. The engineering discipline, in every one of these cases, was never about defeating time. It was about deciding, deliberately and in advance, how the negotiation with it would go.
+
+<Figure n={1} title="The Same Tradeoff, Four Systems" caption="Different domains, identical lever: bound the queue and W falls, at the cost of turning some arrivals away; widen it and W rises, in exchange for absorbing bursts.">
+
+```mermaid
+graph LR
+    Arr["Arrivals, rate λ\n(fixed, outside your control)"] --> Q["Queue, capacity L\n(the only lever you have)"]
+    Q --> Srv["Service"]
+    Q -->|"L = λW"| W["Wait time W"]
+    Q -.->|"queue full"| Drop["Arrivals turned away"]
+
+    style Arr fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style Q fill:#DE4B31,color:#fff,stroke:#1B1D1F
+    style Srv fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style W fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style Drop fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+```
+
+</Figure>
+
+<FormalNote>
+Little's Law holds for any queueing system in steady state, regardless of arrival distribution or
+service discipline: $L = \lambda W$ — the average number of items in the system equals the average
+arrival rate times the average time each item spends there. Because $\lambda$ is usually fixed by
+demand outside the system's control, the only lever left is $L$. Erlang's earlier result names the
+specific probability a caller finds every line busy, for offered traffic $A$ across $N$ lines:
+
+$$B(N, A) = \frac{A^N / N!}{\sum_{k=0}^{N} A^k / k!}$$
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+Little's Law closes the Time monograph the way
+[Complexity Never Disappears](../reality/complexity-never-disappears) closes the Reality monograph —
+both are conservation statements that make a tradeoff impossible to hide rather than offering a way
+around it. The ramp meter's deliberate, chosen delay is the same relocation
+[Observability Is a Budget](../observations/observability-is-a-budget) describes for its seven
+currencies, now spent explicitly in queue capacity and wait time instead of attention or storage.
+</Callout>

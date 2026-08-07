@@ -3,17 +3,29 @@
   "type": "research-series",
   "title": "Physics of Information Systems",
   "subtitle": "First-principles essays on the categorical gap between reality and its representations, and what that gap forces every information system to do.",
-  "abstract": "A multi-part publication exploring information systems from first principles — starting from the categorical difference between reality and the signs a system stores in its place, and building outward toward how information is captured, held, and acted on.",
+  "abstract": "A multi-part publication exploring information systems from first principles, organized into three tracks, now complete. Reality traces the categorical gap between a thing and its representation, down through raw signals and observation, to the physics of time itself. Information asks what a system does with what it has observed once the moment of watching has passed — how it retains state, preserves history, works fast without claiming to be true, and how meaning itself only ever emerges from a relationship rather than living inside any single fact. Computation asks what a system is allowed to do with meaning once it has it — the deliberate compressions called models, the real cost of coordinating independent parts, and the decisions all of it was ever built to enable. An epilogue closes the series by tracing the single gap — between what actually is and whatever stands in for it — that every track examined from a different angle. The series draws on measurement theory, information theory, queueing theory, signal processing, distributed-systems theory, statistical learning theory, and game theory — with the formal statements and diagrams shown alongside the essays, not left implicit.",
   "date": "2026-08-01",
   "program": "Data & Information Systems",
   "author": "Shreyas Agarwal",
-  "revision": "Revision 01",
-  "domains": ["Systems Theory", "Data Infrastructure", "Systems Architecture"],
+  "revision": "Revision 07",
+  "domains": [
+    "Systems Theory",
+    "Data Infrastructure",
+    "Systems Architecture",
+    "Information Theory",
+    "Signal Processing",
+    "Distributed Systems"
+  ],
   "sections": [
     {
       "id": "index",
       "title": "Overview",
       "href": ""
+    },
+    {
+      "id": "series-guide",
+      "title": "Series Guide",
+      "href": "series-guide"
     },
     {
       "id": "reality-track",
@@ -22,7 +34,7 @@
       "children": [
         {
           "id": "reality-monograph",
-          "title": "Reality",
+          "title": "I. Reality",
           "children": [
             {
               "id": "reality-exists-before-information",
@@ -40,8 +52,317 @@
               "href": "reality/reality/complexity-never-disappears"
             }
           ]
+        },
+        {
+          "id": "time-monograph",
+          "title": "II. Time",
+          "children": [
+            {
+              "id": "operational-intelligence-vs-business-intelligence",
+              "title": "Operational Intelligence vs. Business Intelligence",
+              "href": "reality/time/operational-intelligence-vs-business-intelligence"
+            },
+            {
+              "id": "most-dashboards-are-historical-autopsies",
+              "title": "Most Dashboards Are Historical Autopsies",
+              "href": "reality/time/most-dashboards-are-historical-autopsies"
+            },
+            {
+              "id": "reality-arrives-late",
+              "title": "Reality Arrives Late",
+              "href": "reality/time/reality-arrives-late"
+            },
+            {
+              "id": "time-in-distributed-systems",
+              "title": "What Time Means in Distributed Systems",
+              "href": "reality/time/time-in-distributed-systems"
+            },
+            {
+              "id": "queue-time-negotiation",
+              "title": "Every Queue Is a Negotiation with Time",
+              "href": "reality/time/queue-time-negotiation"
+            }
+          ]
+        },
+        {
+          "id": "signals-monograph",
+          "title": "III. Signals",
+          "children": [
+            {
+              "id": "everything-begins-as-signals",
+              "title": "Everything Begins as a Signal",
+              "href": "reality/signals/everything-begins-as-signals"
+            },
+            {
+              "id": "sampling-reality",
+              "title": "Sampling Reality",
+              "href": "reality/signals/sampling-reality"
+            },
+            {
+              "id": "noise-is-not-failure",
+              "title": "Noise Is Not Failure",
+              "href": "reality/signals/noise-is-not-failiure"
+            },
+            {
+              "id": "signal-loss-is-permanent",
+              "title": "Signal Loss Is Permanent",
+              "href": "reality/signals/signal-loss-is-permanent"
+            }
+          ]
+        },
+        {
+          "id": "observations-monograph",
+          "title": "IV. Observations",
+          "children": [
+            {
+              "id": "signals-become-observations",
+              "title": "Signals Become Observations",
+              "href": "reality/observations/signals-become-observations"
+            },
+            {
+              "id": "observability-vs-analytics",
+              "title": "Observability vs. Analytics",
+              "href": "reality/observations/observability-vs-analytics"
+            },
+            {
+              "id": "observation-is-never-neutral",
+              "title": "Observation Is Never Neutral",
+              "href": "reality/observations/observation-is-never-neutral"
+            },
+            {
+              "id": "every-observation-is-already-history",
+              "title": "Every Observation Is Already History",
+              "href": "reality/observations/every-observation-is-already-history"
+            },
+            {
+              "id": "observability-is-a-budget",
+              "title": "Observability Is a Budget",
+              "href": "reality/observations/observability-is-a-budget"
+            }
+          ]
         }
       ]
+    },
+    {
+      "id": "information-track",
+      "title": "Information",
+      "group": "Information",
+      "children": [
+        {
+          "id": "state-monograph",
+          "title": "I. State",
+          "children": [
+            {
+              "id": "state-vs-systems",
+              "title": "The Difference Between State and Systems",
+              "href": "information/state/state-vs-systems"
+            },
+            {
+              "id": "state-is-frozen-time",
+              "title": "State Is Frozen Time",
+              "href": "information/state/state-is-frozen-time"
+            },
+            {
+              "id": "state-reconstruction-from-immutable-logs",
+              "title": "State Reconstruction from Immutable Logs",
+              "href": "information/state/state-reconstruction-from-immutable-logs"
+            },
+            {
+              "id": "event-sourcing-vs-temporal-snapshots",
+              "title": "Event Sourcing vs. Temporal Snapshots",
+              "href": "information/state/event-sourcing-vs-temporal-snapshots"
+            },
+            {
+              "id": "historical-truth-is-harder-than-current-truth",
+              "title": "Why Historical Truth Is Harder Than Current Truth",
+              "href": "information/state/historical-truth-is-harder-than-current-truth"
+            }
+          ]
+        },
+        {
+          "id": "history-monograph",
+          "title": "II. History",
+          "children": [
+            {
+              "id": "history-is-not-database",
+              "title": "History Is Not a Database",
+              "href": "information/history/history-is-not-database"
+            },
+            {
+              "id": "immutable-histories",
+              "title": "Immutable Histories",
+              "href": "information/history/immutable-histories"
+            },
+            {
+              "id": "the-cost-of-remembering-everything",
+              "title": "The Cost of Remembering Everything",
+              "href": "information/history/the-cost-of-remembering-everything"
+            },
+            {
+              "id": "history-explains-state-executes",
+              "title": "History Explains; State Executes",
+              "href": "information/history/history-explains-state-executes"
+            }
+          ]
+        },
+        {
+          "id": "memory-monograph",
+          "title": "III. Memory",
+          "children": [
+            {
+              "id": "memory-for-speed-not-truth",
+              "title": "Memory Is for Speed, Not Truth",
+              "href": "information/memory/memory-for-speed-not-truth"
+            },
+            {
+              "id": "caches-forget-on-purpose",
+              "title": "Caches Forget on Purpose",
+              "href": "information/memory/caches-forget-on-purpose"
+            },
+            {
+              "id": "working-memory-in-information-systems",
+              "title": "Working Memory in Information Systems",
+              "href": "information/memory/working-memory-in-information-systems"
+            }
+          ]
+        },
+        {
+          "id": "context-monograph",
+          "title": "IV. Context",
+          "children": [
+            {
+              "id": "facts-require-context",
+              "title": "Facts Require Context",
+              "href": "information/context/facts-require-context"
+            },
+            {
+              "id": "metadata-is-operational-context",
+              "title": "Metadata Is Operational Context",
+              "href": "information/context/metadata-is-operational-context"
+            },
+            {
+              "id": "context-decays",
+              "title": "Context Decays",
+              "href": "information/context/context-decays"
+            },
+            {
+              "id": "meaning-is-never-stored-directly",
+              "title": "Meaning Is Never Stored Directly",
+              "href": "information/context/meaning-is-never-stored-directly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "computation-track",
+      "title": "Computation",
+      "group": "Computation",
+      "children": [
+        {
+          "id": "models-monograph",
+          "title": "I. Models",
+          "children": [
+            {
+              "id": "dimensions-are-compression-algorithms-for-reality",
+              "title": "Dimensions Are Compression Algorithms for Reality",
+              "href": "computation/models/dimensions-are-compression-algorithms-for-reality"
+            },
+            {
+              "id": "the-map-is-not-the-territory",
+              "title": "The Map Is Not the Territory",
+              "href": "computation/models/the-map-is-not-the-territory"
+            },
+            {
+              "id": "every-abstraction-has-a-cost",
+              "title": "Every Abstraction Has a Cost",
+              "href": "computation/models/every-abstraction-has-a-cost"
+            },
+            {
+              "id": "models-predict-more-than-they-describe",
+              "title": "Models Predict More than They Describe",
+              "href": "computation/models/models-predict-more-than-they-describe"
+            },
+            {
+              "id": "every-model-eventually-becomes-wrong",
+              "title": "Every Model Eventually Becomes Wrong",
+              "href": "computation/models/every-model-eventually-becomes-wrong"
+            }
+          ]
+        },
+        {
+          "id": "coordination-monograph",
+          "title": "II. Coordination",
+          "children": [
+            {
+              "id": "coordination-is-the-real-scalability-problem",
+              "title": "Coordination Is the Real Scalability Problem",
+              "href": "computation/coordination/coordination-is-the-real-scalability-problem"
+            },
+            {
+              "id": "consensus-is-expensive",
+              "title": "Consensus Is Expensive",
+              "href": "computation/coordination/consensus-is-expensive"
+            },
+            {
+              "id": "the-cost-of-knowing-why",
+              "title": "The Cost of Knowing Why",
+              "href": "computation/coordination/the-cost-of-knowing-why"
+            },
+            {
+              "id": "the-bug-that-never-crashes",
+              "title": "The Most Expensive Bug Is the One that Never Crashes",
+              "href": "computation/coordination/the-bug-that-never-crashes"
+            },
+            {
+              "id": "delay-is-contiguos",
+              "title": "Delay Is Contiguous",
+              "href": "computation/coordination/delay-is-contiguos"
+            },
+            {
+              "id": "the-city-is-a-distributed-system",
+              "title": "The City Is a Distributed System",
+              "href": "computation/coordination/the-city-is-a-distributed-system"
+            }
+          ]
+        },
+        {
+          "id": "decisions-monograph",
+          "title": "III. Decisions",
+          "children": [
+            {
+              "id": "information-exists-to-enable-decisions",
+              "title": "Information Exists to Enable Decisions",
+              "href": "computation/decisions/information-exists-to-enable-decisions"
+            },
+            {
+              "id": "designing-for-delay-propagation-analysis",
+              "title": "Designing for Delay Propagation Analysis",
+              "href": "computation/decisions/designing-for-delay-propagation-analysis"
+            },
+            {
+              "id": "why-transit-networks-behave-like-graphs",
+              "title": "Why Transit Networks Behave Like Graphs, Not Schedules",
+              "href": "computation/decisions/why-transit-networks-behave-like-graphs"
+            },
+            {
+              "id": "the-anatomy-of-a-missed-connection",
+              "title": "The Anatomy of a Missed Connection",
+              "href": "computation/decisions/the-anatomy-of-a-missed-connection"
+            },
+            {
+              "id": "measuring-fragility-in-public-infrastructure",
+              "title": "Measuring Fragility in Public Infrastructure",
+              "href": "computation/decisions/measuring-fragility-in-public-infrastructure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "epilogue",
+      "title": "Epilogue",
+      "href": "computation/decisions/the-physics-of-information-systems"
     }
   ]
 }

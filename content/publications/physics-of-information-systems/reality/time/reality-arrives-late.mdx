@@ -51,3 +51,37 @@ No system can determine, purely by inspecting its own data, how much reality has
 It would be easy to read all of this as a list of problems waiting for a sufficiently good engineer to solve — faster sensors, faster networks, faster processing, closing the gap asymptotically toward zero. Some of that closing is genuinely possible, and worth pursuing. But it can only ever be closing, never reaching. Light itself has a speed limit, and every signal humans build is slower than light. A network request between two continents cannot travel faster than the fiber-optic cable's physical length allows, no matter how the software routing it is optimized. A blood sample cannot be analyzed before the chemical reactions it depends on have had time to occur. At the very bottom of every one of these delays sits the same physical fact the starlight made impossible to miss: information requires a signal, a signal requires a medium, and a medium requires time to carry anything across distance. This is not a temporary shortfall in current technology. It is the condition information operates under, permanently, in this universe.
 
 This is why delay deserves to be treated, throughout the rest of this series, not as noise to be designed away but as a real constraint to be designed *around* — accounted for explicitly, the way an astronomer accounts for the fact that they are always looking into the past, or the way a careful physician accounts for the fact that a chart is only ever as current as the moment it was drawn. Once delay is accepted as structural rather than accidental, a further and stranger question opens up — one this chapter has been quietly setting aside the whole way through. So far, every example here has assumed a single observer waiting on a single, if delayed, signal. What happens once there is more than one observer, in more than one place, each receiving their own delayed signals on their own schedule — does "now" even mean the same thing to both of them anymore? That question turns out to have a much stranger answer than most people expect, and it is where the next chapter begins.
+
+<Figure n={1} title="One Formula, Four Scales" caption="Every row below is the identical equation, t = d/v — only d and v change. None of them reach t = 0.">
+
+| Example | Distance $d$ | Speed $v$ | Resulting delay |
+| --- | --- | --- | --- |
+| Starlight (nearest stars) | A few light-years | $c$ | Years |
+| Transcontinental network packet | ~10,000 km | ~$2\times10^8$ m/s | Tens of milliseconds |
+| Blood sample to lab result | A few kilometers, plus assay time | Courier speed + reaction kinetics | Hours to a day |
+| National census to published figure | N/A (aggregation, not transit) | Processing throughput | Months to a year |
+
+</Figure>
+
+<FormalNote>
+Every delay in this chapter has the same shape, at wildly different scales: for a signal traveling
+at speed $v$ across distance $d$, the transit time is $t_{\text{delay}} = d/v$. For light,
+$v = c \approx 3\times10^8\ \text{m/s}$ — the fastest any signal can travel — which is why
+$t_{\text{delay}} > 0$ for starlight is a hard floor, not an engineering shortfall. A network packet
+between two continents inherits the identical formula, just six orders of magnitude smaller, never
+zero either way.
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+This chapter's delay is deliberately the *second* gap named in
+[Reality Exists Before Information](../reality/reality-exists-before-information) — that opening
+chapter's argument holds even if $t_{\text{delay}}$ here were engineered to zero, which is exactly
+why the two chapters had to be kept separate. The Kalman filter in
+[Every Observation Is Already History](../observations/every-observation-is-already-history) is the
+fully worked-out engineering response to this delay. The next chapter,
+[What Time Means in Distributed Systems](./time-in-distributed-systems), asks what happens to the
+very idea of "now" once more than one observer is receiving these delayed signals on their own
+independent schedule.
+</Callout>

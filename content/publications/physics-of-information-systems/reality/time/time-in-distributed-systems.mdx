@@ -57,3 +57,45 @@ Vector clocks extend this same idea further, letting a system distinguish "A def
 "Why does now stop existing once systems are separated?" turns out not to be a rhetorical flourish. It has a precise, structural answer, and it is the same answer in both physics and distributed computing: a single, shared *now* was never a property of separated things to begin with. It is an approximation that works well enough when distances and delays are small enough to ignore — which is why ordinary human experience never runs into the problem, and why Alice and Bob's five-millisecond disagreement feels so strange the first time it's actually looked at directly. Once separation and delay become large enough to matter — light-years for stars, milliseconds for servers, it makes no difference to the structure of the problem — the shared *now* quietly stops being available, and the only thing left to build with, honestly, is *before* and *after*, tracked locally, compared through messages that themselves take time, exactly the way logical clocks do it.
 
 This has a direct, practical consequence for anyone building systems that span more than one machine: stop asking what time it is "right now" across the whole system, because that question doesn't have a stable answer to give. Ask instead what could have caused what — a question with a real, buildable answer, and the one every distributed system that actually works correctly has, in one form or another, learned to ask instead.
+
+<Figure n={1} title="Alice, Bob, and a Logical Clock" caption="Wall-clock time can't settle who was 'first.' A logical clock doesn't try to — it only ever certifies what could have influenced what.">
+
+```mermaid
+sequenceDiagram
+    participant A as Alice (C=0)
+    participant B as Bob (C=0)
+    A->>A: local event: transfer sent (C=1)
+    A->>B: message, timestamp=1
+    B->>B: "I haven't received it" (C=1, before message arrives)
+    B->>B: message arrives: C = max(1,1)+1 = 2
+    Note over A,B: Both statements were true.<br/>Neither clock was wrong.<br/>There was no shared "now" to be right or wrong about.
+```
+
+</Figure>
+
+<FormalNote>
+A Lamport logical clock names the rule the diagram follows: on receiving a message timestamped $t$,
+set $C \leftarrow \max(C, t) + 1$. This guarantees a one-way implication —
+
+$$a \to b \implies C(a) < C(b)$$
+
+— but not its converse: two unrelated events can still land on either side of each other's counters.
+Vector clocks close that gap. Each process keeps a full vector $V$, one counter per process, and two
+events are provably *concurrent* — genuinely unordered, not merely unmeasured — exactly when neither
+vector is componentwise $\leq$ the other:
+
+$$a \parallel b \iff V_a \not\leq V_b \ \wedge\ V_b \not\leq V_a$$
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+This chapter is the general case of the two-observer problem
+[Every Observation Is Already History](../observations/every-observation-is-already-history) solves
+for one spacecraft and one ground station using a Kalman filter's predict-correct loop instead of a
+logical clock. It also gives exact mechanism to
+[Reality Arrives Late](./reality-arrives-late)'s closing question, and it is the reason the next
+chapter, [Every Queue Is a Negotiation with Time](./queue-time-negotiation), treats delay as something
+to be deliberately placed rather than a gap to be closed — closing it was never on the table to begin
+with.
+</Callout>

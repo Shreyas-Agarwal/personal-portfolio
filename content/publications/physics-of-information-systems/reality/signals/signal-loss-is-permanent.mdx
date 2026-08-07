@@ -41,3 +41,43 @@ Applied plainly: the wax cylinders that survive from Ishi's recordings are the Y
 This is the sharpest form the question in this monograph's title can take, and it deserves to be treated with more weight than a technical footnote: acquisition is not a stage that can be revisited or compensated for later. Whatever detail a system, a sensor, a recording, or a person fails to capture at the moment reality offers it — through insufficient sampling rate, through a noise source misjudged and filtered away, through simply not being present, not asking, not recording — does not remain available somewhere, waiting for improved processing to retrieve it. It is gone in the same sense the previous chapters' examples were, and Ishi's case makes this the sharpest and most human version of the same law running through the entire monograph: reality emits signals, constantly, and every one of those signals exists for exactly as long as it exists and not one instant longer. What gets captured in that window becomes information, subject to everything the rest of this series will say about representation, models, and decisions. What doesn't get captured in that window was never information at all. It was reality, briefly, and then it wasn't there to be captured anymore.
 
 This closes the Signals monograph on its most serious note, and it is worth stating the throughline plainly. A signal exists before anyone assigns it meaning. That signal must be sampled at a rate fast enough to catch what's actually happening, or it will be measured as something false. What survives sampling still has to be separated from noise — and noise, properly understood, is only ever a provisional label for what nobody yet has a theory to explain. And whatever, at any stage of this process, is never captured at all — through an insufficient sampling rate, a real signal wrongly filtered away, or simply a moment that came and went with nobody listening — does not wait somewhere to be recovered. It is permanently, irreversibly gone, the moment the reality that produced it moves on without being observed. The next monograph in this series picks up exactly where this leaves off: once a signal has, in fact, been captured, what does it take for that signal to cross the boundary into something a system can actually reason about — an observation, properly speaking, rather than a raw and still-mute event?
+
+<Figure n={1} title="The Chain Ishi's Recordings Sit On" caption="Everything downstream of the wax cylinders can only reveal what the cylinders already captured. Y is a hard ceiling on Z — not a floor to be improved past.">
+
+```mermaid
+graph LR
+    X["X: Ishi himself,\nthe living, speaking source"] -->|"acquisition\n(recording sessions, 1911-1916)"| Y["Y: the wax cylinders\n(what was actually captured)"]
+    Y -->|"processing\n(transcription, restoration,\nfuture analysis)"| Z["Z: any future output"]
+    X -.->|"I(X;Z) ≤ I(X;Y),\nalways"| Z
+
+    style X fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style Y fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style Z fill:#DE4B31,color:#fff,stroke:#1B1D1F
+```
+
+</Figure>
+
+<FormalNote>
+The data processing inequality, for a chain $X \to Y \to Z$ — an original source $X$, a captured
+signal $Y$, and any later processing $Z$ derived only from $Y$:
+
+$$I(X; Z) \leq I(X; Y), \qquad \text{where } I(X; Y) = H(X) - H(X \mid Y)$$
+
+$I(\cdot\,;\cdot)$ is mutual information, defined in terms of entropy $H$: how much knowing one
+variable reduces uncertainty about the other. No restoration algorithm, transcription, or future
+model applied to $Y$ alone can increase what a later stage carries about $X$ beyond what $Y$ already
+held — the inequality is a ceiling on $Z$, fixed the moment $Y$ was captured.
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+The data processing inequality is the formal reason "look for where the complexity went" only ever
+applies to what got *relocated* — see
+[Complexity Never Disappears](../reality/complexity-never-disappears) — and never to what was never
+captured in the first place; there is nowhere for that to be relocated from. It closes the Signals
+monograph and hands off directly to
+[Signals Become Observations](../observations/signals-become-observations), where the chapter's other
+tool, wavelet analysis, reappears formally as the measurement-theory question of what resolution a
+captured signal is even recorded at.
+</Callout>

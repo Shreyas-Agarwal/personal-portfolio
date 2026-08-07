@@ -120,3 +120,50 @@ organization trying to coordinate people who can't all see the same reality at t
 downstream of this. Reality exists before information. The territory exists before the map. And
 whatever the map leaves out is still out there, still real, still someone's problem, just not yet
 visible from where you're currently standing.
+
+<Figure n={1} title="Where the Washing Machine's Complexity Went" caption="The dial got simpler. The total did not shrink — it moved behind the panel, where an engineer, not the user, now has to hold it.">
+
+```mermaid
+graph LR
+    U["User-facing interface\n(one dial, a few buttons)"] -->|"complexity removed here..."| E["...is absorbed here"]
+    E --> V["Valve regulation"]
+    E --> H["Thermal cutoffs"]
+    E --> M["Variable-speed motor control"]
+    E --> S["Suspension damping"]
+    E --> C["Embedded controller\narbitrating all of it"]
+
+    style U fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style E fill:#DE4B31,color:#fff,stroke:#1B1D1F
+    style V fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style H fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style M fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style S fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style C fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+```
+
+</Figure>
+
+<FormalNote>
+Tesler's Law, as a conservation statement: for a given task, let $C_{\text{total}}$ be its
+irreducible complexity. Simplifying an interface doesn't change $C_{\text{total}}$ — it only changes
+how it is partitioned between the person using the system and whoever built it:
+
+$$C_{\text{total}} = C_{\text{user}} + C_{\text{engineer}}, \qquad \frac{d}{dt}\,C_{\text{total}} = 0$$
+
+Reducing $C_{\text{user}}$ necessarily increases $C_{\text{engineer}}$ by the same amount — or shifts
+it into a third term, like a training program or an on-call rotation, that absorbs it instead. The
+conserved quantity is irreducible task complexity; the only real design variable is where it lives.
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+This closing chapter's conservation law is the same mechanism the rest of the series keeps
+rediscovering under different names: the "seven currencies" of
+[Observability Is a Budget](../observations/observability-is-a-budget) are exactly the places
+complexity gets relocated to when a dashboard hides operational detail behind one score; and the
+deliberate, chosen delay in [Every Queue Is a Negotiation with Time](../time/queue-time-negotiation)
+is the same relocation, spent in time rather than in engineering effort. It builds directly on
+[The Territory Exists Before the Map](./territory-exists-before-map), whose "lost detail" is this
+chapter's "relocated complexity," named formally.
+</Callout>

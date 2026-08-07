@@ -1,0 +1,76 @@
+---
+title: "Event Sourcing vs Temporal Snapshots"
+description: "Competing approaches to preserving history. On a document that remembers every keystroke, and also remembers being named 'Final Draft.'"
+date: "TBD"
+readingTime: "13 min"
+series: "Physics of Information Systems"
+track: "Information"
+monograph: "State"
+order: 4
+coreQuestion: "When should you store what changed, and when should you store what things were?"
+---
+
+Open the version history panel on a shared Google Doc that several people have been editing, and two genuinely different kinds of historical record sit side by side, doing two genuinely different jobs. Scroll through the fine-grained timeline, and you can watch the document rebuild itself character by character — every keystroke, every deletion, every pasted paragraph, in the exact order it happened, attributed to whoever typed it. This is event sourcing in its purest, most granular everyday form: nothing about the document's current text is stored as a finished thing. It is entirely reconstructed, on demand, by replaying the complete sequence of individual edits from the very first character onward — the identical principle as chess notation from the previous chapter, just running continuously, on prose, at a scale of thousands of tiny events instead of a few dozen moves.
+
+Alongside that fine-grained event stream, the same document lets any collaborator manually name a specific version — "Final Draft," "Sent to Client," "Before the Legal Review" — creating a durable, labeled snapshot of the document exactly as it stood at that chosen instant. This is a fundamentally different kind of record. It doesn't ask anyone to replay anything. It stores, directly and completely, what the document *was*, at one chosen moment someone decided was worth freezing and naming, independent of the thousands of small edits that produced it.
+
+**These are the two competing strategies this chapter's title refers to, and the honest answer to which one is correct is that neither one is, on its own — they're solving different problems, and most systems worth building end up needing some version of both, the exact way this one document quietly does.** Event sourcing preserves everything, at the cost of needing to replay a potentially long sequence of events every time you want to know a value that isn't the very latest one. A temporal snapshot answers "what was true at this specific named moment" instantly, at the direct cost of losing the fine-grained texture of everything that happened between one snapshot and the next.
+
+<Callout type="architectural-tension">
+Event sourcing asks: what changed, and in what order? A temporal snapshot asks: what did things look like, at this moment we decided mattered enough to freeze? A system that only answers the first question can't quickly tell you what Tuesday looked like. A system that only answers the second can't tell you what happened between Monday and Tuesday at all.
+</Callout>
+
+## What replay actually costs, once the log gets long
+
+Chess notation gets away with pure event sourcing partly because a game rarely runs past a hundred moves — replaying the full sequence, even by hand, takes a reader a few minutes at most. A document with years of continuous multi-author editing, or a financial ledger with millions of transactions, faces a version of the same replay mechanism at a scale where recomputing the current state from the very first event, every single time someone wants to read it, would be genuinely impractical. This is the actual, practical reason most real event-sourced systems periodically take a snapshot anyway — a full, computed current state, checkpointed and stored directly, so that reconstructing "now" doesn't require replaying the system's entire history from the beginning every time, only the events that happened since the last checkpoint. The snapshot, in this design, isn't a competing philosophy to event sourcing. It's a practical accelerant sitting on top of it — exactly the relationship the named "Final Draft" version and the underlying keystroke log have to each other inside the same document, whether or not the people who built the feature ever described it in those terms.
+
+## What happens when two people type at once
+
+A shared document raises a problem chess notation never has to face at all: multiple people editing concurrently, in real time, each one's changes arriving at slightly different moments, sometimes overlapping in the exact same sentence. A single, orderly, one-move-at-a-time log — the assumption underneath chess notation and, for that matter, most classic event sourcing — breaks down the instant two authors are typing in the same paragraph simultaneously, because there is no longer one single, agreed-upon order in which their respective events occurred.
+
+The mathematical answer to this specific problem is a family of data structures called conflict-free replicated data types, or CRDTs, designed so that multiple copies of the same document, each receiving a different, independently-ordered stream of edits, can always be merged back together into an identical, consistent result — regardless of what order the edits happened to arrive in at each copy. A CRDT achieves this by requiring that every operation be designed to commute and merge predictably no matter its arrival order, so that two authors typing in the same region of a document don't produce a corrupted, contradictory result when their edits are finally reconciled — they produce one coherent document, deterministically, every time, the same way two people simultaneously depositing money into the same bank account produce one correctly-updated balance regardless of which deposit the bank's system happens to process first.
+
+<Callout type="unresolved">
+Event sourcing, on its own, assumes a single agreed-upon order of events. The instant a system has to accept genuinely concurrent, independently-timed changes from multiple sources — as any real-time collaborative document must — that assumption breaks, and something like a CRDT is required specifically to restore a consistent result without forcing every edit through one single, artificially imposed sequence.
+</Callout>
+
+## Choosing between the two, honestly
+
+None of this resolves into a simple rule like "always use event sourcing" or "always use snapshots," and it's worth resisting the temptation to pretend otherwise. The right choice depends on which question a system is actually going to be asked most often, and how expensive it is to answer that question the hard way. A system that mostly needs to know "what is true right now" and rarely needs to explain how it got there is usually better served by storing current state directly, checkpointed and simple, with an event log kept mainly as an audit trail rather than the primary source of truth. A system where understanding *how* something reached its current state is itself the point — a version-controlled codebase, a chess game worth studying move by move, a financial ledger that has to justify every balance with a traceable transaction history — is usually better served by treating the event log as the actual source of truth, with any stored current state demoted to a convenient, disposable cache that could, in principle, always be rebuilt from the log if it were lost or corrupted.
+
+This is, in the end, the same tradeoff this monograph opened with, seen from a new angle. An odometer discards the driving and keeps only the current mileage, because almost nobody needs to replay the driving to use the number. A chess game keeps every single move, because the entire value of the record is in being able to walk back through exactly how the position arrived where it did. Most real systems sit somewhere between these two honest extremes, and the actual engineering skill isn't picking one paradigm forever — it's noticing, correctly, which of the two questions a given part of the system will actually be asked, and building accordingly.
+
+This leaves one hard problem neither event sourcing nor temporal snapshots fully solves on their own, and it's the sharpest question this monograph has left standing. Even with a perfect, complete log of every event, and perfect, well-timed snapshots at every point that mattered — what happens when new information arrives, after the fact, revealing that something recorded as true at the time was actually wrong? Not a bug in the log, but a genuine correction to history itself, arriving late. That is the subject of this monograph's final chapter.
+
+<Figure n={1} title="Event Sourcing and Snapshots, Compared" caption="Neither column is the correct answer on its own — most real systems, like the shared document this chapter opens with, run both at once, using each for the question it actually answers well.">
+
+| | Event log (event sourcing) | Named snapshot |
+| --- | --- | --- |
+| Answers | What changed, and in what order? | What did things look like at this moment? |
+| Read cost | $O(n)$, or $O(k)$ since last checkpoint | $O(1)$ |
+| Storage | Every event, forever | One full state per snapshot |
+| Concurrent writers | Requires a single order, or a CRDT | Not applicable — a snapshot is already merged |
+| Failure mode if used alone | Slow reads as $n$ grows | No record of what happened between snapshots |
+
+</Figure>
+
+<FormalNote>
+Replaying from scratch costs $O(n)$ in the number of events; checkpointing periodically and replaying
+only since the last snapshot costs $O(k)$, where $k \ll n$ — the practical argument for running
+snapshots on top of event sourcing in one complexity bound. A CRDT's correctness condition names what
+lets concurrent, arbitrarily-ordered replicas always converge: its merge operation must be
+commutative, associative, and idempotent, regardless of the order edits actually arrive in.
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+The snapshot-as-accelerant pattern is the same relocation
+[Complexity Never Disappears](../../reality/reality/complexity-never-disappears) describes in
+general — replay cost doesn't vanish, it moves into a checkpointing process that has to be engineered
+and maintained. The storage tradeoff between logging everything and checkpointing state is a direct
+instance of the "storage" and "compute" currencies in
+[Observability Is a Budget](../../reality/observations/observability-is-a-budget). The next chapter,
+[Why Historical Truth Is Harder Than Current Truth](./historical-truth-is-harder-than-current-truth),
+takes up what happens when even a well-kept log turns out, later, to have recorded something wrong.
+</Callout>

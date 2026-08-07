@@ -11,6 +11,7 @@ export {
   Decision,
   Evidence,
   Figure,
+  FormalNote,
   InteractiveDemo,
   Observation,
   Reference,

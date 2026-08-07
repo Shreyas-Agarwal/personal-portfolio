@@ -37,3 +37,24 @@ It's worth asking, honestly, why organizations don't simply correct this once it
 This is the trap the core question of this chapter is pointing at: dashboards don't usually deceive anyone about facts. They deceive, gently and almost invisibly, about *tense*. They present the past in the grammar of the present, and everyone in the room, reasonably, reads present-tense grammar as present-tense information. Recognizing a dashboard as an autopsy — asking, plainly, "is this describing something that has already concluded, dressed up to look like something still unfolding?" — is most of the work of correcting for it.
 
 None of this, importantly, is a complaint that delay is avoidable, or that a truly live dashboard could close the gap entirely if only it were engineered better. Even a dashboard built with total honesty, showing only genuinely still-open situations, still has to contend with something more basic than design choices: information about the present cannot travel instantly from where it happens to where it's read. That limit isn't a tooling problem. It's a physical one, and it's the subject the next chapter takes up directly.
+
+<Figure n={1} title="Borrowed Grammar" caption="The visual vocabulary of live instrumentation, applied to a value that closed hours or months ago, produces a reading that feels current without being current — a category error in tense, not in fact.">
+
+| Visual element | Where it originates | What it implies | What it often actually shows |
+| --- | --- | --- | --- |
+| Speedometer-style gauge | Cars, live control panels | The present value, right now | An average over a period that already closed |
+| Sparkline | ICU monitors, seismographs | A signal still unfolding | A once-nightly refresh of settled records |
+| Green→red color shift | Warning lights, alarms | An active, ongoing state | A static classification of a completed event |
+
+</Figure>
+
+## Elsewhere in this series
+
+<Callout type="note">
+The asymmetry this chapter names — closed facts are easy to count, open situations resist it — is the
+same asymmetry [Signals Become Observations](../observations/signals-become-observations) describes
+for nominal categories versus continuous reality: a settled thing fits a fixed vocabulary; an
+unfolding one keeps needing a wider one. The next chapter,
+[Reality Arrives Late](./reality-arrives-late), grounds the "borrowed heartbeat" problem in the
+physical reason a live view can never fully close the tense gap this chapter describes.
+</Callout>

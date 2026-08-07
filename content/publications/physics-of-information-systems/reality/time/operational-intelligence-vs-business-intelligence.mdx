@@ -102,3 +102,29 @@ left to make when it matters." That second question is a completely legitimate, 
 It is simply not the same question, and mistaking one for a slow version of the other is exactly the
 confusion the next chapter takes up directly — because the tools organizations build to answer the
 second question have a way of quietly convincing everyone they're still answering the first.
+
+<Figure n={1} title="The Test, Applied" caption="The same underlying data can sit on either side of this line — what moves it is whether a decision is still waiting, not how the data was produced.">
+
+```mermaid
+graph TD
+    Q{"Is there still a decision\nopen that this information\ncould change?"}
+    Q -->|"Yes"| OI["Operational Intelligence\nradar separation, ICU vitals,\nfraud mid-transaction"]
+    Q -->|"No"| BI["Business Intelligence\nannual safety report,\nquarterly outcomes review"]
+    OI -->|"decision closes"| BI
+
+    style Q fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+    style OI fill:#DE4B31,color:#fff,stroke:#1B1D1F
+    style BI fill:#ECE5D4,color:#1B1D1F,stroke:#1B1D1F
+```
+
+</Figure>
+
+## Elsewhere in this series
+
+<Callout type="note">
+The test this chapter proposes — "is a decision still open?" — is the same test
+[Observability vs. Analytics](../observations/observability-vs-analytics) applies to records instead
+of decisions, distinguishing telemetry from an explanation. The next chapter,
+[Most Dashboards Are Historical Autopsies](./most-dashboards-are-historical-autopsies), examines why
+so many systems present a closed-decision artifact using the visual grammar of an open one.
+</Callout>

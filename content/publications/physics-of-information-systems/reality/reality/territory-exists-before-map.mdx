@@ -116,3 +116,39 @@ disappear from the world; it just stops being the map's problem and becomes some
 at a worse time, with less warning, than if the map had accounted for it from the start. That
 relocation — never elimination, always relocation — is the subject the next chapter takes on
 directly.
+
+<Figure n={1} title="Length as a Function of Ruler Size" caption="The measured length of a fractal-like boundary rises without bound as the measuring unit shrinks — there is no true length hiding underneath, only a resolution the measurer chose.">
+
+| Ruler length $\varepsilon$ | What it registers | Measured length trend |
+| --- | --- | --- |
+| 100 km | Headland to headland | Shortest estimate |
+| 10 km | Bays, larger peninsulas | Longer |
+| 1 km | Inlets, rocky outcrops | Longer still |
+| $\to 0$ | Every irregularity at every scale | $L(\varepsilon) \to \infty$ |
+
+</Figure>
+
+<FormalNote>
+Richardson's coastline observation has a named form, given by Benoit Mandelbrot: the measured length
+$L$ of a coastline depends on the ruler length $\varepsilon$ used to measure it, rather than
+converging to one fixed value —
+
+$$L(\varepsilon) \approx M \cdot \varepsilon^{\,1 - D}$$
+
+where $D$ is the coastline's fractal dimension (Britain's is usually estimated around $D \approx
+1.25$). As $\varepsilon \to 0$, $L(\varepsilon) \to \infty$ — length isn't a fixed property of the
+coastline, it's a joint property of the coastline *and* the ruler.
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+The choice of $\varepsilon$ — how finely a representation is willing to look — is the same choice a
+sampling rate makes for a signal in time rather than space; see
+[Sampling Reality](../signals/sampling-reality) for the Nyquist–Shannon version of this same
+resolution problem. The Mercator projection's deliberate trade — bearing accuracy purchased with size
+distortion — is the same shape of trade this monograph's closing chapter,
+[Complexity Never Disappears](./complexity-never-disappears), generalizes into a conservation law. And
+the earlier chapter, [Reality Exists Before Information](./reality-exists-before-information),
+establishes the categorical gap this chapter has been measuring the *size* of.
+</Callout>

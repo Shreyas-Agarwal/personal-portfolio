@@ -43,3 +43,38 @@ It would be comfortable to treat the Penzias-Wilson story as a closed, historica
 The honest lesson isn't "check everything twice, forever," which is neither practical nor what Penzias and Wilson actually did — they filtered aggressively and correctly, ruling out mundane explanations exactly as good practice requires. The lesson is narrower and more useful: **noise, by definition, is a residual category — whatever remains once every known explanation has been ruled out — and residual categories are exactly where the discoveries no existing theory predicted tend to be hiding.** Treating "noise" as a permanent, settled verdict rather than a provisional, theory-dependent label is the mistake. Treating it as a place worth occasionally returning to, with a fresh theory in hand, is what turned a persistent, irritating hiss into a Nobel Prize.
 
 This leaves one further, harder question that filtering and detection theory don't answer on their own. Even once a signal has been correctly separated from noise, captured at a sufficient sampling rate, and recognized for what it is — what happens to everything that was, at the moment of acquisition, simply never captured at all? Not misclassified, not filtered out, but genuinely never recorded in the first place. That loss, unlike noise, cannot be revisited later with a better theory. It is the subject of this monograph's final chapter, and it is, without exaggeration, the most serious one.
+
+<Figure n={1} title="Where the CMB Sat on the Threshold, for a Year" caption="Penzias and Wilson kept lowering the threshold for 'known interference, eliminated' — the hiss never moved. What moved was whether anyone had a theory that made it worth calling signal.">
+
+| Step | Action | Effect on SNR against terrestrial explanations |
+| --- | --- | --- |
+| 1 | Check electrical connections | Terrestrial noise source ruled out |
+| 2 | Point antenna at New York City | Urban interference ruled out |
+| 3 | Clean pigeon droppings from antenna throat | Physical obstruction ruled out |
+| 4 | Princeton's prediction arrives | Residual hiss reclassified: noise → signal |
+
+</Figure>
+
+<FormalNote>
+Signal-to-noise ratio, in the decibel form the chapter uses:
+
+$$\mathrm{SNR_{dB}} = 10 \log_{10}\!\left(\frac{P_{\text{signal}}}{P_{\text{noise}}}\right)$$
+
+Signal detection theory names the threshold decision itself: a detector's operating point can be
+pushed anywhere along one curve — the receiver operating characteristic — trading true-positive rate
+against false-positive rate. Moving the threshold changes which kind of error you accept more of; it
+never improves the underlying separability of signal from noise, which only improves with a better
+instrument, or with the two observers' actual work — subtracting known interference until whatever's
+left is worth a real theory.
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+The receiver operating characteristic curve introduced here in miniature is stated in full, with
+precision and recall, in [Observability Is a Budget](../observations/observability-is-a-budget), where
+the same threshold tradeoff is applied to hospital alarms instead of radio antennas. It builds on
+[Sampling Reality](./sampling-reality)'s account of what a system is even capable of seeing, and it
+sets up the final chapter directly: [Signal Loss Is Permanent](./signal-loss-is-permanent) is about
+the one category of loss that a better theory, unlike a better theory of noise, can never revisit.
+</Callout>
