@@ -3,19 +3,22 @@ import Link from "next/link";
 import { DraftingGrid } from "@/components/ui/DraftingGrid";
 import { getAllFieldNotes } from "@/lib/field-notes/loader";
 import { plexMono, serif } from "@/lib/fonts";
-import { getAllPublications } from "@/lib/publication/loader";
+import { getAllArticles, getAllPublications } from "@/lib/publication/loader";
 
 export const metadata: Metadata = {
   title: "Writing",
-  description: "Publications and Field Notes — finished essays and ideas still in motion.",
+  description:
+    "Publications, individual articles, and Field Notes — finished essays and ideas still in motion.",
   openGraph: {
     title: "Writing | Shreyas Agarwal",
-    description: "Publications and Field Notes — finished essays and ideas still in motion.",
+    description:
+      "Publications, individual articles, and Field Notes — finished essays and ideas still in motion.",
   },
 };
 
 export default function WritingPage() {
   const publications = getAllPublications();
+  const articles = getAllArticles();
   const fieldNotes = getAllFieldNotes();
   const recentNotes = fieldNotes.slice(0, 3);
 
@@ -36,32 +39,48 @@ export default function WritingPage() {
             Writing
           </h1>
           <p className="text-lg text-[#A0A5AD] max-w-2xl leading-relaxed font-sans font-light">
-            Two registers of thinking, kept deliberately separate: finished essays, and the raw
-            observations that come before them.
+            Two registers of thinking, kept deliberately separate: finished essays — whole or by
+            the chapter — and the raw observations that come before them.
           </p>
         </header>
 
         <div className="grid gap-8 sm:grid-cols-2">
-          {/* ── Publications panel — editorial identity ─────────────────── */}
+          {/* ── Publications panel — editorial identity, with articles as a
+                secondary way into the same body of work: every article
+                exists only because a publication does, so this stays one
+                panel with two doors, not two peer panels. ────────────────── */}
           <section className="border border-[#33373B] bg-[#24272A] rounded-sm p-8 flex flex-col">
             <span
               className={`${plexMono.className} text-xs font-semibold tracking-widest text-[#DE4B31] uppercase`}
             >
               Publications
             </span>
-            <h2 className={`${serif.className} mt-3 text-2xl text-[#ECE5D4]`}>
-              {publications.length} {publications.length === 1 ? "Publication" : "Publications"}
-            </h2>
+            <div className="mt-3 space-y-1">
+              <h2 className={`${serif.className} text-2xl text-[#ECE5D4]`}>
+                {publications.length} {publications.length === 1 ? "Publication" : "Publications"}
+              </h2>
+              <p className={`${plexMono.className} text-xs text-[#8A8F99] uppercase tracking-wider`}>
+                {articles.length} Individual Articles
+              </p>
+            </div>
             <p className="mt-3 text-sm text-[#A0A5AD] leading-relaxed font-sans font-light flex-1">
               Case studies, research notes, and architecture notes — finished arguments, edited
-              and complete.
+              and complete. Browse a whole publication, or jump straight to one of its chapters.
             </p>
-            <Link
-              href="/works/publications"
-              className={`${plexMono.className} mt-6 inline-flex items-center gap-1.5 text-xs text-[#DE4B31] font-medium uppercase tracking-wider hover:gap-2.5 transition-all`}
-            >
-              Enter Library <span>→</span>
-            </Link>
+            <div className="mt-6 flex flex-col gap-2.5">
+              <Link
+                href="/works/publications"
+                className={`${plexMono.className} inline-flex items-center gap-1.5 text-xs text-[#DE4B31] font-medium uppercase tracking-wider hover:gap-2.5 transition-all`}
+              >
+                Browse Publications <span>→</span>
+              </Link>
+              <Link
+                href="/writing/articles"
+                className={`${plexMono.className} inline-flex items-center gap-1.5 text-xs text-[#B08D57] font-medium uppercase tracking-wider hover:gap-2.5 transition-all`}
+              >
+                Browse Articles <span>→</span>
+              </Link>
+            </div>
           </section>
 
           {/* ── Field Notes panel — notebook identity ────────────────────── */}

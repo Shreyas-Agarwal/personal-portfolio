@@ -15,7 +15,12 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { parseTocHeadings } from "./toc";
-import type { PublicationDocument, PublicationManifest, PublicationSection } from "./types";
+import type {
+  PublicationArticle,
+  PublicationDocument,
+  PublicationManifest,
+  PublicationSection,
+} from "./types";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -183,7 +188,10 @@ export function getPublicationSlugs(source: string): string[][] {
 }
 
 /**
- * Returns all available publication manifests sorted by date descending.
+ * Returns all publicly listed publication manifests, sorted by date
+ * descending. Publications marked `unlisted` are excluded — they're still
+ * reachable at their direct URL (see loadPublicationDocument), just not
+ * surfaced in any catalogue, count, or the sitemap.
  */
 export function getAllPublications(): PublicationManifest[] {
   const root = path.join(process.cwd(), "content/publications");
@@ -196,6 +204,7 @@ export function getAllPublications(): PublicationManifest[] {
     if (!dir.isDirectory()) continue;
     try {
       const manifest = loadPublicationManifest(path.join(root, dir.name));
+      if (manifest.unlisted) continue;
       manifests.push(manifest);
     } catch {
       // ignore invalid directories
@@ -203,4 +212,58 @@ export function getAllPublications(): PublicationManifest[] {
   }
 
   return manifests.sort((a, b) => (a.date > b.date ? -1 : 1));
+}
+
+// ── Article flattening ─────────────────────────────────────────────────────────
+
+function collectArticles(
+  sections: PublicationSection[],
+  manifest: PublicationManifest,
+  inheritedGroup: string | undefined,
+  inheritedTrack: string | undefined,
+): PublicationArticle[] {
+  const result: PublicationArticle[] = [];
+
+  for (const s of sections) {
+    const group = s.group ?? inheritedGroup;
+
+    if (s.href !== undefined && s.href !== "") {
+      result.push({
+        id: `${manifest.id}/${s.id}`,
+        title: s.title,
+        url: `/works/publications/${manifest.id}/${s.href}`,
+        publicationId: manifest.id,
+        publicationTitle: manifest.title,
+        publicationType: manifest.type,
+        program: manifest.program,
+        domains: manifest.domains ?? [],
+        date: manifest.date,
+        group,
+        trackTitle: inheritedTrack,
+      });
+    }
+
+    if (s.children) {
+      result.push(...collectArticles(s.children, manifest, group, s.title));
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Returns every individually navigable article across all publications —
+ * the series' chapters flattened out of their nested sidebar tree, so each
+ * can be listed and linked on its own instead of only being reachable by
+ * drilling into a publication's navigation.
+ *
+ * The publication's own overview page (href "") is excluded — it's already
+ * surfaced as the publication itself in the Publications catalogue.
+ */
+export function getAllArticles(): PublicationArticle[] {
+  const articles = getAllPublications().flatMap((manifest) =>
+    collectArticles(manifest.sections, manifest, undefined, undefined),
+  );
+
+  return articles.sort((a, b) => (a.date > b.date ? -1 : 1));
 }

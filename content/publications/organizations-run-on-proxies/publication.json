@@ -11,6 +11,8 @@
   "author": "Shreyas Agarwal",
   "domains": ["Organizational Theory", "Systems Architecture", "Decision Science"],
   "status": "published",
+  "unlisted": true,
+  "locked": true,
   "sections": [
     {
       "id": "index",

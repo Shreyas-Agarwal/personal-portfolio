@@ -7,24 +7,31 @@
 
 import Link from "next/link";
 import { plexMono, serif } from "@/lib/fonts";
+import { withPublicationQuery } from "@/lib/publication/query";
 import type { PublicationSection } from "@/lib/publication/types";
 
 interface PublicationFooterProps {
   prev?: PublicationSection;
   next?: PublicationSection;
   basePath: string;
+  /** Preserve reader mode across Previous/Next — the reader stays in the
+   *  distraction-free layout until they explicitly navigate elsewhere. */
+  readerMode?: boolean;
 }
 
 function NavCard({
   section,
   basePath,
   direction,
+  readerMode,
 }: {
   section: PublicationSection;
   basePath: string;
   direction: "prev" | "next";
+  readerMode: boolean;
 }) {
-  const href = (section.href ?? "") === "" ? basePath : `${basePath}/${section.href}`;
+  const path = (section.href ?? "") === "" ? basePath : `${basePath}/${section.href}`;
+  const href = withPublicationQuery(path, { readerMode });
   const isPrev = direction === "prev";
 
   return (
@@ -58,14 +65,25 @@ function NavCard({
   );
 }
 
-export function PublicationFooter({ prev, next, basePath }: PublicationFooterProps) {
+export function PublicationFooter({
+  prev,
+  next,
+  basePath,
+  readerMode = false,
+}: PublicationFooterProps) {
   if (!prev && !next) return null;
 
   return (
     <footer className="mt-20 border-t border-[#2C2E32] pt-10">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {prev ? <NavCard section={prev} basePath={basePath} direction="prev" /> : <div />}
-        {next && <NavCard section={next} basePath={basePath} direction="next" />}
+        {prev ? (
+          <NavCard section={prev} basePath={basePath} direction="prev" readerMode={readerMode} />
+        ) : (
+          <div />
+        )}
+        {next && (
+          <NavCard section={next} basePath={basePath} direction="next" readerMode={readerMode} />
+        )}
       </div>
     </footer>
   );

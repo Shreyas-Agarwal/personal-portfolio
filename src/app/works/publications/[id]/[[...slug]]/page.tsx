@@ -3,6 +3,7 @@
  */
 
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { compileMDX } from "next-mdx-remote/rsc";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
@@ -41,17 +42,20 @@ import {
 import { PublicationDryRead } from "@/components/publication/PublicationDryRead";
 import { PublicationFooter } from "@/components/publication/PublicationFooter/PublicationFooter";
 import { PublicationHeader } from "@/components/publication/PublicationHeader/PublicationHeader";
+import { PublicationLockScreen } from "@/components/publication/PublicationLockScreen/PublicationLockScreen";
 import { PublicationMetadata } from "@/components/publication/PublicationMetadata/PublicationMetadata";
 import { PublicationShell } from "@/components/publication/PublicationShell/PublicationShell";
 import { PublicationSidebar } from "@/components/publication/PublicationSidebar/PublicationSidebar";
 import { PublicationTOC } from "@/components/publication/PublicationTOC/PublicationTOC";
 import { Comments } from "@/components/shared/Comments";
+import { accessCookieName, isValidAccessToken } from "@/lib/publication/access";
 import { loadPublicationDocument, resolvePublicationSource } from "@/lib/publication/loader";
 import { blocksToPlainText, parsePublicationPlainText } from "@/lib/publication/plain-text";
+import { isReaderMode, withPublicationQuery } from "@/lib/publication/query";
 
 interface PageProps {
   params: Promise<{ id: string; slug?: string[] }>;
-  searchParams: Promise<{ view?: string }>;
+  searchParams: Promise<{ view?: string; sidebar?: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -60,6 +64,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const source = resolvePublicationSource(id);
     const doc = await loadPublicationDocument(source, slug);
     const isIndex = slug.length === 0;
+
+    if (doc.manifest.locked || doc.manifest.unlisted) {
+      return {
+        title: doc.manifest.locked ? "Private" : doc.manifest.title,
+        description: doc.manifest.locked ? "This content is private." : undefined,
+        robots: { index: false, follow: false },
+      };
+    }
+
     return {
       title: isIndex ? doc.manifest.title : `${doc.current.title} — ${doc.manifest.title}`,
       description: doc.manifest.abstract ?? doc.manifest.subtitle,
@@ -97,7 +110,8 @@ const MDX_COMPONENTS = {
 
 export default async function ProjectPublicationPage({ params, searchParams }: PageProps) {
   const { id, slug = [] } = await params;
-  const { view } = await searchParams;
+  const { view, sidebar } = await searchParams;
+  const readerMode = isReaderMode(sidebar);
 
   let doc: Awaited<ReturnType<typeof loadPublicationDocument>>;
   const source = resolvePublicationSource(id);
@@ -111,6 +125,15 @@ export default async function ProjectPublicationPage({ params, searchParams }: P
   }
 
   const { manifest, current, source: mdxSource, toc, prev, next } = doc;
+
+  if (manifest.locked) {
+    const store = await cookies();
+    const token = store.get(accessCookieName(id))?.value;
+    if (!isValidAccessToken(id, token)) {
+      return <PublicationLockScreen id={id} title={manifest.title} />;
+    }
+  }
+
   const currentPath = current.href ? `${basePath}/${current.href}` : basePath;
   const blocks = parsePublicationPlainText(mdxSource);
   const plainText = blocksToPlainText(blocks);
@@ -124,6 +147,7 @@ export default async function ProjectPublicationPage({ params, searchParams }: P
         currentPath={currentPath}
         blocks={blocks}
         plainText={plainText}
+        readerMode={readerMode}
       />
     );
   }
@@ -142,12 +166,15 @@ export default async function ProjectPublicationPage({ params, searchParams }: P
 
   return (
     <PublicationShell
+      readerMode={readerMode}
       sidebar={
-        <PublicationSidebar
-          manifest={manifest}
-          activeHref={current.href ?? ""}
-          basePath={basePath}
-        />
+        readerMode ? null : (
+          <PublicationSidebar
+            manifest={manifest}
+            activeHref={current.href ?? ""}
+            basePath={basePath}
+          />
+        )
       }
       document={
         <>
@@ -156,7 +183,7 @@ export default async function ProjectPublicationPage({ params, searchParams }: P
               manifest={manifest}
               current={current}
               basePath={basePath}
-              dryReadHref={`${currentPath}?view=text`}
+              dryReadHref={withPublicationQuery(currentPath, { readerMode, extra: { view: "text" } })}
               plainText={plainText}
               pdfTargetId="publication-pdf-source"
             />
@@ -165,7 +192,7 @@ export default async function ProjectPublicationPage({ params, searchParams }: P
           </div>
 
           <div className="print:hidden">
-            <PublicationFooter prev={prev} next={next} basePath={basePath} />
+            <PublicationFooter prev={prev} next={next} basePath={basePath} readerMode={readerMode} />
 
             <Comments
               term={`publications/${id}${slug.length ? `/${slug.join("/")}` : ""}`}

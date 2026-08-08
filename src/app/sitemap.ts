@@ -2,7 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import type { MetadataRoute } from "next";
 import { projects } from "@/data/projects";
-import { getAllPublications } from "@/lib/publication/loader";
+import { getAllFieldNotes } from "@/lib/field-notes/loader";
+import { getAllArticles, getAllPublications } from "@/lib/publication/loader";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://agarwal.systems";
@@ -14,6 +15,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/systems",
     "/works",
     "/works/publications",
+    "/writing",
+    "/writing/articles",
+    "/writing/field-notes",
     "/systems/workflow-architecture",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
@@ -76,5 +80,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...docRoutes, ...adrRoutes, ...publicationRoutes, ...projectRoutes];
+  // Dynamic individual articles — each chapter within a series
+  // (/works/publications/[id]/[...slug])
+  const articleRoutes = getAllArticles().map((article) => ({
+    url: `${baseUrl}${article.url}`,
+    lastModified: new Date(article.date),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  // Dynamic field notes (/writing/field-notes/[slug])
+  const fieldNoteRoutes = getAllFieldNotes().map((note) => ({
+    url: `${baseUrl}/writing/field-notes/${note.slug}`,
+    lastModified: new Date(note.date),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
+
+  return [
+    ...staticRoutes,
+    ...docRoutes,
+    ...adrRoutes,
+    ...publicationRoutes,
+    ...articleRoutes,
+    ...fieldNoteRoutes,
+    ...projectRoutes,
+  ];
 }

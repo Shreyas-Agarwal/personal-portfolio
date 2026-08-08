@@ -21,6 +21,10 @@ interface PublicationHeaderProps {
   manifest: PublicationManifest;
   current: PublicationSection;
   basePath: string;
+  /** Breadcrumb target — always the default (sidebar-visible) layout, since
+   *  clicking back to the publication title re-enters its table of contents
+   *  rather than continuing the current reading session. */
+  breadcrumbHref?: string;
   dryReadHref: string;
   plainText: string;
   pdfTargetId: string;
@@ -42,6 +46,7 @@ export function PublicationHeader({
   manifest,
   current,
   basePath,
+  breadcrumbHref = basePath,
   dryReadHref,
   plainText,
   pdfTargetId,
@@ -56,7 +61,7 @@ export function PublicationHeader({
       {/* ── Breadcrumb ── */}
       <div className="mb-6 flex items-center gap-2">
         <Link
-          href={basePath}
+          href={breadcrumbHref}
           className={`${plexMono.className} text-[10px] uppercase tracking-[0.2em] text-[#E6E1D6]/30 transition-colors hover:text-[#E6E1D6]/65`}
         >
           {manifest.title}

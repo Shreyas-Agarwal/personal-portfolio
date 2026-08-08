@@ -91,6 +91,18 @@ export interface PublicationManifest {
    */
   originFieldNotes?: string[];
 
+  /**
+   * Excludes this publication from catalogues, /writing counts, article
+   * indexing, and the sitemap. The direct URL still resolves — this is for
+   * publications shared with specific people rather than the public.
+   */
+  unlisted?: boolean;
+  /**
+   * Requires a passcode (set via a `PUB_PASSCODE_<ID>` env var) before the
+   * content renders. See src/lib/publication/access.ts.
+   */
+  locked?: boolean;
+
   /** Ordered sidebar sections — defines navigation and URL structure. */
   sections: PublicationSection[];
 }
@@ -121,4 +133,32 @@ export interface PublicationDocument {
   toc: TocHeading[];
   prev?: PublicationSection;
   next?: PublicationSection;
+}
+
+// ── Individual article (flattened chapter within a series) ─────────────────────
+
+/**
+ * A single navigable article/chapter within a publication, flattened out of
+ * the manifest's nested `sections` tree — independent of its place in that
+ * tree, so it can be listed, searched, and linked on its own.
+ */
+export interface PublicationArticle {
+  /** Stable identifier: `${publicationId}/${section.id}`. */
+  id: string;
+  /** Article title (the section's display label). */
+  title: string;
+  /** Absolute site URL, e.g. "/works/publications/physics-of-information-systems/reality/reality/...". */
+  url: string;
+  publicationId: string;
+  publicationTitle: string;
+  publicationType: PublicationType;
+  program?: string;
+  /** Domain tags inherited from the parent publication. */
+  domains: string[];
+  /** ISO 8601 date, inherited from the parent publication. */
+  date: string;
+  /** Top-level track/group label, e.g. "Reality". */
+  group?: string;
+  /** Nearest parent section title, e.g. "I. Reality" — the article's immediate grouping. */
+  trackTitle?: string;
 }

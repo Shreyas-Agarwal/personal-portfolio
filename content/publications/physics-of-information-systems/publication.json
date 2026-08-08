@@ -16,6 +16,8 @@
     "Signal Processing",
     "Distributed Systems"
   ],
+  "unlisted": true,
+  "locked": true,
   "sections": [
     {
       "id": "index",

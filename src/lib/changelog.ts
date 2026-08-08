@@ -8,6 +8,22 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
   {
+    revision: "r17",
+    date: "2026-08-08",
+    title: "Private publications",
+    description:
+      "Added a passcode-gated visibility mode for publications shared with specific people rather than published generally — unlisted from every catalogue, count, and the sitemap, with a lock screen guarding the direct link.",
+    tags: ["publications", "infra"],
+  },
+  {
+    revision: "r16",
+    date: "2026-08-08",
+    title: "Articles index and reader mode",
+    description:
+      "Added a global Articles index surfacing every chapter of every series on its own, plus a distraction-free reader mode (no sidebar) for articles opened from it — reachable via a query param so every article keeps a single canonical URL. Sitemap and robots coverage extended to individual articles and field notes.",
+    tags: ["publications", "design", "infra"],
+  },
+  {
     revision: "r15",
     date: "2026-08-06",
     title: "Downloads, dry read, and comments",
