@@ -1,0 +1,65 @@
+---
+title: "0004 — Desktop Agent Execution Models"
+description: "Scheduled background execution vs. user-triggered and hybrid execution models."
+date: 2026-08-01
+readingTime: 5 min
+---
+
+# Desktop Agent Execution Model
+
+<Callout type="note">
+  **Scope:** Evaluates execution triggering strategies — scheduled background tasks vs. explicit user initiation vs. process-hooked launchers.
+</Callout>
+
+## Context
+
+The existing implementation registers two OS-level scheduled tasks (daily run and hourly refresh). Both assume that when the task fires:
+
+1. The local source application is running on the machine.
+2. The target company data file is currently open.
+3. The local port/socket server interface is reachable.
+
+<Observation n={1}>
+  When a scheduled task fires against a closed source application, the OS task scheduler logs "Task Succeeded", but the agent logs an internal error and exits. This creates a silent operational failure gap where no data is captured.
+</Observation>
+
+### Interaction with Change-Token Synchronization (Note 0001)
+
+Under the change-token model (Note 0001), a missed or delayed run costs **latency, never correctness**. When the agent eventually runs, it queries "everything modified since watermark $N$," catching up completely regardless of gap duration.
+
+## Decision
+
+<Decision n={1} status="accepted">
+  Adopt **explicit user-triggered execution** (interactive launcher) as the primary initial operational model, backed by **server-side staleness monitoring and alerting**.
+</Decision>
+
+### Models Evaluated
+
+<Process>
+  <Step n={1} title="Model A — Scheduled Background Execution (Current)">
+    Runs unattended via OS Task Scheduler. *Disadvantage:* Silent failure when the source application is closed; no UI feedback path to human operators.
+  </Step>
+  <Step n={2} title="Model B — Explicit User-Triggered Execution (Accepted Initial)">
+    User launches the interactive agent when working in the source application. *Advantage:* Guarantees source application is active; surfaces immediate UI feedback to the operator.
+  </Step>
+  <Step n={3} title="Model C — Process-Hooked / System Tray Launcher (Future)">
+    Lightweight tray component detects source application process start and triggers automatically. *Advantage:* Zero human intervention required while eliminating closed-app failures.
+  </Step>
+</Process>
+
+## Consequences
+
+<Tradeoff
+  gain="Eliminates silent unattended failures by construction. Provides immediate success/failure UI feedback to the local operator."
+  cost="Sync frequency is bounded by user action rather than fixed schedules. Requires server-side staleness alerting."
+/>
+
+- **Eliminates silent background failures** when the desktop app is closed.
+- **Complemented by change-token sync (Note 0001)** so delayed runs catch up completely.
+- **Server-side monitoring flags inactive installations** if no sync lands within expected windows.
+
+## Alternatives & Future Roadmap
+
+- **Model A (Scheduled Background):** *Rejected* due to silent failure modes.
+- **Model B (User-Triggered):** *Accepted* for initial release.
+- **Model C (System Tray Hook):** *Deferred* for future evaluation once baseline reliability is established.

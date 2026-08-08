@@ -1,0 +1,89 @@
+---
+title: "Observability is a Budget"
+description: "Storage, cardinality, telemetry cost, and selective visibility. On an ICU bed generating hundreds of alarms a day, and the seven currencies observation is actually paid in."
+date: "TBD"
+readingTime: "14 min"
+series: "Physics of Information Systems"
+track: "Reality"
+monograph: "Observations"
+order: 5
+coreQuestion: "What does it actually cost to watch something, and who decides how much of that cost is worth paying?"
+---
+
+A single occupied bed in a modern intensive care unit, wired to the standard array of monitors — heart rhythm, oxygen saturation, blood pressure, respiration — can generate several hundred audible alarms over the course of a single day, and published clinical research has found that the overwhelming majority of them, often estimated above eighty or ninety percent, turn out to be clinically insignificant: a sensor slipping slightly out of place, a brief and harmless movement artifact, a threshold set a touch too sensitively for this particular patient. This is not a minor inconvenience. It has a name in the clinical literature — alarm fatigue — and it describes a well-documented, dangerous pattern: staff repeatedly exposed to a flood of low-value alarms gradually, understandably, become desensitized to alarms in general, including, on documented occasions, the rare one that mattered.[^1]
+
+It would be easy to read this as a simple engineering failure — build better sensors, tune the thresholds more precisely, solve alarm fatigue with better calibration. That's part of the answer, but it misses the deeper structural fact this chapter's title is built around, and the title is worth reading exactly as written. It does not say observability is *expensive*. It says observability is a *budget* — and a budget, unlike a simple cost, implies a finite pool that has to be deliberately allocated across genuinely different kinds of currency, not just one. **Watching a system does not cost one thing. It costs at least seven different things simultaneously, and every decision about what to monitor, and how closely, is really a decision about how to divide a limited amount of each of them.**
+
+## The seven currencies
+
+**Attention** is the first and often the scarcest: a nurse, like anyone, has a finite capacity to notice and respond to alerts, and every alarm that isn't worth noticing spends down the same attentional budget that a genuinely urgent one needs later. **Storage** is the more familiar cost — every reading from every monitor, if retained, accumulates, and retaining continuous data from thousands of beds indefinitely is a real, physical, costly commitment. **Bandwidth** is closely related but distinct — wireless monitors transmitting continuously compete for a shared, finite amount of network capacity, especially in a crowded ward with many beds broadcasting simultaneously. **Compute** is spent running the algorithms that try to distinguish a real cardiac event from a sensor artifact in real time, a genuinely hard signal-processing problem that itself consumes processing power proportional to how sophisticated the filtering is asked to be. **Power** matters directly for battery-operated wireless monitors, where a sensor sampling and transmitting more often, in the name of better visibility, drains its battery faster and needs replacing or recharging more frequently, itself a real operational cost. **Human cognition** is related to attention but broader — the ongoing mental effort of interpreting what a given pattern of readings actually means, a cost that compounds across a whole shift, not just at the moment of a single alarm. And **operational trust** is the subtlest and, in documented cases, the most dangerous currency of all: every false alarm spends down the staff's willingness to treat the next alarm as credible, and that trust, once spent, is measurably harder to earn back than it was to lose.
+
+<Callout type="unresolved">
+There have been real, documented clinical incidents in which a genuinely critical alarm was missed or delayed following prolonged exposure to frequent false alarms — this pattern is well established in published patient-safety research, though any specific named incident should be verified carefully and treated with real care before being cited, given the human stakes involved.
+</Callout>
+
+## The threshold that cannot avoid choosing
+
+Every one of these currencies gets spent according to a single design decision: where to set the detection threshold for a given alarm. Set it loosely — alert only for severe, unambiguous deviations — and you spend less attention, less compute, less operational trust, at the direct cost of missing some genuinely concerning cases that fall just short of the threshold. Set it tightly — alert on the slightest deviation — and you catch more genuine cases, at the direct cost of far more false alarms, spending attention, cognition, and trust faster than any staff can sustainably absorb.
+
+This tradeoff has a precise mathematical description. A receiver operating characteristic curve, or ROC curve, plots exactly this tension: as a detection threshold moves from strict to loose, the rate of correctly caught true events rises, but so does the rate of false alarms, and the curve traces out every achievable combination of the two. There is no point on this curve that eliminates both kinds of error simultaneously — moving the threshold only decides which kind of error you're willing to accept more of. A closely related pair of measures, precision and recall, makes the same tradeoff concrete in a different vocabulary: precision asks, of everything the system flagged as significant, how much actually was; recall asks, of everything that was actually significant, how much did the system actually catch. Raising the threshold tends to raise precision — the alarms that do fire are more likely to be real — at the direct cost of recall, since some real events now fall below the stricter bar and go uncaught entirely. Lowering it does the reverse. Neither direction is simply "better." Each spends the observability budget differently, buying one kind of safety with a different kind of cost, and the honest engineering question is never "how do we eliminate the tradeoff" but "given our actual constraints, which side of it can we least afford to be wrong on."
+
+## Deciding what's even worth watching
+
+There is a deeper layer beneath the threshold question, and it is the one this whole monograph has been quietly building toward from its very first chapter. Before an observation is even made, there is a genuine, quantifiable question: how much does observing this particular thing actually reduce our uncertainty about the patient's real condition, relative to what it costs, across all seven currencies, to observe it? An Ellis Island inspector's chalk mark collapsed a wide space of possible conditions down to one category; Snow's map collapsed a wide space of possible causes down to one pump; a Kalman filter's correction collapses a spread of possible positions down toward a tighter range. Every observation, across this entire monograph, has been doing the identical thing: narrowing uncertainty. Information theory gives this narrowing an exact name and a number — information gain, the precise, calculable reduction in uncertainty a given observation is expected to provide.
+
+This is what actually justifies spending any of the seven currencies at all. Checking a stable patient's blood pressure again, thirty seconds after the last reading, provides very little information gain — the range of plausible values hasn't had time to widen much, so there's little uncertainty left to reduce, and the attention spent checking is largely wasted relative to what it cost. Checking a patient whose condition has just started trending in a concerning direction provides enormous information gain, precisely because genuine uncertainty about what's happening to them has opened up, and a well-timed observation can close a meaningful amount of it. A nurse deciding, in a busy ward with limited time, which patient's vitals to check next is, whether or not they'd ever use the term, running an informal version of what's formally called active learning — deliberately choosing the next observation not at random, and not exhaustively, but specifically where it's expected to reduce the most uncertainty for the resources it costs to make.
+
+## Closing the monograph
+
+This is the throughline the whole of Observations has been building, one chapter at a time, toward this final, explicit statement. A signal crosses a boundary and becomes an observation by being forced into a fixed category, collapsing a wide space of possibility down to one recorded outcome. Turning a pile of such observations into actual understanding — analytics rather than mere telemetry — requires relating them to each other, the way Snow related addresses to a pump and Nightingale related mortality records to sanitation. The act of making any observation is never neutral; it changes, at some real cost, the very system it observes. Every observation, by the time it's received, is already describing a moment that has passed, which is why systems that must act continuously are built around a predict-and-correct loop that never fully closes. And underneath all of it sits a genuine, finite budget — attention, storage, bandwidth, compute, power, cognition, and trust — that every decision about what to watch, how closely, and when, is quietly spending, whether or not anyone building the system ever stops to count the cost.
+
+The next monograph in this series turns from observation to what a system does with what it has observed once the moment of watching has passed — how a fleeting, already-outdated observation becomes something durable enough to be called a state, and what is lost, and what is gained, in freezing a continuously moving reality into something a system can hold onto and act on later.
+
+<Figure n={1} title="The Seven Currencies" caption="Every decision about what to monitor divides a finite budget across seven distinct kinds of cost — not one undifferentiated 'expense.'">
+
+| Currency | Spent by | Depleted by |
+| --- | --- | --- |
+| Attention | A nurse, an on-call engineer | Every alarm, worth noticing or not |
+| Storage | The monitoring system | Every retained reading |
+| Bandwidth | The network | Every transmitted reading |
+| Compute | The filtering algorithm | Every real-time signal-vs-artifact decision |
+| Power | Battery-operated sensors | Every sample taken and transmitted |
+| Human cognition | Whoever interprets the readings | Every pattern that has to be reasoned about |
+| Operational trust | The whole system's credibility | Every false alarm |
+
+</Figure>
+
+<FormalNote>
+Precision and recall name the tradeoff a detection threshold makes, for true/false positives and
+negatives $TP$, $FP$, $FN$: $\text{Precision} = \frac{TP}{TP + FP}$, $\text{Recall} =
+\frac{TP}{TP + FN}$. Information gain, $IG(\text{obs}) = H(\text{condition}) -
+H(\text{condition} \mid \text{obs})$, is the drop in entropy an observation is expected to produce —
+checking a stable patient thirty seconds after the last check has little uncertainty left to remove,
+so $IG \approx 0$. Put the seven currencies together and a budget is exactly a constrained
+optimization: choosing which observations $i$ to make so as to
+
+$$\max \sum_i IG_i \quad \text{subject to} \quad \sum_i \text{cost}_i \leq B$$
+
+for a total budget $B$ split across attention, storage, bandwidth, compute, power, cognition, and
+trust. This is the formal shape of the question active learning answers when it chooses, moment to
+moment, which observation is worth making next.
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+This chapter closes the loop the monograph opened with information gain in
+[Signals Become Observations](./signals-become-observations), and gives the ROC curve sketched
+informally in [Noise Is Not Failure](../signals/noise-is-not-failiure) its precision/recall form.
+"Operational trust," the currency alarm fatigue spends, is complexity relocated in the sense of
+[Complexity Never Disappears](../reality/complexity-never-disappears) — moved into a place ("staff
+credulity") that is not always equipped to hold it. The next monograph opens with
+[Operational Intelligence vs. Business Intelligence](../time/operational-intelligence-vs-business-intelligence),
+which is, in effect, a decision-theoretic account of which of these currencies is worth spending on
+which situation.
+</Callout>
+
+---
+
+[^1]: This is, structurally, the fable of the boy who cried wolf, running through hospital wiring instead of a shepherd's village. The village didn't stop believing the boy because wolves stopped being dangerous. It stopped believing him because every false alarm spent down a finite store of trust that the one true alarm needed and no longer had. Alarm fatigue is the same mechanism, formalized: operational trust is a currency like any other in this chapter's budget, and it can be spent to zero by a system with no wolf in it at all.

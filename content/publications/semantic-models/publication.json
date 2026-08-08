@@ -1,0 +1,48 @@
+{
+  "id": "semantic-models",
+  "type": "architecture-note",
+  "title": "Semantic Metadata Registry",
+  "subtitle": "Architecture, technical specification, and executive proposal for thin-projection analytics ontologies.",
+  "abstract": "A comprehensive publication series detailing the design, architecture, technical specification, and executive proposal for a decoupled Semantic Metadata Registry. Decouples authoring ontologies from runtime projections for prompt generation, query planning, and entity resolution.",
+  "volume": "Volume II",
+  "revision": "Revision 01",
+  "date": "2026-08-04",
+  "program": "Data & Information Systems",
+  "author": "Shreyas Agarwal",
+  "domains": ["Systems Architecture", "Data Infrastructure", "Semantic Engineering"],
+  "status": "published",
+  "sections": [
+    {
+      "id": "index",
+      "title": "Overview",
+      "href": ""
+    },
+    {
+      "id": "specifications",
+      "title": "Architecture & Specs",
+      "group": "Architecture & Specs",
+      "children": [
+        {
+          "id": "vision-paper",
+          "title": "00 Vision Paper",
+          "href": "00-vision-paper"
+        },
+        {
+          "id": "executive-proposal",
+          "title": "01 Executive Proposal",
+          "href": "01-executive-proposal"
+        },
+        {
+          "id": "architecture-overview",
+          "title": "02 Architecture Overview",
+          "href": "02-architecture-overview"
+        },
+        {
+          "id": "technical-specification",
+          "title": "03 Technical Specification",
+          "href": "03-technical-specification"
+        }
+      ]
+    }
+  ]
+}

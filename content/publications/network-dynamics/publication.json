@@ -1,0 +1,21 @@
+{
+  "id": "network-dynamics",
+  "type": "essay",
+  "title": "Network Dynamics in Distributed Systems",
+  "subtitle": "Understanding cascading failures, backpressure, and load propagation.",
+  "abstract": "Analyzing how localized network disruptions propagate into global cluster failures, and designing resilient backpressure mechanisms for distributed event streams.",
+  "volume": "Volume I",
+  "revision": "Revision 01",
+  "date": "2026-04-12",
+  "program": "Distributed Systems",
+  "author": "Shreyas Agarwal",
+  "domains": ["Distributed Systems", "Network Architecture", "Reliability Engineering"],
+  "status": "published",
+  "sections": [
+    {
+      "id": "index",
+      "title": "Network Dynamics in Distributed Systems",
+      "href": ""
+    }
+  ]
+}

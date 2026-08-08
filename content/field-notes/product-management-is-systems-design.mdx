@@ -1,0 +1,19 @@
+---
+title: "Product management is often systems design with different constraints"
+date: 2026-05-30
+tags: ["product", "systems-design"]
+excerpt: "The tools are different — roadmaps instead of diagrams — but the underlying discipline of managing tradeoffs under constraints is the same."
+status: published
+---
+
+I spent long enough resisting the comparison between product management and systems design before finally admitting they're doing the same job with different vocabularies. Both are exercises in managing tradeoffs among components you don't fully control, under constraints that keep changing, toward an outcome that's only partially specified.
+
+In systems design, the components are services, data stores, and the contracts between them. You're constantly deciding what belongs inside a boundary versus outside it, what should be strongly consistent versus eventually consistent, what failure modes are acceptable and which ones need to be designed out entirely. The skill isn't knowing the "right" architecture — there usually isn't one — it's knowing which tradeoffs matter for this system, at this point in its life, given these constraints.
+
+In product management, the components are teams, features, and the contracts (explicit or implicit) between a product and its users. You're deciding what belongs in this release versus the next one, what commitments to make to which stakeholders, which failure modes — a confusing onboarding flow, a missing edge case, a support burden — are acceptable for now and which ones will compound if left alone. Same skill, different nouns.
+
+Where the comparison gets useful rather than just cute: the failure patterns transfer almost directly. A system with too much coupling between services is hard to change safely — you can't touch one thing without breaking three others. A product with too much coupling between features has the same disease: you can't sunset one flow without a chorus of "but I use that for X." A system with unclear ownership boundaries accumulates orphaned code nobody wants to touch. A product with unclear ownership boundaries accumulates orphaned features nobody wants to kill, because killing something is a decision and decisions need an owner.
+
+The constraint that's genuinely different, and that I underestimated for a long time, is observability. In a system, you can usually instrument your way to ground truth — logs, traces, metrics, an actual record of what happened. In a product, the equivalent signal (what users actually want, why they churned, what they were trying to do) is almost always inferred, noisy, and delayed. Product management is systems design where your telemetry is broken by default and you have to build the equivalent of tracing — user research, funnels, support tickets, direct conversations — before you can even start reasoning about the tradeoffs properly. That single difference explains a huge amount of why product decisions feel less rigorous than engineering ones: it's not that the reasoning is looser, it's that the inputs to the reasoning are much harder to get clean.
+
+Once I started treating roadmap prioritization as a constraint-satisfaction problem instead of a taste exercise, the conversations with engineers got a lot easier — mostly because we were finally using the same mental model, just pointed at different layers of the same stack. The org chart is a distributed system too. It just doesn't emit logs.

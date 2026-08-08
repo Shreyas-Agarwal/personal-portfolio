@@ -1,0 +1,63 @@
+{
+  "id": "desktop-connector",
+  "type": "case-study",
+  "title": "Desktop Synchronization Architecture",
+  "subtitle": "A case study in native change detection, transport design, and execution semantics.",
+  "abstract": "This case study documents the engineering decisions behind a desktop synchronization system: how native change detection was approached, how responsibility boundaries were drawn between native and web layers, and how transport, execution, and enrollment semantics were resolved.",
+  "volume": "Volume I",
+  "revision": "Revision 03",
+  "date": "2026-08-01",
+  "program": "Data & Information Systems",
+  "author": "Shreyas Agarwal",
+  "domains": ["Systems Architecture", "Data Engineering"],
+  "status": "published",
+  "sections": [
+    {
+      "id": "index",
+      "title": "Overview",
+      "href": ""
+    },
+    {
+      "id": "framing",
+      "title": "Framing & Scope",
+      "href": "notes/00-framing"
+    },
+    {
+      "id": "design-notes",
+      "title": "Design Notes",
+      "group": "Design Notes",
+      "children": [
+        {
+          "id": "note-0001",
+          "title": "0001 Native Change Detection",
+          "href": "notes/01-native-change-detection-vs-date-based-sync"
+        },
+        {
+          "id": "note-0002",
+          "title": "0002 Responsibility Boundaries",
+          "href": "notes/02-responsibility-boundaries"
+        },
+        {
+          "id": "note-0003",
+          "title": "0003 Transport & Storage",
+          "href": "notes/03-transport-storage-event-driven-processing"
+        },
+        {
+          "id": "note-0004",
+          "title": "0004 Execution Models",
+          "href": "notes/04-execution-models"
+        },
+        {
+          "id": "note-0005",
+          "title": "0005 Language Selection",
+          "href": "notes/05-implementation-language-selection"
+        },
+        {
+          "id": "note-0006",
+          "title": "0006 Device Enrollment",
+          "href": "notes/06-installation-registration-and-device-enrollment"
+        }
+      ]
+    }
+  ]
+}

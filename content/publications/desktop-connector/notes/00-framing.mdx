@@ -1,0 +1,84 @@
+---
+title: "Framing & Case Study Scope"
+description: "A redesign of a desktop-to-cloud data synchronization agent, generalized from a real engagement."
+date: 2026-08-01
+readingTime: 4 min
+---
+
+# Desktop Synchronization Architecture — Case Study
+
+<Callout type="historical">
+  **Engagement Context:** This case study documents the redesign of a desktop-to-cloud data synchronization agent, generalized from a real client engagement into a study of core systems principles.
+</Callout>
+
+## Abstract
+
+Desktop-resident synchronization agents — small client programs that run on a user's machine, read data from a local application, and deliver it to a cloud platform — are a common integration pattern wherever a business system of record predates cloud infrastructure and cannot itself be moved.
+
+This case study documents the redesign of one such agent, generalized from a real engagement, structured as six design notes plus this framing document. Each note isolates one architectural concern — change detection, responsibility boundaries, transport, execution triggering, implementation language, and device enrollment — and derives its recommendation from a specific, observed failure mode in the system being replaced, rather than from abstract preference.
+
+<Callout type="note">
+  **A Note on Genericization:** This case study uses a commercial desktop accounting platform as its motivating example throughout, because that is the real system this redesign was performed against. Vendor names, product names, and customer-identifying details have been removed or replaced with generic architectural terms. The engineering reasoning — the failure modes observed, the trade-offs weighed, the alternatives rejected — is preserved exactly as encountered.
+</Callout>
+
+## The Problem
+
+A business runs its operational data — accounting records, inventory, transactional history — inside a desktop application that predates any cloud strategy the business now has. That data needs to reach a cloud platform for reporting, analytics, or downstream automation. The desktop application cannot be replaced (it is the system of record, often for regulatory or workflow reasons the platform has no control over), so a synchronization agent must bridge the two: something that runs on the same machine as the source application, reads its data, and delivers it outward.
+
+This pattern recurs across many domains — accounting software, practice-management systems, point-of-sale terminals, on-premises ERPs — and the engineering problems it raises are largely the same regardless of which specific desktop application sits at the source:
+
+<Process>
+  <Step n={1} title="Change Detection">
+    How do you know what changed since the last successful synchronization, without re-reading everything every time?
+  </Step>
+  <Step n={2} title="Responsibility Boundaries">
+    What should run on the client, and what should run on the server — and what happens when that boundary is drawn incorrectly?
+  </Step>
+  <Step n={3} title="Transport & Storage">
+    How does data actually move from the client to the platform's real storage and processing layer, and what happens if an intermediate hop is treated as the destination?
+  </Step>
+  <Step n={4} title="Execution Semantics">
+    What triggers the agent to run at all, and what happens when that trigger's assumptions are silently false?
+  </Step>
+  <Step n={5} title="Language Selection">
+    What should the agent be written in, given it is small, infrequently run, and must operate unattended on hardware outside the platform's administrative control?
+  </Step>
+  <Step n={6} title="Client Enrollment">
+    How does a freshly installed agent, with no built-in knowledge of who is running it, become bound to the correct customer and the correct subset of that customer's data?
+  </Step>
+</Process>
+
+## Context
+
+The system this case study is drawn from was a single, monolithic desktop client — roughly 1,300 lines of code in one module, with no internal package boundaries — responsible for all of the following at once: scheduling, configuration and credential storage, synchronization-window planning, source-application data extraction, cloud upload, retry logic, logging, and process locking.
+
+<Observation n={1}>
+  Concentrating unrelated responsibilities in one undifferentiated module increases both the cost and risk of any single future change. A modification intended for extraction logic carries a non-trivial risk of side effects in upload or scheduling code.
+</Observation>
+
+## Design Goals
+
+Across all six notes, four goals recur and shape every individual decision:
+
+<Tradeoff
+  gain="Correctness does not depend on timing — missed or delayed runs cost latency, never correctness."
+  cost="Requires server-side watermark persistence per company data file."
+/>
+
+- **Correctness should not depend on timing.** A missed run, a delayed run, or a backdated correction to already-processed data should cost latency, not correctness — the system should always be able to catch up completely, never permanently miss something.
+- **Responsibilities should be separable.** A change to one concern (where data is uploaded, how a client authenticates, what triggers a run) should not require touching or re-verifying unrelated concerns.
+- **The client should be replaceable without being rebuilt.** As much decision-making as possible — what to extract, where to send it, how to retry — should live on the server, so operational changes are configuration changes, not client redistributions.
+- **Distribution should not encode identity.** A single build should work for every customer; identity and entitlement should be established at enrollment time, in server-side state, never baked into the shipped artifact.
+
+## Document Roadmap
+
+| Note | Scope |
+| :--- | :--- |
+| [Note 0001](01-native-change-detection-vs-date-based-sync) | Why date-windowed synchronization is structurally incorrect for a source system with independent transaction-date and modification-date semantics, and the case for change-token-based detection |
+| [Note 0002](02-responsibility-boundaries) | Responsibility coupling in the existing desktop agent; the proposed client/server responsibility boundary |
+| [Note 0003](03-transport-storage-event-driven-processing) | Transport, object storage, and event-driven downstream triggering architecture |
+| [Note 0004](04-execution-models) | Scheduled background execution vs. user-triggered and hybrid execution models |
+| [Note 0005](05-implementation-language-selection) | Implementation language evaluation for the redesigned agent |
+| [Note 0006](06-installation-registration-and-device-enrollment) | How an installation gets bound to a customer without the distributed artifact carrying any customer-specific identity |
+
+Only Note 0001 requires knowledge specific to the source application's internal change-tracking behavior. The remaining five notes are concerns that apply to nearly any desktop-to-cloud synchronization agent.

@@ -1,0 +1,20 @@
+---
+title: "DuckDB keeps reminding me that databases are execution engines, not storage"
+date: 2026-04-18
+tags: ["data", "duckdb", "olap"]
+excerpt: "Every time I reach for DuckDB out of convenience, it teaches me something about what a database actually is."
+status: published
+relatedPublication: architecture-of-information-systems
+---
+
+I keep reaching for DuckDB for small, throwaway things — a quick aggregation over a CSV, a join between two Parquet files sitting in a folder, something I'd normally do in pandas but don't want to think about memory for. And every single time, it quietly corrects a mental model I didn't realize I was still carrying: that a database is fundamentally a place you put data.
+
+It isn't. A database is fundamentally a place you *run queries*. Storage is almost incidental — DuckDB will happily query a Parquet file sitting on disk, a Pandas DataFrame in memory, an Arrow table someone else built, without ever "loading" the data into some proprietary internal format first. What DuckDB actually sells you is a very good query optimizer and a vectorized execution engine that will figure out how to answer your question against whatever data happens to be sitting there.
+
+Once you see it this way, a lot of things about the OLTP/OLAP split make more sense as a difference in what's being optimized rather than a difference in "types of database." OLTP systems are optimized for the storage-and-mutation half of the job: safe, fast, small, isolated writes to individual rows. OLAP systems like DuckDB are optimized for the execution half: scanning enormous amounts of column-oriented data as fast as possible and pushing predicates, projections, and aggregations down as close to the storage as they can go. Neither one is "the database." They're both databases, tuned for opposite points on the read/write spectrum, and the storage format each prefers (row-oriented vs. columnar) falls out of that choice rather than defining it.
+
+This matters practically because it changes what questions you ask when something is slow. If you think of a database as a storage system, a slow query prompts you to ask "do we have the right indexes, is the disk fast enough." If you think of a database as an execution engine, a slow query prompts you to ask "what's the query plan, where is the optimizer failing to push down a predicate, is it materializing something it doesn't need to." Those are different investigations, and the second one has been the actually productive one almost every time I've chased a DuckDB or Postgres query that was misbehaving.
+
+It also explains why so many "new" database technologies over the past few years aren't new storage engines at all — they're new execution strategies bolted onto existing storage. Query federation layers, in-process analytical engines, vectorized runtimes sitting on top of object storage. The interesting engineering has moved almost entirely into the execution layer, because storage got commoditized (cheap object stores, standard columnar formats like Parquet) well before execution did.
+
+I don't have a grand conclusion here beyond: the next time a piece of infrastructure feels annoyingly indifferent to how you're storing your data, it's worth asking whether that's a bug or the entire point. In DuckDB's case it's very clearly the point, and it's made me a little suspicious of any tool that still insists you feed it data its way before it will do anything useful.

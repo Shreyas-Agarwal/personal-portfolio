@@ -1,0 +1,187 @@
+---
+title: "Dependency Bleed"
+date: "2026-07-01"
+---
+
+# Dependency Bleed
+
+In the previous article, **[Why Analytics Platforms Require a Canonical Business Model](../data/canonical-business-model)**, we introduced the idea of a Canonical Business Model. The goal was simple: protect analytical systems from becoming tightly coupled to operational schemas, vendor definitions, and reporting logic scattered across dashboards. Architecturally, this creates a much cleaner system — but it does not create an independent system. The analytics platform still depends on external services: CRMs, project management platforms, scheduling tools, authentication providers, payment processors, webhook sources, third-party APIs. Modern applications import dozens or hundreds of external libraries and SaaS APIs, and over time these dependencies bleed past their integration boundaries and dictate the operational characteristics of your core system.
+
+Every one of those dependencies shares a common characteristic:
+
+> Eventually, they will fail.
+
+Not because the vendors are incompetent. Not because the software is poorly written. Because every sufficiently complex system experiences failure. The question is not whether a dependency will fail — the question is what happens to your system when it does. When a third-party dependency stalls, errors out, or experiences latencies, your system is forced to inherit its failure mode unless explicitly isolated.
+
+<Observation n={1}>
+  Every unisolated external dependency is a potential single point of failure. A 100ms latency spike in a non-critical analytics tracking API can exhaust thread pools in your primary API gateway.
+</Observation>
+
+---
+
+## The Dangerous Assumption
+
+Many software systems begin life with a surprisingly optimistic architecture. A request arrives, the application processes it, the application calls another service, that service calls another service, which calls another service, which calls a database. The flow appears logical: each component performs a specific task, and each dependency contributes a piece of the final answer.
+
+Everything works beautifully in development, because development environments are usually healthy. Production environments are not.
+
+## The Linear Cascade
+
+Imagine a reporting platform that needs information from three external systems: a CRM, a scheduling platform, and a project management platform. The request path might look like this:
+
+```text
+User Request
+      ↓
+Analytics API
+      ↓
+CRM API
+      ↓
+Scheduling API
+      ↓
+Project API
+      ↓
+Response
+```
+
+At first glance this seems harmless. The problem emerges when one dependency slows down. Suppose the scheduling platform begins responding in ten seconds instead of two hundred milliseconds. The analytics API waits. User requests accumulate. Connections remain open, threads remain occupied, memory consumption rises, and request queues begin forming. Soon a localized dependency problem becomes a platform-wide incident. Nothing actually crashed — the system simply ran out of patience.
+
+## Failure Is Contagious
+
+One of the most important lessons in distributed systems is that failure propagates — not physically, architecturally. An overloaded dependency causes requests to wait. Waiting requests consume resources. Resource consumption creates contention. Contention creates latency. Latency creates retries. Retries create additional load. The dependency becomes even slower, and the cycle reinforces itself. The original failure was small; the resulting outage becomes large. This phenomenon appears so frequently that it has become one of the defining challenges of modern software architecture.
+
+<Evidence n={1}>
+  Uncoordinated client retries amplify traffic backpressure against failing downstream services — a small, localized slowdown compounds into cascading, platform-wide load.
+</Evidence>
+
+### Patterns of Dependency Contagion
+
+1. **Unbounded Thread Blocking**: Synchronous HTTP calls to third-party APIs lock application worker threads.
+2. **Cascading Retries**: Uncoordinated client retries amplify traffic backpressure against failing downstream services.
+3. **Transitive Schema Bleed**: Vendor API response changes crash internal deserialization routines.
+
+## The Lesson from Release It!
+
+One of the most influential books ever written on production software systems is *Release It!* by Michael T. Nygard. Its central insight remains remarkably relevant:
+
+> Stability is not created by preventing failure. Stability is created by containing failure.
+
+That distinction changes how systems are designed. Traditional engineering often asks, "How do we stop failures?" Resilient engineering asks, "How do we stop failures from spreading?" The difference is subtle. The implications are enormous.
+
+<Callout type="important">
+  The goal of resilient architecture is not preventing failure — that is impossible when depending on systems outside your control. The goal is containing failure so it cannot spread.
+</Callout>
+
+## Circuit Breakers
+
+Consider an electrical circuit: when excessive current flows through the system, a breaker trips, the circuit is intentionally interrupted, and this prevents damage from propagating further. Software circuit breakers operate using the same principle. If an external dependency begins failing repeatedly, the application temporarily stops calling it.
+
+Instead of:
+
+```text
+Request
+   ↓
+Fail
+   ↓
+Retry
+   ↓
+Fail
+   ↓
+Retry
+```
+
+the system becomes:
+
+```text
+Request
+   ↓
+Circuit Open
+   ↓
+Fallback Response
+```
+
+The dependency receives time to recover, the application preserves resources, and users receive predictable behavior. The objective is not perfection — the objective is controlled degradation.
+
+```typescript filename="dependency-isolation.ts"
+// BAD: Direct un-isolated call blocks the main thread
+async function handleCheckout(order: Order) {
+  await paymentGateway.charge(order); // Might hang for 30s!
+  await analyticsTracker.log(order);  // Non-critical, but blocks response!
+}
+
+// GOOD: Isolated with timeout, fallback, and async execution
+async function handleCheckoutIsolated(order: Order) {
+  await withTimeout(paymentGateway.charge(order), 3000);
+  enqueueBackgroundJob('logAnalytics', order); // Fire-and-forget background queue
+}
+```
+
+## Bulkheads
+
+Circuit breakers protect against unhealthy dependencies. Bulkheads protect against unhealthy workloads. The name originates from shipbuilding: ships are divided into isolated compartments, and if one compartment floods, the entire vessel does not sink. Software systems require similar boundaries.
+
+Imagine a platform receiving:
+
+* Dashboard refresh requests
+* API ingestion traffic
+* Background processing jobs
+
+If all workloads share the same execution resources, one surge can starve everything else — a single malfunctioning integration suddenly impacts unrelated services. Bulkheads prevent this: workloads receive isolated pools of resources, failures remain contained, and the rest of the platform continues operating.
+
+## Architectural Isolation Patterns
+
+To prevent dependency bleed:
+
+- **Circuit Breakers**: Trip open when dependency error rate exceeds threshold, instantly failing fast without executing network calls.
+- **Bulkheads**: Allocate isolated worker thread pools to specific external dependencies so one failing vendor cannot starve others.
+- **Asynchronous Decoupling**: Offload non-critical telemetry and enrichment to background queues.
+
+<Process>
+  <Step n={1} title="Detect">
+    Trip the circuit breaker when a dependency's error rate or latency exceeds a defined threshold.
+  </Step>
+  <Step n={2} title="Contain">
+    Fail fast with a fallback response instead of executing further network calls, and isolate the workload in its own bulkhead so other consumers are unaffected.
+  </Step>
+  <Step n={3} title="Decouple">
+    Move non-critical work — telemetry, enrichment, analytics logging — onto background queues so it can never block the primary request path.
+  </Step>
+</Process>
+
+<Decision n={1} status="accepted">
+  Enforce strict timeout policies, circuit breakers, and bulkhead thread pools on all external network dependencies.
+</Decision>
+
+<Tradeoff
+  gain="Isolates system stability from third-party vendor outages and latency spikes."
+  cost="Adds architectural complexity with fallback logic and circuit state handling."
+/>
+
+## Resilience Through Isolation
+
+At first glance, circuit breakers and bulkheads appear to be different patterns. They are not. Both are expressions of the same architectural principle:
+
+> Healthy systems isolate failure.
+
+The objective is not eliminating dependencies — that is impossible. The objective is preventing dependency failures from becoming system failures. Every additional integration increases complexity, and every additional dependency increases risk. Resilience emerges from controlling how those risks interact.
+
+## A More Important Lesson
+
+This article is not really about circuit breakers, nor is it about bulkheads. It is about expectations. Inexperienced architectures assume dependencies will succeed. Mature architectures assume dependencies will eventually fail.
+
+This shift mirrors the patterns we have already seen throughout this series: operational databases became analytical bottlenecks, visualization platforms became business-model bottlenecks, and external services eventually become reliability bottlenecks. The technologies change, but the pattern remains consistent — architectures evolve when optimistic assumptions encounter operational reality.
+
+<Callout type="historical">
+  So far, this series has explored the separation between operational and analytical systems, the separation between application code and infrastructure, the separation between vendor schemas and business definitions, and the separation between dependency failures and system failures.
+</Callout>
+
+## Looking Ahead
+
+Next, we return to the data layer — specifically, one of the most common architectural temptations in modern systems: the desire to model everything as a generic relationship graph. Flexible schemas appear powerful, until they collide with query planners, indexing strategies, and performance constraints. The question becomes:
+
+> How much flexibility can a data model absorb before it begins working against the database itself?
+
+And that is where we go next — continue to **[The High Structural Cost of Generic Relationship Graphs](../data/generic-relationship-cost)**.
+
+---
+
+*Next in Track 02: **[Modern Memory Leaks](modern-memory-leak)**.*

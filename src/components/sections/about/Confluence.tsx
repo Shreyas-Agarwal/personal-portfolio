@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 interface Stage {
   id: number;
@@ -71,7 +71,7 @@ export function ConfluenceSection() {
       {
         rootMargin: "-30% 0px -40% 0px",
         threshold: 0.1,
-      }
+      },
     );
 
     const elements = document.querySelectorAll("[data-stage-index]");

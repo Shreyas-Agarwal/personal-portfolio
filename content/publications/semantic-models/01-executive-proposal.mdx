@@ -1,0 +1,96 @@
+---
+title: "01 — Executive Proposal: Semantic Layer"
+description: "A shared semantic layer proposal before Gold-layer model development."
+date: 2026-08-04
+readingTime: 6 min
+---
+
+# Proposal: A Shared Semantic Layer
+
+<Callout type="important">
+  **The Ask:** Approve a short, fixed architecture window before Gold-layer development begins. Establishing business meaning *before* Gold tables exist costs days; migrating after Gold tables exist costs months.
+</Callout>
+
+## Executive Summary
+
+This proposal prevents engineering effort from growing linearly with every new data feature. By defining business meaning once, we eliminate duplicated logic, ensure consistent reporting across dashboards and AI interfaces, and establish the foundation for intelligent automation.
+
+**This proposal is not about adding AI.** AI simply exposed a platform capability that every future intelligent feature requires. We have one window to establish that capability before Gold-layer development begins.
+
+---
+
+## Architectural Evolution
+
+### Current State (Fragmented Business Semantics)
+
+<Process>
+  <Step n={1} title="Gold Layer Models">
+    Analytical data lives in Gold-layer warehouse tables.
+  </Step>
+  <Step n={2} title="Shared Runtime (Dashboards)">
+    Dashboards execute queries through a shared runtime, but charts must know physical query paths directly.
+  </Step>
+  <Step n={3} title="AI & New Features (Isolated Intent)">
+    AI agents and new tools must independently guess business meaning (customer definition, transaction date, revenue formula) from raw schema, producing quiet discrepancies.
+  </Step>
+</Process>
+
+### Target State (Unified Semantic Layer)
+
+<Process>
+  <Step n={1} title="Gold Layer Models">
+    Analytical data lives in Gold-layer warehouse tables.
+  </Step>
+  <Step n={2} title="Shared Semantic Metadata Registry">
+    One central, decoupled registry defines business meaning, concepts, relationships, and value aliases once.
+  </Step>
+  <Step n={3} title="Unified Entry Points">
+    Dashboards, AI agents (via tool calls), reporting APIs, and automation engines all resolve queries through identical compiled Planner Views.
+  </Step>
+</Process>
+
+---
+
+## The Core Problem: Undefined Business Meaning
+
+A user asks the AI assistant: *"Show me top customers in Europe by sales for Q3."*
+
+Executing the SQL query is trivial — the runtime does that reliably. The hard part is answering five business questions *before* the query runs:
+
+<Observation n={1}>
+  - What counts as a **customer** (billing account, delivery site, parent org)?
+  - Which date column is the **transaction date** (posting date, invoice date, delivery date)?
+  - Which measure represents **sales** (gross invoice value, net of discount, post-returns revenue)?
+  - How do different **country spellings** ("UK", "United Kingdom", "GB") resolve to "Europe"?
+  - If a company's name changed last month, does the report group historical records under the **current name** or split them?
+</Observation>
+
+Right now, there is nowhere in the platform where those five answers live together as a single source of truth.
+
+---
+
+## Why Now? The Gold-Layer Window
+
+<Decision n={1} status="accepted">
+  **Sequence Mandate:** No Gold-layer table gets authored until the Semantic Registry contract is finalized. Gold tables are downstream of semantic projections; changing the schema after Gold tables exist forces a multi-team migration.
+</Decision>
+
+```typescript filename="semantic-first-roadmap.ts"
+// Proposed Engineering Sequence
+const roadmap = [
+  "Phase 1: Finalize Semantic Registry & Projection Schema (Design Window)",
+  "Phase 2: Author Gold-Layer Tables aligned with Semantic Entities",
+  "Phase 3: Compile Prompt & Planner Views for Runtime + AI Agents",
+];
+```
+
+## Business Impact & ROI
+
+<Tradeoff
+  gain="Zero duplicate business logic across dashboards and AI interfaces. 10x faster feature delivery for new analytical tools."
+  cost="Requires a short, fixed design window prior to writing Gold-layer SQL transforms."
+/>
+
+- **Single Source of Truth:** Revenue, Customer, and Date definitions are authored once.
+- **Lower Maintenance:** Column renames or table refactors update 1 row in the registry, zero prompt updates.
+- **AI Safety & Accuracy:** Prevents AI agents from inventing SQL join paths or hallucinating column definitions.

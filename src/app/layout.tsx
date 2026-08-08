@@ -25,21 +25,29 @@ export const metadata: Metadata = {
 
 import { FooterRenderer } from "@/components/layout/FooterRenderer";
 import { Header } from "@/components/layout/Header";
+import { HeaderProvider } from "@/components/layout/HeaderContext";
+import { getGitHubContributions } from "@/lib/github";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gitHubCommits = await getGitHubContributions();
   return (
-    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-red-500">
-        <style>{`body { background-color: #000 !important; color: #fff !important; }`}</style>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">
         <Analytics />
         <SpeedInsights />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <FooterRenderer />
+        <HeaderProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <FooterRenderer gitHubCommits={gitHubCommits} />
+        </HeaderProvider>
       </body>
     </html>
   );

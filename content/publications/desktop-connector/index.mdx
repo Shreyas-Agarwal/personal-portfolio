@@ -1,0 +1,85 @@
+---
+title: Desktop Synchronization Architecture
+description: A case study in native change detection, transport design, and execution semantics.
+readingTime: 3 min
+---
+
+# Desktop Synchronization Architecture
+
+_A case study in native change detection, transport design, and execution semantics._
+
+---
+
+Keeping a desktop application synchronized with a remote platform sounds deceptively straightforward.
+
+Watch for changes. Upload them. Retry failures.
+
+Yet every one of those steps hides architectural decisions that determine whether a system survives unreliable networks, partial failures, conflicting updates, and years of product evolution.
+
+This case study documents the redesign of a production desktop synchronization system from first principles—not by replacing technologies, but by isolating responsibilities, making failure modes explicit, and redefining the contract between native software and cloud infrastructure.
+
+<Callout type="important">
+  Every recommendation in this collection originates from an observed failure in an existing production implementation. The goal is not to prescribe generic architecture, but to document the exact engineering reasoning that led to each design decision.
+</Callout>
+
+---
+
+## Why This Matters
+
+Desktop synchronization systems appear in many forms:
+
+- **Accounting & ERP Software**
+- **CAD and BIM Systems**
+- **Offline-First Enterprise Applications**
+- **Practice-Management & POS Terminals**
+
+Despite serving different domains, they all confront the same core architectural questions:
+
+- What constitutes a meaningful change?
+- Which system owns authoritative state?
+- How should work survive network partitions?
+- Where should synchronization responsibilities live?
+- How should newly installed clients become trusted?
+
+---
+
+## The Architectural Questions
+
+Each document investigates one architectural concern independently.
+
+<Process>
+  <Step n={1} title="Native Change Detection">
+    How should a desktop application determine *what* has changed without repeatedly scanning the entire dataset?
+  </Step>
+  <Step n={2} title="Responsibility Boundaries">
+    Which responsibilities belong inside the native client, and which should move to backend services?
+  </Step>
+  <Step n={3} title="Transport & Storage">
+    How should synchronization data move between client and server while remaining reliable, observable, and vendor-independent?
+  </Step>
+  <Step n={4} title="Execution Semantics">
+    Should synchronization execute immediately, on a schedule, or under explicit orchestration?
+  </Step>
+  <Step n={5} title="Implementation Language">
+    What characteristics make a language suitable for a long-running desktop synchronization agent?
+  </Step>
+  <Step n={6} title="Client Enrollment">
+    How does a newly installed client securely establish its identity before synchronization begins?
+  </Step>
+</Process>
+
+---
+
+## Document Collection Roadmap
+
+| Document | Purpose |
+| :--- | :--- |
+| **[Framing & Scope](notes/00-framing)** | System framing, engagement context, and high-level design goals. |
+| **[0001 — Native Change Detection](notes/01-native-change-detection-vs-date-based-sync)** | Replaces time-window synchronization with native monotonic change tracking. |
+| **[0002 — Responsibility Boundaries](notes/02-responsibility-boundaries)** | Separates desktop responsibilities from cloud control plane responsibilities. |
+| **[0003 — Transport & Storage](notes/03-transport-storage-event-driven-processing)** | Redesigns how synchronization payloads move directly to object storage. |
+| **[0004 — Execution Models](notes/04-execution-models)** | Defines interactive vs. background execution triggering. |
+| **[0005 — Language Selection](notes/05-implementation-language-selection)** | Evaluates Go vs. Python for unattended Windows agents. |
+| **[0006 — Client Enrollment](notes/06-installation-registration-and-device-enrollment)** | Specifies single-use registration codes and OAuth device authorization. |
+
+Each paper may be read independently, but together they describe a complete architectural redesign.

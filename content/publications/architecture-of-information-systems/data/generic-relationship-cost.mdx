@@ -1,0 +1,212 @@
+---
+title: "The High Structural Cost of Generic Relationship Graphs"
+date: "2026-07-01"
+---
+
+# The High Structural Cost of Generic Relationship Graphs
+
+*Why flexibility often becomes the most expensive feature in a data model.*
+
+In a previous article, **[Why Analytics Platforms Require a Canonical Business Model](canonical-business-model)**, we explored how mature analytics platforms eventually establish Canonical Business Models. The goal was not simply cleaner reporting — it was control: control over business definitions, control over transformations, control over how information moves through the system. But once teams begin building their own data models, a new temptation appears, and a seductive one at that. Instead of explicitly modeling the business, why not create a structure capable of modeling everything?
+
+---
+
+## The Dream of Infinite Flexibility
+
+Imagine you are designing a new platform. You know requirements will change, you know users will request custom fields, you know new entities will emerge, and you know today's schema will eventually become obsolete. The obvious solution seems attractive: don't define entities at all. Define relationships. Define attributes. Define metadata. Create a generic framework capable of representing anything.
+
+Many architectures arrive at some variation of:
+
+```text
+Entity
+Attribute
+Value
+```
+
+or
+
+```text
+Node
+Relationship
+Node
+```
+
+The promise is compelling — future-proofing, unlimited extensibility, maximum flexibility. The business changes; the schema does not. At least in theory.
+
+---
+
+## Why Engineers Fall In Love With It
+
+Generic models solve a real problem. Imagine a project platform. Today a project contains:
+
+* Name
+* Status
+* Budget
+
+Tomorrow somebody requests:
+
+* Region
+* Risk Score
+* Sustainability Rating
+
+A traditional relational model requires schema changes. A generic model simply stores new attributes — no migration, no redesign, no deployment. The platform adapts instantly. This feels powerful, and in the early stages of a product, it often is. The flexibility is real. The cost simply hasn't arrived yet.
+
+<Observation n={1}>
+  Generic schemas trade compile-time relational safety and database optimizer statistics for runtime flexibility. Every query turns into a multi-hop self-join across a single massive key-value table.
+</Observation>
+
+---
+
+## The Missing Question
+
+Most teams ask:
+
+> How easily can we store this data?
+
+Far fewer ask:
+
+> How easily can we retrieve this data?
+
+Those are not the same problem. Databases spend far more time answering questions than storing information, particularly analytical systems. And this is where generic models begin charging interest on their flexibility.
+
+---
+
+## The Query That Reveals Everything
+
+Suppose an executive asks:
+
+> Which projects in Europe with budgets above $5 million experienced schedule slippage while maintaining high issue density?
+
+In an entity-centric model, the query is relatively straightforward. The database understands the concepts of projects, budgets, regions, schedules, and issues. Those concepts exist explicitly, indexes can be built around them, statistics can be collected, and query planners can optimize access paths. The database understands the shape of the problem.
+
+Now imagine the same request against a generic EAV structure. The database no longer sees projects — it sees rows. It no longer sees budgets — it sees attributes. It no longer sees regions — it sees values. The business meaning has been abstracted away, and the optimizer must reconstruct reality before it can answer the question. That reconstruction becomes increasingly expensive as complexity grows.
+
+### The EAV Anti-Pattern
+
+Consider representing a simple product with dynamic attributes:
+
+```sql filename="eav-example.sql"
+-- EAV Schema: Flexible but computationally brutal
+CREATE TABLE entity_attribute_value (
+    entity_id UUID NOT NULL,
+    attribute_name VARCHAR(255) NOT NULL,
+    attribute_value TEXT,
+    PRIMARY KEY (entity_id, attribute_name)
+);
+
+-- Querying three attributes requires three self-joins:
+SELECT 
+    e1.entity_id,
+    e1.attribute_value AS product_name,
+    e2.attribute_value AS price,
+    e3.attribute_value AS category
+FROM entity_attribute_value e1
+JOIN entity_attribute_value e2 ON e1.entity_id = e2.entity_id AND e2.attribute_name = 'price'
+JOIN entity_attribute_value e3 ON e1.entity_id = e3.entity_id AND e3.attribute_name = 'category'
+WHERE e1.attribute_name = 'name';
+```
+
+---
+
+## The Optimizer's Blindfold
+
+Modern relational databases are astonishingly sophisticated. Query planners estimate cardinality, indexes accelerate lookups, statistics guide execution paths, and storage engines optimize physical access patterns. But these systems work best when the structure of the data is visible, and generic relationship models obscure that structure.
+
+The optimizer loses context. Indexes become less effective. Execution plans become harder to predict. Queries become increasingly dependent on joins, pivots, and transformations, and performance begins degrading in ways that are difficult to diagnose. The flexibility remains. The efficiency disappears.
+
+Relational query optimizers rely on column histograms, statistics, and typed indexes. In a generic EAV table:
+
+1. **Histograms are useless**: The database engine sees one `attribute_value` column containing strings, numbers, dates, and JSON.
+2. **Index selectivity collapses**: Standard B-Tree indexes cannot differentiate between high-cardinality IDs and low-cardinality status flags stored in the same column.
+3. **Type safety vanishes**: Type validation moves out of the engine and into fragile application code.
+
+<Tradeoff
+  gain="Zero DDL migrations when adding new domain fields or entity types."
+  cost="Bypasses query optimizer, eliminates column-level constraints, and scales joins quadratically."
+/>
+
+---
+
+## When Graph Thinking Meets Relational Storage
+
+The situation becomes even more interesting when teams attempt to implement graph-like thinking inside relational databases. Everything becomes a node. Everything becomes a relationship. Everything becomes connected. Conceptually, this feels elegant; architecturally, it often creates friction.
+
+Relational databases are optimized around structured entities. Graph databases are optimized around traversals. Trying to force one paradigm into another usually means inheriting the weaknesses of both: the schema becomes harder to understand, the queries become harder to optimize, and the operational complexity increases. The flexibility feels liberating. The execution engine disagrees.
+
+<Callout type="warning">
+  Forcing graph-shaped traversal logic onto tables optimized for structured entities does not average the two paradigms — it tends to inherit the weaknesses of both.
+</Callout>
+
+---
+
+## The Cost Appears Gradually
+
+This is what makes generic models dangerous: they rarely fail immediately. Early development accelerates. Requirements are accommodated quickly. Stakeholders are impressed. Then the platform matures — data volume grows, queries become analytical, historical records accumulate, and reporting requirements expand. The same flexibility that accelerated development begins slowing everything else down.
+
+The architecture reaches a familiar point: the component originally introduced to reduce complexity has become a source of complexity. We have seen this pattern before.
+
+---
+
+## Entity-Centric Modeling
+
+Mature systems often move in the opposite direction — not toward greater abstraction, but toward greater specificity. Instead of storing:
+
+```text
+Entity
+Attribute
+Value
+```
+
+they define:
+
+```text
+Project
+Schedule
+Issue
+Contract
+Asset
+```
+
+The schema becomes more opinionated, less generic, more explicit. This feels restrictive. In reality, it allows the database to do what databases do best: understand structure, optimize access, execute efficiently. The model stops describing everything. It starts describing the business.
+
+<Decision n={1} status="accepted">
+  Prefer explicit typed schemas with JSONB / variant columns for genuine sparse attributes over pure EAV relational models.
+</Decision>
+
+---
+
+## A More Important Lesson
+
+This article is not really about EAV, nor is it about graph models. It is about a recurring architectural misconception:
+
+> Flexibility is free.
+
+It isn't. Flexibility is one of the most expensive features a system can possess. Sometimes that cost is justified; sometimes it is not. The mistake is assuming flexibility arrives without trade-offs — every layer of abstraction conceals information, and every concealed detail reduces the system's ability to optimize itself.
+
+Eventually, the architecture must decide:
+
+> Do we want infinite flexibility?
+
+Or
+
+> Do we want predictable performance?
+
+Most mature systems discover they cannot maximize both simultaneously.
+
+<Callout type="important">
+  Flexibility is not free. Every layer of abstraction conceals information, and every concealed detail reduces the system's ability to optimize itself.
+</Callout>
+
+---
+
+## Looking Ahead
+
+So far, this series has explored how complexity spreads through systems. **[Operational databases became analytical bottlenecks](oltp-vs-olap)**. **[Visualization tools became business-model bottlenecks](canonical-business-model)**. **[Dependencies became reliability bottlenecks](../infrastructure/dependency-bleed)**. Generic schemas became performance bottlenecks.
+
+Next, we move from data structures to runtime behavior, because even perfectly designed schemas can bring down a system when memory management goes wrong. Modern failures rarely look like traditional crashes. More often, they look like healthy systems slowly suffocating under unresolved promises, blocked event loops, and unbounded memory growth — continue to **[The Modern Memory Leak](../infrastructure/modern-memory-leak)**.
+
+---
+
+*Part 5 of the Architecture of Information Systems series.*
+
+*Next in Track 01: **[History as a First-Class Feature](history-as-feature)**.*

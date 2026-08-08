@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 
-// Research section has been consolidated into Journal.
-// All entries are now available at /journal
+// Research section has been consolidated into the Publications library.
 export default function ResearchIndexPage() {
-  redirect("/journal");
+  redirect("/works/publications");
 }

@@ -7,7 +7,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { ConceptMonographView } from "@/components/sections/systems/ConceptMonographView";
 import { MermaidDiagram } from "@/components/ui/mermaid-diagram";
+import { CONCEPTS, CONCEPTS_MAP } from "@/data/concepts";
 
 export async function generateMetadata({
   params,
@@ -15,6 +17,19 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const concept = CONCEPTS_MAP.get(slug);
+
+  if (concept) {
+    return {
+      title: `${concept.title} | The Physics of Information Systems`,
+      description: concept.oneLiner,
+      openGraph: {
+        title: `${concept.title} — Concept Monograph`,
+        description: concept.oneLiner,
+      },
+    };
+  }
+
   const filePath = path.join(process.cwd(), "content/docs", `${slug}.md`);
   if (!fs.existsSync(filePath)) return { title: "Not Found" };
 
@@ -28,16 +43,30 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams() {
+  const conceptParams = CONCEPTS.map((concept) => ({ slug: concept.slug }));
+
   const docsDirectory = path.join(process.cwd(), "content/docs");
-  if (!fs.existsSync(docsDirectory)) return [];
-  const filenames = fs.readdirSync(docsDirectory);
-  return filenames.map((filename) => ({
-    slug: filename.replace(/\.md$/, ""),
-  }));
+  let docParams: { slug: string }[] = [];
+  if (fs.existsSync(docsDirectory)) {
+    const filenames = fs.readdirSync(docsDirectory);
+    docParams = filenames
+      .filter((filename) => filename.endsWith(".md"))
+      .map((filename) => ({
+        slug: filename.replace(/\.md$/, ""),
+      }));
+  }
+
+  return [...conceptParams, ...docParams];
 }
 
 export default async function SystemDocPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const concept = CONCEPTS_MAP.get(slug);
+
+  if (concept) {
+    return <ConceptMonographView concept={concept} />;
+  }
+
   const filePath = path.join(process.cwd(), "content/docs", `${slug}.md`);
 
   if (!fs.existsSync(filePath)) {
@@ -123,13 +152,13 @@ export default async function SystemDocPage({ params }: { params: Promise<{ slug
         <article
           className="prose prose-neutral max-w-none 
                     prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-black
-                    prose-h1:text-3xl prose-h1:mb-8 prose-h1:mt-16
-                    prose-h2:text-2xl prose-h2:mb-6 prose-h2:mt-12
-                    prose-p:leading-relaxed prose-p:text-neutral-800 prose-p:text-lg
+                    prose-h1:mt-16 prose-h1:mb-8 prose-h1:text-3xl
+                    prose-h2:mt-12 prose-h2:mb-6 prose-h2:text-2xl
+                    prose-p:text-lg prose-p:leading-relaxed prose-p:text-neutral-800
                     prose-strong:text-black
                     prose-blockquote:border-l-2 prose-blockquote:border-black prose-blockquote:bg-white/50 prose-blockquote:py-2 prose-blockquote:italic prose-blockquote:text-neutral-700
                     prose-code:rounded prose-code:bg-neutral-200/50 prose-code:px-1 prose-code:py-0.5 prose-code:font-mono prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
-                    prose-pre:rounded-none prose-pre:bg-white prose-pre:border prose-pre:border-neutral-200 prose-pre:text-neutral-900
+                    prose-pre:rounded-none prose-pre:border prose-pre:border-neutral-200 prose-pre:bg-white prose-pre:text-neutral-900
                     prose-table:border-collapse prose-table:border prose-table:border-neutral-300
                     prose-th:border prose-th:border-neutral-300 prose-th:bg-neutral-100/50 prose-th:p-3 prose-th:text-left
                     prose-td:border prose-td:border-neutral-200 prose-td:p-3

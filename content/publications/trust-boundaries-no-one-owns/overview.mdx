@@ -1,0 +1,34 @@
+# Case Study Note: Six Exploits, One Failure
+
+**Companion piece to:** the six-part _Trust Boundaries Nobody Owns_ series (SSRF → CSRF → SameSite Cookies → CORS → Clickjacking → CSP)
+
+---
+
+## What this is
+
+The six essays this note accompanies each explain a distinct browser or network security mechanism — the kind of thing that normally gets a standalone writeup: what the exploit looks like, what the defense is, ship the fix. What makes them worth presenting as a series isn't any one exploit; it's that all six, read together, are the same organizational failure recurring at six different points in a system that has no reason, technically, to treat them as related.
+
+That's the actual claim on display here: a trust boundary that gets set implicitly — by whoever happened to be solving an adjacent problem, under whatever time pressure existed that day — tends to stay unowned indefinitely, because nothing in most organizations' processes ever asks "who is responsible for checking that this boundary still holds." Security engineering treats this as six unrelated bugs. It's more useful to treat it as one bug, expressed six times.
+
+## The six cases
+
+| Essay | The implicit trust decision | Who made it, and when | What "ownership" would have looked like |
+| --- | --- | --- | --- |
+| **SSRF** | Requests originating from inside the network are safe | Nobody — it's the default assumption of most internal network design | Explicit egress rules, revisited as new internal services are added |
+| **CSRF** | A request carrying valid cookies reflects the user's intent | Set by cookie-based session design decades ago | Origin checks and tokens treated as a standing requirement, not an add-on |
+| **SameSite Cookies** | Cookies should be sent cross-site by default | Set by the original cookie spec, unrelated to security | Browser vendors retrofitting a default nobody explicitly chose |
+| **CORS** | This origin can be trusted to read this response | Set once, by whoever was unblocking a frontend bug | A policy revisited whenever the frontend's origins change, not left as-is indefinitely |
+| **Clickjacking** | What the user sees is what they're clicking | Never a decision at all — an assumption baked into how frames render | Frame-busting or CSP frame-ancestors treated as default, not optional |
+| **CSP** | The page will only ever load the resources it loaded on day one | Set at launch, rarely revisited as the app grows | A policy owned by whoever ships new third-party scripts, updated in lockstep |
+
+Every row has the same shape: a decision that was never actually deliberated, made by whoever was closest to the problem at the time, inherited by everyone after them, and never assigned to anyone as an ongoing responsibility. The exploit, in each case, is just what happens when the gap between "the boundary as originally set" and "the system as it now exists" grows large enough to walk through.
+
+## Why six cases, and not one essay making the general point
+
+A single essay stating "implicit trust boundaries decay without an owner" would be a fine thesis and a thin piece of writing — true, but not demonstrated. The six-case structure exists because the claim is only convincing once a reader has seen it hold across mechanisms that share no code, no protocol, and often no relationship to each other at the implementation level. SSRF is a server-side networking problem. Clickjacking is a rendering problem. If the same organizational failure explains both, that's a stronger claim than if it only explained one family of related bugs.
+
+The discipline here is the same one used in the four-altitudes case study, applied to breadth instead of depth: decide what each piece is actually a case of, before writing it, and then write it as that case specifically — not as a generic security explainer with a shared moral bolted onto the end. Each essay still has to work as a standalone explanation of its mechanism. The series-level claim is not stated loudly in every entry; it's demonstrated by the pattern being visible once someone reads more than one.
+
+## Why this is a durable skill, not a security-blog trick
+
+Any individual essay in this series will age the way security writing always does — a specific bypass technique or a particular browser's exact default will eventually be superseded. What doesn't age is the underlying diagnostic: when a technical failure keeps recurring in a system, the more useful question is rarely "what's the next patch" but "who was supposed to be checking this, and why wasn't anyone." That question applies as well to a codebase's trust boundaries as it does to an organization's decision-making — which is deliberately the same question the _Organizations Run on Proxies_ essay asks about judgment and authority. This series is that question, run against six specific, checkable technical cases instead of an organizational abstraction — evidence for the same underlying claim, from a different angle.

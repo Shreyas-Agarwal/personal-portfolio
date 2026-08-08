@@ -1,0 +1,21 @@
+{
+  "id": "mcp-context-rot",
+  "type": "research-note",
+  "title": "Context Rot in Tool Protocols",
+  "subtitle": "Analysis of context window saturation and token degradation in LLM tool interfaces.",
+  "abstract": "Analyzing why exposing extensive tool manifests to LLMs causes context rot, degraded reasoning, and prompt token bloat — and how two-phase discover/bind tool invocation solves it.",
+  "volume": "Volume I",
+  "revision": "Revision 01",
+  "date": "2026-07-22",
+  "program": "AI & Computation",
+  "author": "Shreyas Agarwal",
+  "domains": ["AI Systems", "Protocol Engineering", "Context Optimization"],
+  "status": "published",
+  "sections": [
+    {
+      "id": "index",
+      "title": "Context Rot in Tool Protocols",
+      "href": ""
+    }
+  ]
+}

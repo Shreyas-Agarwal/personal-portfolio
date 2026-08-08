@@ -1,0 +1,97 @@
+---
+title: "0006 — Installation Registration & Device Enrollment"
+description: "Binding an installation to a customer without embedding identity in the distributed artifact."
+date: 2026-08-01
+readingTime: 6 min
+---
+
+# Installation Registration & Device Enrollment
+
+<Callout type="note">
+  **Scope:** Specifies how a downloaded agent installation becomes bound to a customer and authorized company data file without encoding customer identity into the shipped artifact.
+</Callout>
+
+## Motivation
+
+Note 0002 and Note 0005 establish that the desktop agent authenticates using an asymmetric keypair (Ed25519) signed per request. Neither note specified how that keypair becomes associated with a customer identity at initial run.
+
+<Observation n={1}>
+  The legacy implementation hardcoded a customer's company name into shipped configuration defaults. Baking customer identity into the binary required separate custom builds or post-install manual configuration edits per customer.
+</Observation>
+
+The goal of this design: **One binary, one download link, for every customer — identity is resolved entirely server-side.**
+
+## Phase 1 — Single-Use Registration Code (Initial Release)
+
+<Process>
+  <Step n={1} title="Purchase & Code Generation">
+    Customer purchases access. Backend creates entitlement record and generates a single-use registration code (`REG-8XJ2-KP9A-QM71`).
+  </Step>
+  <Step n={2} title="Generic Artifact Download">
+    Customer downloads the generic agent binary — identical for all customers worldwide.
+  </Step>
+  <Step n={3} title="Keypair Generation & Local Enumeration">
+    On first run, customer inputs the registration code. Agent generates a local Ed25519 keypair (`private.key` stays on local machine) and enumerates local company data files.
+  </Step>
+  <Step n={4} title="Server Registration Request">
+    Agent sends `POST /register` with `{ code, public_key, company_list, machine_metadata }`.
+  </Step>
+  <Step n={5} title="Entitlement Verification & Key Binding">
+    Backend validates code, cross-checks reported companies against entitlement records, stores `public_key` bound to an `installation_id`, and invalidates the registration code.
+  </Step>
+</Process>
+
+```typescript filename="registration-payload.ts"
+interface RegistrationPayload {
+  registrationCode: string; // e.g. "REG-8XJ2-KP9A-QM71"
+  publicKey: string; // Ed25519 public key hex
+  discoveredCompanies: Array<{
+    companyId: string;
+    companyName: string;
+  }>;
+  machineMetadata: {
+    os: "windows";
+    hostname: string;
+  };
+}
+```
+
+### Multi-Company Entitlement Boundary
+
+A single desktop application instance may have multiple company files loaded. To prevent an agent from extracting unauthorized files on the same machine:
+
+<Decision n={1} status="accepted">
+  The backend cross-checks the agent's reported company list against customer entitlement records at registration time, authorizing only matched company IDs in server-side state. Any subsequent request for an unauthorized company is rejected server-side.
+</Decision>
+
+## Phase 2 — Browser-Based Device Authorization (Future)
+
+Replace manual registration code entry with the OAuth 2.0 Device Authorization Grant (RFC 8628) flow.
+
+<Process>
+  <Step n={1} title="Request Device Code">
+    Agent requests device code (`POST /device/code`) and displays user code + URL (`auth.platform.com/device`).
+  </Step>
+  <Step n={2} title="User Browser Approval">
+    Customer logs into platform account in browser and approves the requested device code.
+  </Step>
+  <Step n={3} title="Token Exchange & Key Binding">
+    Agent polls backend until approved, generates Ed25519 keypair, and submits public key bound to the authenticated user session.
+  </Step>
+</Process>
+
+## Consequences
+
+<Tradeoff
+  gain="Single distributed binary for all customers. Identity lives strictly in server-side state. Multi-company security boundaries enforced by server."
+  cost="Requires backend to maintain installation records and registration code life-cycle state."
+/>
+
+- **The distributed agent artifact is 100% identical for every customer.**
+- **Multi-company data file permissions are enforced by backend state.**
+- **Forward-compatible upgrade path from registration codes to OAuth Device Grant.**
+
+## Open Questions & Future Work
+
+- Define exact registration code entropy, format, and expiration TTL window.
+- Define revocation semantics when an installation is decommissioned.

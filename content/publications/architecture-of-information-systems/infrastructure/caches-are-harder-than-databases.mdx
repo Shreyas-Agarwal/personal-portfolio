@@ -1,0 +1,112 @@
+---
+title: "Caches Are Far Harder Than Databases"
+date: "2026-07-01"
+---
+
+# Caches Are Far Harder Than Databases
+
+In the previous article, **[Modern Analytical Transport](../data/modern-analytical-transport)**, a years-old debt finally got paid down: the serialization tax identified early in this series turned out to be solvable, not by making transport faster, but by removing the serialization step entirely through Arrow's shared memory layout and ADBC's Arrow-native driver interface. A query that used to cost a round trip through rows and back into columns now costs almost nothing extra beyond the query itself.
+
+Naturally, this creates a new temptation. Once something becomes cheap enough to call repeatedly, engineers do what engineers always do: they call it repeatedly, and then someone suggests caching the result so they don't have to call it at all. This feels like a harmless, purely additive optimization sitting in front of a transport layer that already works. It is not harmless, and it is not simple.
+
+<Observation n={1}>
+  A database spends decades of engineering — write-ahead logs, MVCC, isolation levels, replication protocols — solving exactly one problem: letting many readers and writers see a consistent, correct view of state under concurrent access. A cache re-opens that same problem, from scratch, usually with none of that infrastructure behind it, because it looks like "just a key-value store," not a second database.
+</Observation>
+
+---
+
+## Why This Looks Simple and Isn't
+
+The mental model most engineers bring to caching is straightforward: store the result of an expensive operation, check the cache before repeating the operation, and clear the entry when the underlying data changes. Each of those three steps sounds like a one-line implementation detail. Each one is actually a distinct, hard distributed-systems problem wearing a performance costume.
+
+"Check the cache" is a race condition waiting for enough concurrency. "Clear the entry when the data changes" requires the write path to know about every cache key the change could possibly affect — which, as the next section shows, is a much larger set than it first appears. The database spent thirty years getting these problems right, behind interfaces like transactions and isolation levels that most application engineers never have to think about directly. A cache asks an application team to solve a smaller version of the same problem, usually without any of the corresponding rigor, because the surface area looks like nothing more than `GET` and `SET`.
+
+---
+
+## The Invalidation Fan-Out Problem
+
+Cache invalidation is usually introduced as a two-line concept: when the underlying data changes, remove or refresh the cached entry. The difficulty is in "the cached entry," singular, which assumes one piece of source data maps cleanly to one cache key. Recall the **[Gold-layer fragmentation from a few chapters back](../data/dashboard-first-anti-pattern)**: a single canonical `customer` entity fed multiple Gold views, each sliced differently for a different dashboard. Now put a cache in front of each of those views.
+
+A single update to the canonical customer record can, in principle, invalidate a regional churn cache key, a cohort revenue cache key, a customer-health-score cache key, and any number of other derivatives nobody remembers commissioning — the exact fan-out this series already diagnosed as an architectural cost, now reappearing as a correctness requirement. Miss any one of those derivative keys during invalidation, and the system doesn't crash. It just quietly serves a wrong number, with total confidence, for however long the TTL says it's allowed to.
+
+<Callout type="warning">
+  Cache staleness rarely looks like an error. It looks like a perfectly formatted, perfectly fast, perfectly wrong answer. A slow query is an inconvenience a user notices. A stale cache is a wrong answer nobody notices until it's acted on.
+</Callout>
+
+---
+
+## Race Conditions: Two Kinds, Different Severity
+
+Not every caching race condition is equally dangerous, and it's worth separating the merely wasteful from the actually incorrect.
+
+**The cache stampede** is the wasteful kind. Two requests miss the cache at the same moment — perhaps right after an entry expired — and both fall through to the database, both compute the same result, and both write it back to the cache. No data is corrupted. Work is simply duplicated, and under enough concurrent traffic, a stampede of simultaneous misses can produce the exact **[ingestion-style overload this series just finished examining at the gateway](gateway-backpressure)**: a burst of legitimate load arriving all at once, hitting a resource that assumed requests would be spread out over time.
+
+**The write-then-read race** is the dangerous kind. A write invalidates a cache entry, but a concurrent read — perhaps hitting a read replica that hasn't caught up yet — recomputes the value from a source that doesn't reflect the write, and writes that stale value back into the now-empty cache slot. The cache is not merely behind; it now actively contains a wrong answer that looks freshly computed, and it will keep serving that wrong answer, confidently, until the TTL expires. This is strictly worse than the stampede, because nothing about the system's behavior signals that anything went wrong.
+
+<Evidence n={1}>
+  A write-then-read race does not require unusual timing to occur in production — it requires only that a read-replica lag window and a cache-repopulation window overlap even briefly, which happens routinely under normal replication lag. The bug is not exotic. It is a predictable consequence of caching in front of any system with asynchronous replication.
+</Evidence>
+
+---
+
+## Read-Through, Write-Through, and Write-Behind
+
+Three architectures dominate application-layer caching, and they trade correctness for latency in different, explicit ways.
+
+<Figure n={1} title="Three Caching Architectures" caption="Each pattern resolves the freshness-versus-latency tradeoff differently — none of them make the tradeoff disappear.">
+
+| Pattern | Write path | Read path | Failure mode |
+|---|---|---|---|
+| Read-through | Writes go directly to the source | On miss, cache loads from source and populates itself | Thundering herd on simultaneous misses after expiry |
+| Write-through | Writes go to cache and source synchronously | Cache is always consistent with source at write time | Every write pays full source latency — no faster than no cache |
+| Write-behind | Writes go to cache immediately, flushed to source asynchronously | Fast reads and writes | A crash before flush loses data; anyone reading the source directly sees a stale or missing value |
+
+</Figure>
+
+Write-behind deserves particular suspicion in an analytical context, because it reintroduces a version of the exact problem this series solved when **[separating operational systems from analytical ones](../data/oltp-vs-olap)**. If writes land in the cache first and reach the actual source of truth on a delay, then any process reading directly from that source — a warehouse job, a downstream Gold pipeline, an audit query — sees a system that is behind the cache's version of reality, sometimes by a meaningful window. The cache has quietly become a second source of truth, and the two are allowed to disagree for as long as the flush is delayed.
+
+<Decision n={1} status="accepted">
+  Prefer read-through caching with explicit, event-driven invalidation over TTL-only expiry for anything derived from Gold-layer or canonical-model data. Trigger invalidation from the same **[change-data-capture stream already used to model state transitions as append-only events](../data/history-as-feature)**, rather than from a fixed timer that has no relationship to when the underlying data actually changed.
+</Decision>
+
+```typescript filename="event-driven-invalidation.ts"
+// Instead of a blind TTL, invalidate specifically on the event stream
+// already established earlier in this series for state transitions.
+changeStream.on('CustomerStatusChanged', async (event) => {
+  const affectedKeys = deriveAffectedCacheKeys(event.customerId);
+  // Explicit fan-out: every derivative view keyed off this entity
+  // is invalidated together, not left to a timer to eventually catch up.
+  await Promise.all(affectedKeys.map((key) => cache.del(key)));
+});
+```
+
+---
+
+## Queue Pressure's Quieter Cousin
+
+There's a useful parallel to draw from **[a couple of chapters back](gateway-backpressure)**, when queue pressure was introduced as a signal worth watching directly rather than discovering only once a worker fell over. A cache under load produces a version of the same pressure, but it fails in the opposite direction. A gateway under ingestion pressure that has no threshold set degrades by accepting too much and eventually falling over loudly — a visible, honest failure. A cache under invalidation pressure that has no threshold set degrades by serving stale data indefinitely — an invisible, dishonest one.
+
+<Tradeoff
+  gain="A well-invalidated cache in front of fast, Arrow-native transport removes repeated load from the source entirely for the queries that matter most, compounding the transport improvements from the previous article."
+  cost="Every caching layer introduces a second place where 'current state' is defined, and unlike a queue backing up under ingestion pressure — which is visible and loud — a cache serving stale data under invalidation pressure is silent until someone acts on a wrong number."
+/>
+
+---
+
+## A More Important Lesson
+
+This article is not really about Redis or Memcached. It is about which side of a boundary is allowed to be wrong for a little while. This series has drawn that same line repeatedly, under different names: operational truth versus historical truth, the canonical model versus the vendor schema, the cache versus the source it's shadowing. Every one of those boundaries asks the same underlying question — when two representations of the same information can disagree, which one does the system trust, and for how long is the other one allowed to keep lying convincingly before it's corrected.
+
+A database answers that question with decades of formal consistency guarantees. A cache answers it with whatever invalidation strategy someone happened to implement on a Tuesday. That gap is the entire reason caches are harder than the databases they sit in front of — not because the technology is more complex, but because the guarantees are almost always weaker than they look, right up until they're the reason a number was wrong.
+
+---
+
+## Looking Ahead
+
+This series has now walked the full path a piece of information travels: from the schema that models it, through the pipelines that transform it, across the transport that moves it, into the cache that shortcuts it, and out to whatever gateway decided it was safe to let the request through in the first place. Every layer along that path turned out to hide its own physics, its own failure modes, and its own version of the same lesson — an abstraction holds until the assumption underneath it stops being true, and something downstream inherits the gap.
+
+What none of this has touched yet is how anyone actually finds out, in the moment, which layer is currently lying. That is a question about observability, not architecture, and it deserves its own treatment rather than a rushed final section here.
+
+---
+
+*Next in Track 02: **[Designing for Unconditional Recovery](unconditional-recovery)**.*

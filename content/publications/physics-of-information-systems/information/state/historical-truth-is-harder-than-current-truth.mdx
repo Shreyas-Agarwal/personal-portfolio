@@ -1,0 +1,78 @@
+---
+title: "Why Historical Truth Is Harder Than Current Truth"
+description: "Corrections, late arrivals, competing histories, and temporal consistency. On the moment a company has to admit that what it once reported as true, wasn't."
+date: "TBD"
+readingTime: "13 min"
+series: "Physics of Information Systems"
+track: "Information"
+monograph: "State"
+order: 5
+coreQuestion: "Why is it so much harder to know what was true than what is true?"
+---
+
+Public companies occasionally have to file something most of them would clearly rather not: a restatement, formally amending a previously published financial report because an error, sometimes significant, has since come to light in figures the market and its own investors had already relied on for months or years. A restatement is not simply a correction of a typo. It is a formal declaration that the company's earlier, official record of its own state — what it reported, at the time, as true about its revenue, its expenses, its earnings — no longer stands, and a new figure now supersedes it, for a period that has already closed and cannot be revisited by any means except paperwork.
+
+This creates a genuinely strange situation, worth sitting with directly rather than gliding past. Ask "what is the company's financial position right now" and, restatement aside, there is a single, current, knowable answer — whatever this quarter's fresh numbers say. But ask "what was the company's financial position last March" and you now, after the restatement, have two competing answers: what the company reported as true in March, in good faith, based on what it knew then, and what is now understood, with the benefit of later information, to have actually been true in March all along. Both answers are legitimate. Both describe the same real month. And they disagree, sometimes substantially, because "what we believed to be true in March" and "what was actually true in March" turn out to be two genuinely different questions, only one of which anyone had a way to answer correctly back in March itself.
+
+**This is the sharp edge the title of this chapter is pointing at. Current truth only ever has to account for what's known right now. Historical truth has to account for two separate timelines at once: when something was actually true in the world, and when the system recording it came to know that it was true — and those two timelines are only the same by coincidence, never by guarantee.**
+
+<Callout type="architectural-tension">
+A restatement doesn't just change a number. It reveals that "what was true then" and "what we recorded as true then" were never actually the same claim, even though both had been treated, until the correction arrived, as interchangeable. Nothing about March changed when the restatement was filed. What changed was the system's account of what March had been.
+</Callout>
+
+## Two clocks, not one
+
+The formal tool built to hold both of these timelines simultaneously, rather than collapsing them into one, is bitemporal data modeling, and it earns its name honestly: it tracks two separate notions of time for every recorded fact, not one. Valid time answers "during what real-world period was this fact actually true" — for the earnings figure, the fiscal quarter it describes. Transaction time answers "during what period did our system believe, and record, this fact to be true" — the period between when the original figure was filed and when the restatement corrected it. A record with only one of these two timestamps can answer only half of the historical-truth question. A record with both can answer, precisely and without contradiction, three genuinely different questions that would otherwise get tangled into one: what did we say was true about March, back when we said it; what do we now understand to have actually been true about March; and, crucially, exactly when did our understanding of March change, and to what.
+
+This third question turns out to matter enormously in practice, and it's worth being specific about why. An investor who made a decision in April, based on the original March figures, made that decision using the information that genuinely existed at the time — a decision that was reasonable given what was knowable then, even though a restatement later revealed the underlying figures to have been wrong. Evaluating whether that April decision was a *good* decision, given the information available at the time, requires being able to ask the system "what did you believe was true about March, as of April" — a question a system tracking only a single, continuously-updated "current best guess" about March can no longer answer at all, because updating March's figure in place, without preserving the earlier version and exactly when it changed, silently erases the very distinction the question depends on.
+
+## Competing histories, and why neither one is simply wrong
+
+This has a further, uncomfortable implication worth stating directly: bitemporal tracking doesn't produce one corrected history plus a record of an earlier mistake. In a meaningful sense, it preserves two competing histories of the same period, both legitimately "true" relative to a different point of reference — one true relative to what was knowable at the time, the other true relative to what's knowable now, with the benefit of a correction that hadn't arrived yet. Neither version deserves to simply be deleted and replaced by the other, because each answers a real, different, valid question. Erasing the original figure entirely, once restated, would make it impossible to ever again evaluate a decision that was made — reasonably — based on information that has since turned out to be wrong. Keeping only the original, uncorrected figure would mean an organization stubbornly reporting numbers it now knows to be false. A properly bitemporal system keeps both, permanently, each timestamped along both of its two independent clocks, and lets whoever asks a question later specify exactly which of the two histories they mean to ask about.
+
+<Callout type="unresolved">
+There is no single, final, most-correct version of history that a bitemporal system is working toward uncovering. There is only "what was believed true, as of a given moment" and "what is currently believed true" — both legitimate, both permanently preserved, neither one erasing the other's right to have been the honest answer at the time it was given.
+</Callout>
+
+## Closing the State monograph
+
+This is the furthest this monograph pushes the idea it opened with, and it's worth tracing the full arc plainly. An odometer showed that state is a compressed residue of a system's process, sufficient for the questions that matter and silent about everything else. Muybridge's photographs showed that any single frozen instant of state, however completely captured, cannot on its own reveal a rate of change — only a comparison across instants can do that. Chess notation showed that an immutable log of transitions can substitute entirely for stored state, as long as the rules connecting one state to the next are fixed and known. Google Docs' dual history showed that event logs and named snapshots are not competing philosophies but complementary tools, each answering a different question about the same underlying record. And this final chapter has shown the hardest case of all: sometimes the transitions themselves turn out, later, to have been recorded wrong — not through any failure of the logging mechanism, but because reality was only ever knowable imperfectly at the moment it was captured — and a system honest about this has to hold two timelines at once rather than pretending a single, ever-updating "current truth" was ever really what history looked like as it happened.
+
+The next monograph in this series turns from state's single evolving record to something narrower and, in its own way, more deliberately curated: not everything a system has recorded about its own past, but specifically the parts of that past worth preserving on purpose, for reasons that go beyond simply reconstructing what happened — the subject of History, and the question of what separates a database from a memory worth keeping.
+
+<Figure n={1} title="One Fact, Two Timelines" caption="Neither row is deleted when the restatement is filed. The March figure the market saw in April is a permanent, separate fact from the corrected March figure — both timestamped, both true relative to a different point of reference.">
+
+| Value | Valid time (what period it describes) | Transaction time (when the system believed it) |
+| --- | --- | --- |
+| Original Q1 earnings figure | March (the fiscal quarter) | Filed in April, superseded by restatement |
+| Restated Q1 earnings figure | March (same fiscal quarter) | Filed at restatement, current belief |
+
+</Figure>
+
+<FormalNote>
+Bitemporal data tags every fact not with one timestamp but with a pair: $T_{\text{valid}}$, the
+real-world period the fact describes, and $T_{\text{transaction}}$, the period the system believed
+and recorded it. A restatement doesn't overwrite the original tuple — it closes the old
+$T_{\text{transaction}}$ interval and opens a new one, with a new value, over the same
+$T_{\text{valid}}$. Both persist, which is what makes "what did you believe about March, as of April"
+a well-formed query rather than an answer already overwritten by what the system believes now:
+
+$$\text{belief}(t, \tau) = \{\, v : \langle v, T_{\text{valid}}, T_{\text{transaction}} \rangle \in \text{Facts},\ t \in T_{\text{valid}},\ \tau \in T_{\text{transaction}} \,\}$$
+
+— the set of values ever believed true of moment $t$, as understood at query time $\tau$.
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+The two clocks this chapter tracks are a direct descendant of the two gaps
+[Reality Exists Before Information](../../reality/reality/reality-exists-before-information) insists
+on keeping separate — $T_{\text{valid}}$ is the "what actually happened" gap, $T_{\text{transaction}}$
+is the "when did anyone find out" gap, and this chapter shows an organization has to track both, not
+collapse them into one. It is also a case-by-case instance of the Bayesian updating in
+[Observability vs. Analytics](../../reality/observations/observability-vs-analytics): a restatement
+is a belief revision arriving after the fact, on a timeline the original observer had no way to see
+coming. This closes the State monograph. The next monograph, History, has not been written yet — it
+is expected to pick up from here, asking what separates a database that merely preserves both
+timelines from a memory curated on purpose.
+</Callout>

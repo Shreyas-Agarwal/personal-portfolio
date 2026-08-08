@@ -35,8 +35,8 @@ export function OperationallyRealizedRuntime() {
                   <h4 className="text-sm font-medium text-white/90">Architectural Trade-offs</h4>
                   <p className="mt-2 text-xs leading-relaxed text-blue-100/40">
                     This colocated model represents a simplified deployment topology, demonstrating
-                    how consolidating queues and persistence simplifies operations compared to the fully
-                    federated design.
+                    how consolidating queues and persistence simplifies operations compared to the
+                    fully federated design.
                   </p>
                 </div>
               </div>

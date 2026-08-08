@@ -22,7 +22,7 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
       <div className="sticky top-[72px] z-40 border-b border-white/[0.06] bg-[#0B0D10]/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3 md:px-12">
           <Link
-            href="/projects"
+            href="/works"
             className="group flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] text-white/30 transition-colors hover:text-white/70"
           >
             <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" />
@@ -153,9 +153,9 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
                     Autodesk University 2025 Contribution
                   </h4>
                   <p className="text-xs text-white/45 max-w-2xl">
-                    Coordinated directly with the GM of Tech Transformation to co-lead this
-                    rollout. The results, workflows, and contributions were presented at the
-                    Autodesk University 2025 global conference.
+                    Coordinated directly with the GM of Tech Transformation to co-lead this rollout.
+                    The results, workflows, and contributions were presented at the Autodesk
+                    University 2025 global conference.
                   </p>
                 </div>
                 <a
@@ -170,7 +170,11 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
               </div>
 
               {/* Secure read-only PDF document viewer */}
-              <PdfViewer url={project.presentationUrl} title={project.title} projectId={project.id} />
+              <PdfViewer
+                url={project.presentationUrl}
+                title={project.title}
+                projectId={project.id}
+              />
             </div>
           ) : project.id === "experion-implementation" ? (
             <div className="rounded-none border border-white/[0.08] bg-[#0E1013] p-8 space-y-8">
@@ -260,7 +264,7 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
       <footer className="border-t border-white/[0.06] px-6 py-12 md:px-12">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <Link
-            href="/projects"
+            href="/works"
             className="group flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] text-white/25 transition-colors hover:text-white/60"
           >
             <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" />
@@ -271,7 +275,7 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
           <div className="flex gap-8">
             {prev && (
               <Link
-                href={`/projects/${prev.id}`}
+                href={`/works/${prev.id}`}
                 className="font-mono text-[9px] tracking-[0.2em] text-white/20 transition-colors hover:text-white/60"
               >
                 ← PREV
@@ -279,7 +283,7 @@ export function ImplementationLayout({ project }: ImplementationLayoutProps) {
             )}
             {next && (
               <Link
-                href={`/projects/${next.id}`}
+                href={`/works/${next.id}`}
                 className="font-mono text-[9px] tracking-[0.2em] text-white/20 transition-colors hover:text-white/60"
               >
                 NEXT →

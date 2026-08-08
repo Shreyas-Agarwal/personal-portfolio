@@ -1,0 +1,127 @@
+---
+title: "Spatial Intelligence: Maps Are Not Tables"
+date: "2026-07-01"
+---
+
+# Spatial Intelligence: Maps Are Not Tables
+
+The previous article, **[Caches Are Far Harder Than Databases](../infrastructure/caches-are-harder-than-databases)**, closed by pointing at an unanswered question: once a layer starts lying about its own state, how does anyone actually find out? That question is worth answering properly, and it will be — but not yet. This series is about to change direction one more time, the same way it did when it first turned from data modeling toward infrastructure, and the observability question will get its real answer two chapters from now, once a more specialized topic has had room to breathe.
+
+One of the more specialized systems I've worked on ingests a continuous stream of sparse GPS pings from vehicles in transit, and is asked, constantly, a version of the same question: *where is this vehicle relative to everything else that matters* — the route it should be on, the stops ahead of it, the other vehicles sharing its corridor. Every previous article in this series modeled data as rows, entities, and versioned records. None of that machinery answers "what's nearby," because "nearby" is not a column. It's geometry.
+
+<Observation n={1}>
+  A relational table has exactly one native notion of order per index: the sort order of the indexed column. Spatial data has no single native order at all — a point's relationship to its neighbors depends on two or three dimensions simultaneously, and no single sort captures more than one of them at a time.
+</Observation>
+
+---
+
+## Why a B-Tree Can't Save You Here
+
+**[Several articles ago](random-uuids)**, this series went deep on B-Trees, page splits, and why identifier randomness destroys index locality. That entire discussion assumed something spatial data quietly violates: that the values being indexed have one dimension of order. A B-Tree indexing `latitude` can answer "which rows have a latitude between X and Y" extremely efficiently. It cannot also tell you, in the same pass, which of those rows are also within a longitude range — the index only knows about the one column it was built on.
+
+```sql filename="naive-spatial-query.sql"
+-- A B-Tree index on latitude helps with this predicate...
+SELECT vehicle_id, lat, lng
+FROM vehicle_pings
+WHERE lat BETWEEN 40.70 AND 40.80
+  AND lng BETWEEN -74.02 AND -73.95;
+-- ...and does nothing for this one. The planner filters the longitude
+-- range by scanning every row the latitude index already returned.
+```
+
+The query above doesn't fail. It degrades — the latitude index narrows the search to a horizontal band that can stretch across the entire dataset, and every row in that band gets checked against the longitude predicate one at a time. At transit scale, with millions of pings arriving continuously, that degradation is the difference between a query that returns in milliseconds and one that doesn't return at all.
+
+<Callout type="constraint">
+  A composite B-Tree index on `(lat, lng)` does not fix this. It only reorders the problem: the index becomes efficient for range queries on `lat` first and `lng` second, but a bounding-box query still can't use both dimensions as a single ordered walk, because a B-Tree fundamentally orders keys along one axis, and a composite key is still one axis — it's just wider.
+</Callout>
+
+---
+
+## R-Trees: Bounding Boxes Instead of Scalars
+
+The structure that actually solves this is the R-Tree, and it solves it by changing what gets stored at each node. Instead of a single scalar value per key, an R-Tree stores a **bounding box** — a minimum enclosing rectangle around everything beneath that node in the tree. A query for "everything within this rectangle" descends the tree the same way a B-Tree search does, except at each level it asks a geometric question — does this node's bounding box overlap the query box — rather than a scalar comparison.
+
+This is the mechanism behind spatial indexes in PostGIS (via GiST, Generalized Search Trees, which R-Trees are a specialization of), and it's why a properly indexed spatial query looks almost identical to the naive version above, but behaves nothing like it underneath:
+
+```sql filename="postgis-spatial-index.sql"
+CREATE INDEX idx_vehicle_pings_geom ON vehicle_pings USING GIST (location);
+
+-- Same intent as the naive query, but the planner walks a bounding-box
+-- tree instead of intersecting two independent scalar range scans.
+SELECT vehicle_id, ST_AsText(location)
+FROM vehicle_pings
+WHERE ST_DWithin(location, ST_MakePoint(-73.98, 40.75)::geography, 500);
+```
+
+<Decision n={1} status="accepted">
+  Index spatial columns with a bounding-box structure (GiST/R-Tree via PostGIS, or an equivalent) rather than relying on composite B-Tree indexes over decomposed latitude/longitude columns. A B-Tree can accelerate one dimension of a spatial query; it cannot accelerate the intersection of two.
+</Decision>
+
+One structural property of R-Trees is worth calling out because it has no B-Tree equivalent: bounding boxes at the same level can overlap. Two vehicles fifty meters apart can end up in different branches of the tree if their surrounding geometry happens to be shaped that way, which means a query sometimes has to descend into more than one branch to be certain it hasn't missed a match. B-Tree keys never overlap by construction; R-Tree bounding boxes overlap by nature. Query planning around that overlap — deciding which branches are worth descending into and which can be pruned — is most of what makes spatial query optimization its own discipline rather than a variant of ordinary indexing.
+
+---
+
+## Quadtrees: Simpler, and Uneven Where It Matters
+
+Quadtrees take a different approach to the same problem: recursively subdivide space into four quadrants, and keep subdividing any quadrant that holds more than some threshold of points, until each leaf holds a manageable number. The structure is easy to reason about and cheap to build, which is why it shows up constantly in game engines, mapping tools, and early-stage geospatial prototypes.
+
+The problem quadtrees run into at transit scale is density skew. A city center generates orders of magnitude more vehicle pings per square kilometer than a rural corridor, which means a quadtree built over an entire metro region ends up with wildly uneven leaf sizes — deeply subdivided in the dense core, barely subdivided at the edges. Neighboring cells at the boundary between a dense and sparse region can differ enormously in size, which makes "find everything near this point" a query whose cost depends heavily on *where* the point happens to be, not just how many points exist overall.
+
+<Evidence n={1}>
+  A quadtree's subdivision depth tracks local point density, not geographic area. Two points a few hundred meters apart, one just inside a dense urban cell and one just outside it in a much larger rural cell, can require descending a very different number of tree levels to resolve the same "nearby" query — the cost of the query becomes a function of location, which is a difficult property to reason about at scale.
+</Evidence>
+
+---
+
+## H3: Turning Geometry Back Into a Column
+
+The structure that has gained the most traction in modern geospatial platforms takes a different bet entirely. H3, originally developed at Uber for exactly this class of ride-hailing and transit problem, tiles the surface of the earth in hexagonal cells at multiple fixed resolutions, and assigns each cell a single indexable identifier. Every point on the globe maps deterministically to one H3 cell at each resolution level — there's no recursive subdivision that depends on local data density, and no tree to walk at query time for a "which bucket is this point in" check. It's a lookup.
+
+The choice of hexagons over squares is not aesthetic. A hexagonal grid gives every cell exactly six neighbors, all at the same distance from the cell's center. A square grid's neighbors are not equidistant — the four edge-adjacent neighbors are closer than the four corner-adjacent ones — which means "nearby cells" is an ambiguous, distance-distorting concept on a square grid and a clean, uniform one on a hexagonal grid.
+
+<Callout type="important">
+  H3 doesn't beat the B-Tree at spatial reasoning. It tricks the B-Tree into thinking it isn't looking at geometry at all. Once every point has been bucketed into an H3 cell identifier, "which vehicles are near this stop" becomes "which rows share this cell ID, or one of its six neighbors" — a query an ordinary index on a string or integer column answers natively, with none of the bounding-box overlap logic an R-Tree needs.
+</Callout>
+
+```sql filename="h3-bucketed-join.sql"
+-- Vehicle pings and stops are both pre-tagged with an H3 cell at build time.
+-- "Nearby" becomes an ordinary equality/IN join, not a geometric predicate.
+SELECT v.vehicle_id, s.stop_id
+FROM vehicle_pings v
+JOIN stops s ON s.h3_cell = v.h3_cell OR s.h3_cell = ANY(h3_k_ring(v.h3_cell, 1));
+```
+
+This is why H3 tends to be used alongside R-Trees rather than instead of them, in practice. H3 is exceptional for coarse bucketing — "which region is this in, roughly" — at the volume and speed transit ingestion demands, precisely because it avoids per-query geometric computation entirely. R-Trees remain the right tool for precise, exact-geometry work — snapping a raw GPS ping to the nearest point on a specific route polyline, the operation route reconstruction actually depends on — where an approximate hexagonal bucket isn't precise enough and the real geometry has to be consulted.
+
+<Tradeoff
+  gain="H3 bucketing turns high-volume 'what's nearby' queries into ordinary indexed joins, at a speed no per-query geometric computation can match, and composes cleanly with standard relational tooling once the bucketing is done."
+  cost="H3 cells are an approximation at a fixed resolution — precise geometric operations like snapping a point to an exact route polyline still require true spatial indexing (R-Trees/GiST), so most production systems end up running both structures side by side rather than choosing one."
+/>
+
+---
+
+## Delay Propagation Is a Graph Wearing a Map's Clothes
+
+Route reconstruction — stitching sparse GPS pings into a continuous, schedule-aligned path — is fundamentally a spatial nearest-geometry problem, and R-Trees are the right tool for it. Delay propagation, modeling how a late vehicle upstream cascades into late arrivals at every downstream stop, is a different kind of problem entirely, and it's worth being precise about the difference: it is a graph traversal over a network whose edges happen to be defined by geography, not a spatial query in the R-Tree or H3 sense at all.
+
+A stop is "downstream" of another stop because a route connects them, not because it's geometrically nearby — two stops across the street from each other on different routes may have no delay relationship whatsoever, while two stops kilometers apart on the same route are directly coupled. Modeling this correctly means the spatial layer (where is everything) and the topological layer (what's connected to what, and in which direction) have to be maintained as genuinely separate structures, joined only where a specific query actually needs both — exactly the entity-centric discipline this series argued for early on, applied here to the difference between "near" and "connected."
+
+---
+
+## A More Important Lesson
+
+This article is not really about R-Trees, quadtrees, or H3. It is about what happens when reality has more dimensions than your index has axes. A B-Tree assumes one ordering is enough because, for most operational data, it is — a customer ID, a timestamp, a status code all have one dimension worth indexing. Geography never had one dimension. It only looked that way because most systems that store coordinates never actually query them as geometry; they store them and let something else, usually a mapping API outside the database entirely, do the spatial reasoning. The moment a system needs to answer "what's nearby" at the speed and volume transit ingestion demands, that deferral stops being an option.
+
+The deeper pattern is the one this series keeps returning to from a new angle every few chapters: an abstraction (the row, the scalar index, the single-dimension sort) holds exactly as long as the domain agrees to have one dimension worth caring about. Geography never agreed to that. It just took this long in the series for a domain to show up that said so directly.
+
+---
+
+## Looking Ahead
+
+Everything in this article assumed the underlying infrastructure — the ingestion pipeline pulling in vehicle pings, the workers computing H3 buckets and running R-Tree lookups, the services propagating delay estimates across a graph — simply keeps running. It doesn't, not indefinitely, and not without failing in ways that have nothing to do with spatial geometry at all: a worker crashes mid-reconstruction, a deploy restarts every instance at once, a circuit breaker trips and never quite figures out when it's safe to close again.
+
+That's the observability and recovery question this article deferred at the start. It's time to answer it, in **[Designing for Unconditional Recovery](../infrastructure/unconditional-recovery)**.
+
+---
+
+*Next in Track 01: **[The Analytics Platform Maturity Curve](analytics-maturity-curve)**.*

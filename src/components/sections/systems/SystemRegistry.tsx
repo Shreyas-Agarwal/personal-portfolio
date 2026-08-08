@@ -90,8 +90,9 @@ export function SystemRegistry() {
           </div>
           <div className="max-w-sm">
             <p className="text-sm leading-relaxed text-black/50">
-              A structured catalog of architectural systems, integration patterns, and infrastructure
-              artifacts. Each entry represents a real design decision under operational pressure.
+              A structured catalog of architectural systems, integration patterns, and
+              infrastructure artifacts. Each entry represents a real design decision under
+              operational pressure.
             </p>
             <div className="mt-8 flex items-center gap-6 border-t border-black/[0.06] pt-6">
               <span className="font-mono text-[10px] tracking-[0.2em] text-black/30">
@@ -216,9 +217,7 @@ export function SystemRegistry() {
               {(["ACTIVE", "IN_DEVELOPMENT", "UNDER_REVIEW"] as SystemStatus[]).map((s) => (
                 <div key={s} className="flex items-center gap-2">
                   <div className={`h-1.5 w-1.5 rounded-full ${STATUS_STYLES[s].dot}`} />
-                  <span className="font-mono text-[9px] tracking-[0.14em] text-black/35">
-                    {s}
-                  </span>
+                  <span className="font-mono text-[9px] tracking-[0.14em] text-black/35">{s}</span>
                 </div>
               ))}
             </div>

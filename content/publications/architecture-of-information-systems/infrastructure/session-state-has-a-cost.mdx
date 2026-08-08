@@ -1,0 +1,155 @@
+---
+title: "Session State Has a Cost"
+date: "2026-07-01"
+---
+
+# Session State Has a Cost
+
+In the previous article, **[History Is a First-Class Feature](../data/history-as-feature)**, we explored why analytical systems eventually become temporal systems. Organizations stop asking "what exists?" and begin asking "what changed?" Answering that question requires preserving history: versioned records, append-only timelines, historical state transitions. The platform accumulates increasingly large volumes of information.
+
+Naturally, this creates a new architectural temptation: if data is valuable, why not keep it close to the application? The answer turns out to be one of the defining lessons of modern infrastructure.
+
+<Observation n={1}>
+  State and scale rarely coexist peacefully. Stateless applications are a myth in the sense that state never disappears — it merely moves. The question is never whether state exists, but where it is allowed to live.
+</Observation>
+
+---
+
+## The Comfortable Illusion
+
+Most applications begin life as a single process: one server, one runtime, one memory space. Everything feels simple. A user logs in, session information is stored in memory, a few objects are cached, and user preferences remain resident inside the application. The architecture works perfectly — because there is only one place for requests to go.
+
+---
+
+## The Day a Second Server Appears
+
+Success introduces complexity. Traffic grows: a second application instance is deployed, then a third, then ten. Suddenly the architecture changes:
+
+```text
+           User
+             ↓
+      Load Balancer
+         ↙     ↘
+   Server A   Server B
+```
+
+At first glance nothing appears different. The application code remains identical, the database remains identical, and users continue interacting with the same platform. But a subtle problem has emerged: Server A and Server B do not share memory.
+
+---
+
+## The Session Problem
+
+Imagine a user logs in. Their session is stored inside Server A. The next request arrives, and the load balancer sends it to Server B. Server B knows nothing about the user — the session has vanished. Not because it was deleted, but because it never existed on that machine.
+
+The system now faces a decision. Either force requests back to the original server, or move session state somewhere shared. This decision shapes the architecture of the entire platform.
+
+---
+
+## Sticky Sessions: The Shortcut
+
+The easiest solution is usually sticky sessions. The load balancer remembers where a user originally landed, and future requests are routed to the same server. The problem appears solved, and for a while, it is — many systems operate successfully this way.
+
+The difficulty emerges later, because sticky sessions create a hidden dependency between users and infrastructure. Server A is no longer interchangeable with Server B; requests become tied to specific machines. The architecture begins losing one of the most valuable properties in distributed systems: replaceability.
+
+<Tradeoff
+  gain="Instant local memory lookups with no coordination overhead — the simplest model to reason about."
+  cost="Server A and Server B stop being interchangeable. Requests become tied to specific machines, rolling deployments become disruptive, and a server failure drops every active session pinned to it."
+/>
+
+---
+
+## The Fallacy of Stateful Compute
+
+Cloud infrastructure introduced a radically different idea: application instances should be disposable. A server should be able to disappear at any moment, a container should be replaceable, a runtime should be restartable — none of these actions should affect users.
+
+<Callout type="constraint">
+  This philosophy becomes impossible when application state lives inside the runtime itself. The moment a server owns state, the server becomes special. Special infrastructure is difficult infrastructure, and difficult infrastructure rarely scales elegantly.
+</Callout>
+
+---
+
+## Horizontal Scaling Changes Everything
+
+When architects talk about horizontal scaling, they often focus on capacity: more servers, more requests, more throughput. But horizontal scaling is really about independence. Every application instance should be capable of serving every request. That requires a simple rule:
+
+> No application instance should own information that other instances require.
+
+The runtime executes. The runtime processes. The runtime responds. The runtime forgets. State lives elsewhere.
+
+---
+
+## State Becomes Infrastructure
+
+Modern systems eventually arrive at the same architecture. Instead of:
+
+```text
+Application
+     ↓
+Session State
+```
+
+they evolve toward:
+
+```text
+Application
+     ↓
+Shared State Layer
+```
+
+This layer may be Redis, PostgreSQL, DynamoDB, distributed caches, object storage, or session stores. The technology matters less than the principle.
+
+<Decision n={1} status="accepted">
+  State becomes an infrastructure concern rather than an application concern. Applications consume state — they do not own it. Session and cache data move out of the runtime and into a shared layer so that any instance can serve any request.
+</Decision>
+
+---
+
+## Why Historical Systems Make This Worse
+
+The challenge becomes even more significant when we connect it back to the previous article. That article introduced temporal systems: historical records, versioned entities, append-only timelines. These systems naturally accumulate far more data than current-state systems.
+
+Imagine attempting to keep portions of that information inside application memory. The result is predictable: memory consumption grows, synchronization complexity grows, recovery becomes difficult, and horizontal scaling becomes fragile. The larger the historical dataset becomes, the more dangerous stateful runtimes become. The architecture begins fighting itself.
+
+---
+
+## Failure Recovery Reveals the Truth
+
+One of the simplest ways to evaluate an architecture is through a thought experiment. Ask: what happens if this server disappears right now?
+
+In a stateless architecture, the answer is usually boring. Another instance takes over, traffic continues, and users remain unaware. In a stateful architecture, the answer becomes complicated: sessions disappear, caches vanish, and user context is lost. Recovery becomes a restoration exercise.
+
+<Observation n={2}>
+  This distinction reveals an uncomfortable truth: many systems appear scalable until the first failure occurs.
+</Observation>
+
+---
+
+## The Cloud's Most Important Lesson
+
+Cloud computing is often described through virtualization, containers, orchestration, and managed services. Those are implementation details. The deeper lesson is architectural: compute became temporary, and state remained permanent.
+
+Modern infrastructure succeeds because these concerns are separated. Applications can be replaced; state persists. Applications can scale; state remains consistent. Applications can fail; state survives. This separation unlocked the elasticity that defines contemporary platforms.
+
+---
+
+## A More Important Lesson
+
+This article is not really about sessions. Nor is it about cookies. It is about ownership.
+
+Earlier in this series we argued that dashboards should not own business logic, operational systems should not own analytical definitions, and dependencies should not own system stability. Now we arrive at another separation: application runtimes should not own state.
+
+<Callout type="important">
+  Every time a component becomes responsible for something beyond its intended role, complexity accumulates. State inside runtimes appears convenient — until scale arrives. Then convenience becomes a constraint.
+</Callout>
+
+---
+
+## Looking Ahead
+
+So far, this series has explored how systems accumulate complexity through data, infrastructure, dependencies, memory, and state. Next we return to the data layer once again, because even when architectures become properly distributed, another invisible cost remains: moving data. Serialization. Network transport. Execution boundaries.
+
+The industry spent decades optimizing storage and computation. Increasingly, the bottleneck is neither. The bottleneck is the cost of moving information between them — continue to **[The Hidden Cost of Moving Data](../data/cost-of-moving-data)**.
+
+---
+
+*Next in Track 02: **[The 4-Tuple Limit](the-four-tuple)**.*

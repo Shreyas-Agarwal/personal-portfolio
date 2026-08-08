@@ -1,0 +1,96 @@
+---
+title: "Dimensions Are Compression Algorithms for Reality"
+description: "Dimensional models compress complexity into analytical structures. On a scale that turned the entire chaos of wind into thirteen numbers a sailor could act on without any instrument at all."
+date: "TBD"
+readingTime: "13 min"
+series: "Physics of Information Systems"
+track: "Computation"
+monograph: "Models"
+order: 1
+coreQuestion: "What does a model actually do when it reduces a continuous, multidimensional reality to a small number of chosen dimensions?"
+---
+
+In 1805, the Royal Navy officer Francis Beaufort devised a scale for describing wind conditions at sea that, in its essential structure, is still in use today. Wind, as a physical phenomenon, is bewilderingly continuous and multidimensional — speed varying moment to moment, gustiness layered on top of a baseline, direction shifting, its effect on the sea's surface compounding all of these in ways no single number could ever fully capture. Beaufort's scale reduced all of this to thirteen discrete categories, numbered 0 through 12, and — critically — anchored each category not to an instrument reading, which most ships of the era didn't reliably have, but to a directly observable effect: force 3 is "smoke rises vertically," roughly; force 6 is "large branches move, umbrellas used with difficulty"; force 10 is "trees uprooted, considerable structural damage." A sailor with no anemometer could still assign an accurate Beaufort number simply by looking at smoke, trees, or the sea's surface, and instantly communicate a genuinely useful, comparable description of conditions to anyone else who understood the same scale.
+
+**This is dimensional compression doing exactly the job this chapter's title describes: an enormously complex, continuous physical reality — wind, in its full richness — reduced to a small, finite set of chosen categories, each one discarding almost everything about the underlying phenomenon except the handful of dimensions that actually mattered for the decision the scale needed to support.** Beaufort didn't need to capture wind's full continuous complexity to make his scale useful. He needed exactly enough dimensions to let a sailor decide whether to shorten sail, and not one dimension more — extra precision would have cost more effort to observe and communicated no additional decision-relevant information.
+
+<Callout type="architectural-tension">
+A dimensional model is not a smaller, cruder version of reality, apologizing for what it left out. It is a deliberate compression, built around a specific decision the model needs to support, discarding everything not relevant to that decision on purpose — the same way Beaufort's thirteen categories threw away the vast majority of wind's actual physical complexity in exchange for something a sailor could read at a glance and act on immediately.
+</Callout>
+
+## What determines which dimensions survive
+
+It's worth asking what actually decided which handful of wind's properties made it into Beaufort's scale and which didn't. Wind has dozens of measurable properties — instantaneous speed, sustained speed, gust frequency, vertical component, temperature interaction — and Beaufort's scale captures essentially none of these directly. What it captures is wind's *observable effect on things a sailor already cares about*: sail-handling difficulty, structural risk, sea state. This is the general mechanism underneath every successful dimensional model, not just Beaufort's: the dimensions chosen for the model aren't the properties easiest to measure, or even the most scientifically complete description of the phenomenon. They're whichever properties turn out to be the most efficient predictors of the outcome the model actually needs to inform.
+
+This selection problem — which dimensions to keep, and how many — has a precise, formal answer in statistics, arrived at through a discipline called [regression](#regression): fitting a simplified mathematical relationship between a set of chosen input dimensions and an outcome of interest, in a way that captures as much of the outcome's real variation as possible using as few dimensions as the data will honestly support. A regression model built to predict, say, sail damage risk from wind conditions would very likely converge on something close to Beaufort's own intuition — that a handful of key variables carry almost all of the predictive weight, and the rest is close enough to noise that including it barely improves the prediction while making the model considerably harder to use.
+
+## Deciding when adding another dimension stops helping
+
+This raises an important, formal question Beaufort solved by intuition and generations of engineering practice since have solved mathematically: how do you know when you've included enough dimensions, and adding more would cost more in complexity than it buys in accuracy? [Information criteria](#aic-bic) — specifically the Akaike Information Criterion and the Bayesian Information Criterion, commonly abbreviated AIC and BIC — are formal tools built to answer exactly this question. Both work by scoring a model on a tradeoff between how well it fits the data it was built from and how many dimensions or parameters it needed to achieve that fit, explicitly penalizing models that add complexity without a proportionate gain in explanatory power. A fourteenth Beaufort category, capturing some genuinely real but vanishingly rare distinction in wind behavior, would very likely fail exactly this test: technically more accurate in a narrow edge case, at a cost, in everyday usability, that isn't remotely worth paying for such a small gain.
+
+<Callout type="unresolved">
+There is no dimensional model that captures a phenomenon completely — every one of them, without exception, is a deliberate trade of completeness for usability. The right question is never "does this model capture everything," because none of them do. The right question is whether the dimensions it kept are the ones that actually mattered for the decision it exists to support.
+</Callout>
+
+## Why compression is the right word, not simplification
+
+It's worth being precise about the distinction the chapter's title is drawing, because "simplification" implies something was made cruder without necessarily being made more useful, while "compression" implies something was made smaller in a way that specifically preserves what matters most for a given purpose — closer to how a compressed audio file discards inaudible detail while preserving what a human ear can actually perceive, rather than simply degrading the recording uniformly. Beaufort's scale is compression in exactly this second sense: the thirteen categories aren't a lower-resolution version of wind's true complexity in some neutral, uniform way. They're a resolution chosen specifically around what a sailor needs to act on, throwing away detail that a sailor's decision doesn't depend on and keeping detail that it does — the same discriminating, purpose-driven discarding this series has already examined once, in an entirely different context, when it looked at how a wavelet transform chooses which scale of detail to preserve and which to compress away.
+
+This raises the question the rest of this monograph exists to pursue in increasing depth. If every dimensional model, done well, is a deliberate act of purpose-driven compression rather than a neutral, uniform simplification — what, exactly, is lost in that compression, and is the loss always as harmless as Beaufort's scale makes it look? That question has an old, familiar shape in this series already, and it's worth revisiting it directly, now that a full monograph's worth of state, history, memory, and context stands behind the reader to make the harder version of the argument land the way it should.
+
+<Figure n={1} title="The Beaufort Scale's Chosen Dimensions" caption="None of these entries name an instrument reading. Every one names an effect a sailor could see — the scale's entire thirteen categories are built around the dimension that mattered for the decision, not the dimension that was easiest to measure.">
+
+| Force | Observable effect | What it's discarding |
+| --- | --- | --- |
+| 0 | Sea like a mirror | Wind's exact speed, direction, gust structure |
+| 3 | Smoke rises vertically, leaves rustle | Exact wind speed within the band |
+| 6 | Large branches move, umbrellas used with difficulty | Gust frequency, vertical component |
+| 10 | Trees uprooted, considerable structural damage | Every finer distinction above the threshold that matters for sail-handling |
+
+</Figure>
+
+<FormalNote>
+<a id="regression"></a>
+**Regression.** Fitting a model of the form $\hat{y} = \beta_0 + \beta_1 x_1 + \cdots + \beta_k x_k$
+means choosing coefficients $\beta$ to minimize the total squared gap between what the model predicts
+and what actually happened, across every historical case available:
+
+$$\hat{\beta} = \arg\min_{\beta} \sum_i \left(y_i - X_i \beta\right)^2$$
+
+For ordinary least squares this has a closed form, $\hat{\beta} = (X^{\top}X)^{-1}X^{\top}y$ — no
+search required, just linear algebra. What this buys, concretely: instead of guessing which of wind's
+dozens of measurable properties matter, regression finds the specific weighted combination of
+whichever dimensions are actually offered to it that best predicts the outcome, and — just as
+importantly — reveals which candidate dimensions turn out to carry a coefficient close to zero,
+meaning they were barely helping at all.
+
+<a id="aic-bic"></a>
+**AIC and BIC.** Regression will always fit the training data at least as well with more dimensions
+added, even when those dimensions are pure noise — a fact information criteria exist specifically to
+correct for, by penalizing dimension count directly:
+
+$$\text{AIC} = 2k - 2\ln(\hat{L}), \qquad \text{BIC} = k\ln(n) - 2\ln(\hat{L})$$
+
+where $k$ is the number of dimensions (parameters), $n$ the number of observations, and $\hat{L}$ the
+model's best achievable likelihood given the data. Both reward a better fit ($\ln \hat{L}$ growing)
+and punish complexity ($k$ growing); the difference between them is *how hard* they punish it —
+BIC's penalty grows with $\ln(n)$, so as more data accumulates it demands increasingly strong
+justification for every added dimension, while AIC's penalty stays fixed at $2k$ regardless of $n$.
+In practice this means AIC tends to favor whichever model predicts new data best, while BIC tends to
+favor whichever model is closest to the smallest true structure — the fourteenth Beaufort category
+would need to earn a large jump in $\ln \hat{L}$ to survive either penalty, and the chapter's intuition
+is that it wouldn't.
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+This chapter's wavelet reference points back to
+[Signal Loss Is Permanent](../../reality/signals/signal-loss-is-permanent), where a wavelet transform
+was the tool choosing which scale of detail to preserve under a fixed acquisition budget — the same
+discriminating, purpose-built discarding this chapter names for dimensions instead of time. The next
+chapter, [The Map Is Not the Territory](./the-map-is-not-the-territory), returns to
+[The Territory Exists Before the Map](../../reality/reality/territory-exists-before-map) to make the
+harder, deliberate version of that argument, using [regression](#regression)'s own selection problem
+as its starting point.
+</Callout>

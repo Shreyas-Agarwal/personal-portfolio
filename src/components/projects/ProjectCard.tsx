@@ -11,7 +11,7 @@ interface ProjectCardProps {
 export function ProjectCard({ project, index }: ProjectCardProps) {
   return (
     <Link
-      href={`/projects/${project.id}`}
+      href={`/works/${project.id}`}
       className="group relative flex flex-col overflow-hidden rounded-none border border-white/[0.08] bg-zinc-900/40 backdrop-blur-md transition-all duration-300 hover:border-white/[0.18] hover:bg-zinc-900/60"
     >
       {/* Index label */}

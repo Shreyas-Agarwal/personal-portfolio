@@ -1,0 +1,135 @@
+{
+  "id": "architecture-of-information-systems",
+  "type": "research-series",
+  "title": "Architecture of Information Systems",
+  "subtitle": "Engineering principles on data modeling, state boundaries, operational vs analytical schemas, and infrastructure dynamics.",
+  "abstract": "A multi-part publication exploring how information moves, transforms, and persists in production software systems — from normalized OLTP schemas and medallion architectures to connection pool memory leaks and 4-tuple TCP limits.",
+  "date": "2026-07-01",
+  "program": "Data & Information Systems",
+  "author": "Shreyas Agarwal",
+  "revision": "Revision 02",
+  "domains": ["Data Infrastructure", "Systems Architecture", "Infrastructure Engineering"],
+  "sections": [
+    {
+      "id": "index",
+      "title": "Overview",
+      "href": ""
+    },
+    {
+      "id": "data-track",
+      "title": "Data Architecture",
+      "group": "Data Architecture",
+      "href": "data/overview",
+      "children": [
+        {
+          "id": "oltp-vs-olap",
+          "title": "Operational vs Analytical Schemas",
+          "href": "data/oltp-vs-olap"
+        },
+        {
+          "id": "canonical-business-model",
+          "title": "Canonical Data Models",
+          "href": "data/canonical-business-model"
+        },
+        {
+          "id": "generic-relationship-cost",
+          "title": "Cost of Generic Relationships",
+          "href": "data/generic-relationship-cost"
+        },
+        {
+          "id": "history-as-feature",
+          "title": "History as a First-Class Feature",
+          "href": "data/history-as-feature"
+        },
+        {
+          "id": "cost-of-moving-data",
+          "title": "The Hidden Cost of Moving Data",
+          "href": "data/cost-of-moving-data"
+        },
+        {
+          "id": "random-uuids",
+          "title": "Cost of Random UUID Keys",
+          "href": "data/random-uuids"
+        },
+        {
+          "id": "dashboard-first-anti-pattern",
+          "title": "The Dashboard-First Anti-Pattern",
+          "href": "data/dashboard-first-anti-pattern"
+        },
+        {
+          "id": "modern-analytical-transport",
+          "title": "Arrow, ADBC & the Death of ODBC",
+          "href": "data/modern-analytical-transport"
+        },
+        {
+          "id": "spatial-intelligence",
+          "title": "Spatial Intelligence: Maps Are Not Tables",
+          "href": "data/spatial-intelligence"
+        },
+        {
+          "id": "analytics-maturity-curve",
+          "title": "The Analytics Platform Maturity Curve",
+          "href": "data/analytics-maturity-curve"
+        }
+      ]
+    },
+    {
+      "id": "infra-track",
+      "title": "Infrastructure Systems",
+      "group": "Infrastructure Systems",
+      "href": "infrastructure/overview",
+      "children": [
+        {
+          "id": "application-is-not-system",
+          "title": "Application Code Is Not the System",
+          "href": "infrastructure/application-is-not-system"
+        },
+        {
+          "id": "dependency-bleed",
+          "title": "Dependency Bleed",
+          "href": "infrastructure/dependency-bleed"
+        },
+        {
+          "id": "modern-memory-leak",
+          "title": "Modern Memory Leaks",
+          "href": "infrastructure/modern-memory-leak"
+        },
+        {
+          "id": "session-state-has-a-cost",
+          "title": "Session State Costs",
+          "href": "infrastructure/session-state-has-a-cost"
+        },
+        {
+          "id": "the-four-tuple",
+          "title": "The 4-Tuple Limit",
+          "href": "infrastructure/the-four-tuple"
+        },
+        {
+          "id": "the-reverse-proxy",
+          "title": "The Reverse Proxy Gateway",
+          "href": "infrastructure/the-reverse-proxy"
+        },
+        {
+          "id": "gateway-backpressure",
+          "title": "Backpressure & Graceful Degradation",
+          "href": "infrastructure/gateway-backpressure"
+        },
+        {
+          "id": "caches-are-harder-than-databases",
+          "title": "Caches Are Far Harder Than Databases",
+          "href": "infrastructure/caches-are-harder-than-databases"
+        },
+        {
+          "id": "unconditional-recovery",
+          "title": "Designing for Unconditional Recovery",
+          "href": "infrastructure/unconditional-recovery"
+        },
+        {
+          "id": "stability-is-a-core-constraint",
+          "title": "Stability Is a Core Constraint, Not a Post-Script",
+          "href": "infrastructure/stability-is-a-core-constraint"
+        }
+      ]
+    }
+  ]
+}

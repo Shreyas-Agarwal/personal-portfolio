@@ -1,0 +1,99 @@
+---
+title: "0001 — Native Change Detection vs. Date-Based Sync"
+description: "Why date-windowed synchronization is structurally incorrect for a source system with independent transaction-date and modification-date semantics."
+date: 2026-08-01
+readingTime: 6 min
+---
+
+# Native Change Detection vs. Date-Based Synchronization
+
+<Callout type="note">
+  This case study uses a commercial desktop accounting platform as its motivating example. The principles below apply to any source system exposing a monotonically increasing internal change identifier.
+</Callout>
+
+## Context
+
+The existing implementation determines what to extract using **transaction-date windows**: a register-style report is queried with date-range bounds, chunked into fixed-size windows (in the observed system, seven days) anchored to the source system's fiscal-year start.
+
+A refresh-window calculation determines how far back into already-extracted windows a run will re-query — typically the first day of the current period, extended by a configurable grace window after period rollover. Windows outside this refresh range are considered final: their extracted artifact is treated as complete once it exists, and is never re-queried except by an explicit full re-extraction.
+
+This is a **transaction-date-based** synchronization model: it assumes a record's relevance to a given sync run is determined by when the transaction is dated, not by when the underlying record was last modified.
+
+## Problem
+
+A record's **transaction date** and its **last-modified date** are independent properties in many source systems of this kind. The observed source system permits editing or cancelling a record dated arbitrarily far in the past, without changing that record's transaction date — only its own internal modification state changes.
+
+<Observation n={1}>
+  Given a synchronization model keyed on transaction date, a correction made today to a record dated outside the current refresh window is invisible to the next scheduled run.
+</Observation>
+
+Concretely, under the observed grace-window configuration:
+
+1. A record dated early in the fiscal year receives a correction months later.
+2. The current run's refresh window covers only the current period — not the period the record is dated in.
+3. That earlier period's already-extracted artifact exists on disk and is assumed complete.
+4. The correction is not re-extracted or uploaded until an operator manually invokes a full re-extraction of the entire fiscal year.
+
+<Callout type="warning">
+  **Engineering Consequence:** This is a correctness defect with an unbounded and silent staleness window. In the worst case, the true staleness period is bounded only by the length of the fiscal year itself, with no mechanism in the design that surfaces this gap.
+</Callout>
+
+The only remediation available is a full resync, which re-extracts every record in the fiscal year regardless of whether it changed.
+
+- **It does not scale with fiscal year size.** The cost of correcting one stale record is identical to the cost of a from-scratch extraction of the entire annual history.
+- **It is not self-healing.** Detecting that a full resync is needed depends on a human noticing a downstream data discrepancy.
+
+## Decision
+
+<Decision n={1} status="accepted">
+  Replace transaction-date-scoped extraction with **change-token-based detection**, using the source system's internal, monotonically increasing alteration counter as the sole determinant of what has changed since the last successful synchronization.
+</Decision>
+
+### Mechanism
+
+Every object in the source system's company data file carries a change-token value: an integer drawn from a single, monotonically increasing counter maintained per company. Any create, edit, or cancel operation advances this counter and stamps the affected object.
+
+```typescript filename="change-token-query.ts"
+interface ChangeTokenFilter {
+  companyId: string;
+  /** Extract all objects modified strictly after this watermark */
+  sinceChangeToken: number;
+}
+```
+
+### Handling of Cancellations and Deletions
+
+The source system sets a cancellation flag on the existing object when cancelled, which advances the change token like any other alteration. A cancelled record surfaces naturally in the next incremental query — no separate deletion-detection mechanism is required.
+
+### Non-Incrementable Collections
+
+Certain reports (aggregate financial statements, point-in-time summaries) are computed at query time from underlying records and have no change token.
+
+| Category | Sync Model | Examples |
+| :--- | :--- | :--- |
+| **Stored, alterable objects** | Change-token-filtered incremental extraction | Transactional records, ledgers, groups, stock/inventory items, type definitions |
+| **Computed reports** | Full periodic snapshot | Aggregate financial statements, point-in-time summaries, receivables/payables |
+
+## Consequences
+
+<Tradeoff
+  gain="Staleness is bounded by run frequency (minutes/hours), not fiscal year length. Remediation cost for a single stale record is proportional to that record alone."
+  cost="Server must persist a watermark per company data file. Returned lower watermarks require anomaly handling for backup restores."
+/>
+
+- **Staleness from a backdated correction is bounded by how often the agent runs**, not by fiscal year length.
+- **A single watermark model applies uniformly across record types**, eliminating duplicate date-windowing logic.
+- **Remediation cost for a single stale record is proportional to that one record.**
+- **Missed or delayed synchronization runs carry only a latency cost, never a correctness cost.**
+
+## Alternatives Considered
+
+1. **Retain date windowing with widened grace windows.** *Rejected:* Narrows the observable frequency of the defect without addressing its root cause.
+2. **Full resync of the entire company on every run.** *Rejected:* Does not scale with record volume and reintroduces serialization overhead.
+3. **Change-token-based incremental extraction.** *Accepted:* Eliminates silent staleness and scales proportionally.
+
+## Open Questions & Future Work
+
+- Confirm empirically the payload-size difference between a change-token filter matching 0 items versus 10,000 items.
+- Confirm specific backup/restore operations that can cause non-monotonic change-token resets.
+- Define the server-side catalog schema distinguishing incremental vs. snapshot collection types.

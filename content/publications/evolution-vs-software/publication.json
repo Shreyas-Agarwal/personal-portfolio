@@ -1,0 +1,21 @@
+{
+  "id": "evolution-vs-software",
+  "type": "essay",
+  "title": "Evolution vs Software",
+  "subtitle": "Why biological systems adapt while software systems decay.",
+  "abstract": "Examining why software architectures suffer from entropy and tech debt, whereas biological evolution uses mutation and natural selection to continuously harden complex systems.",
+  "volume": "Volume I",
+  "revision": "Revision 01",
+  "date": "2026-05-18",
+  "program": "Complex Systems",
+  "author": "Shreyas Agarwal",
+  "domains": ["Systems Engineering", "Software Architecture", "Evolutionary Dynamics"],
+  "status": "published",
+  "sections": [
+    {
+      "id": "index",
+      "title": "Evolution vs Software",
+      "href": ""
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "transformer-vs-qubit",
+  "type": "essay",
+  "title": "Transformers vs Qubits",
+  "subtitle": "Comparative analysis of classical neural attention vs. quantum superposition.",
+  "abstract": "Evaluating the computational physics of transformer attention mechanisms alongside quantum superposition algorithms for complex optimization workloads.",
+  "volume": "Volume I",
+  "revision": "Revision 01",
+  "date": "2026-02-14",
+  "program": "AI & Computation",
+  "author": "Shreyas Agarwal",
+  "domains": ["Quantum Computing", "Machine Learning", "Theoretical Computer Science"],
+  "status": "published",
+  "sections": [
+    {
+      "id": "index",
+      "title": "Transformers vs Qubits",
+      "href": ""
+    }
+  ]
+}

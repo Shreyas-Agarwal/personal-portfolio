@@ -462,7 +462,7 @@ function DiagramWhatsApp() {
       </text>
       <Edge x1={94} y1={107} x2={100} y2={107} dashed color="rgba(248,113,113,0.3)" />
 
-          {/* Secure server call */}
+      {/* Secure server call */}
       <Arrow x1={50} y1={117} x2={50} y2={127} />
       <Node x={50} y={125} label="Secure API Call" w={60} />
       <Arrow x1={50} y1={135} x2={50} y2={145} />

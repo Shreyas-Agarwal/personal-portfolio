@@ -1,0 +1,165 @@
+---
+title: "03 — Technical Specification: Semantic Metadata Registry"
+description: "Technical specification for thin-projection analytics ontologies and registry schemas."
+date: 2026-08-04
+readingTime: 12 min
+---
+
+# Semantic Metadata Registry — Technical Specification
+
+<Callout type="important">
+  **Hard Prerequisite:** No Gold-level table gets authored until the full schema in §5 is finalized. Gold tables are downstream of every registry and projection in this document. Schema first, Gold tables second.
+</Callout>
+
+## 1. The Core Tension & Fix
+
+Three fundamental failure modes occur when a single monolithic schema serves every consumer:
+
+<Process>
+  <Step n={1} title="Authoring Pain">
+    Too many required fields per column when trying to satisfy every downstream consumer at once.
+  </Step>
+  <Step n={2} title="Context Overload">
+    Full objects are shipped to LLM prompts and APIs, exceeding token limits and bloating latencies.
+  </Step>
+  <Step n={3} title="Rigidity & Coupling">
+    Authoring schema == Runtime payload. A column rename breaks five separate consumer integrations.
+  </Step>
+</Process>
+
+<Decision n={1} status="accepted">
+  **The Core Architectural Fix:** Author a rich ontology once in a stable storage format, then compile thin, purpose-built projections (Prompt View, Planner View, Resolver View, Tool Registry) for each consumer instead of shipping raw objects anywhere.
+</Decision>
+
+---
+
+## 2. Entity-First, Not Column-First
+
+Analytics is about a dataset made of tables, relationships, entities, measures, dimensions, and hierarchies. Columns are temporary physical representations.
+
+```typescript filename="entity-mapping-spine.ts"
+// Separation of Concept (what it means) from Mapping (where it lives)
+interface SemanticEntity {
+  semanticId: string;
+  semantic: "measure" | "dimension" | "entity" | "date" | "currency" | "category" | "hierarchy";
+  entityType?: "customer" | "vendor" | "product" | "order" | "invoice";
+  businessMeaning: string; // e.g. "finance.revenue"
+  synonyms: string[];
+  description: string;
+}
+
+interface ColumnMapping {
+  semanticEntityRef: string; // References SemanticEntity.semanticId
+  tableId: string;
+  columnName: string;
+  dataType: "string" | "integer" | "decimal" | "boolean" | "datetime";
+  isCanonicalSource: boolean;
+  capabilities: CapabilityMetadata;
+}
+```
+
+A schema migration or column rename creates a new `ColumnMapping` pointing to the existing `SemanticEntity` — zero ripple effects through downstream prompts or query planners.
+
+---
+
+## 3. The Four Registries
+
+The ontology splits into four peer registries based on lifecycle and ownership:
+
+| Registry | Contains | Change Frequency | Ownership |
+| :--- | :--- | :--- | :--- |
+| **Semantic Registry** | `SemanticEntity` + `ColumnMapping` definitions | Rarely (data model changes) | Platform Team (CI-gated) |
+| **Relationship Registry** | Table definitions, joins, cardinality, chasm-trap rules | Rarely (schema migrations) | Platform Team (CI-gated) |
+| **Entity Registry** | Aliases, fuzzy match rules, embeddings | Continuously (new vendors/typos) | Semi-automated pipeline |
+| **Statistics Registry** | Min/max, null %, top values, sample data | Automated refresh cycle | Automated pipeline |
+
+---
+
+## 4. Authoring Shape: SemanticEntity & ColumnMapping
+
+```typescript filename="semantic-registry-schema.ts"
+export type SemanticKind =
+  | "measure"
+  | "dimension"
+  | "entity"
+  | "date"
+  | "datetime"
+  | "currency"
+  | "category"
+  | "identifier"
+  | "hierarchy";
+
+export interface CapabilityMetadata {
+  supportedAggregations: Array<"sum" | "avg" | "min" | "max" | "count" | "cardinality">;
+  searchable: boolean;
+  supportsRange: boolean;
+  supportsAliases: boolean;
+  filterPriority?: number;
+}
+```
+
+---
+
+## 5. Keyword Reference & Derivation Rules
+
+### Capability Derivation Matrix
+
+Capabilities are derived automatically from `SemanticEntity.semantic` by default, eliminating manual authoring overhead:
+
+| `semantic` | Aggregations | `supportsRange` | `groupable` | `searchable` |
+| :--- | :--- | :--- | :--- | :--- |
+| `measure` | Required (`sum`, `avg`, `min`, `max`) | Yes | Rare | No |
+| `dimension` | None | Rare | Yes | Yes |
+| `entity` | None | No | Yes | Yes (`supportsAliases: true`) |
+| `date` / `datetime` | `min`, `max`, `count` | Yes | Yes | Limited |
+| `currency` | Treated as measure | Yes | Rare | No |
+
+---
+
+## 6. Tool Registry: Automatic Codegen
+
+Tools are auto-generated from the Semantic Registry based on concept capabilities. A concept with `groupable: true` automatically emits a `groupBy` tool.
+
+<Process>
+  <Step n={1} title="Discover">
+    Agent passes natural-language intent to Tool Registry (`discover(intent, entityType?)`); receives minified tool candidates.
+  </Step>
+  <Step n={2} title="Bind">
+    Agent requests full input schema for the chosen tool (`bind(toolName)`).
+  </Step>
+  <Step n={3} title="Invoke">
+    Agent executes tool with validated arguments (`invoke(toolName, args)`).
+  </Step>
+</Process>
+
+---
+
+## 7. Projection Pipeline & Query Planner
+
+```typescript filename="planner-view.ts"
+// Planner View — structural slice consumed by Query Planner & Shared Runtime
+interface PlannerView {
+  semanticId: string;
+  table: string;
+  column: string;
+  dataType: string;
+  defaultAggregation?: string;
+  joinPathToCanonical: string[];
+}
+```
+
+<Observation n={1}>
+  **Runtime Discipline:** A user query first narrows to relevant concepts using vector embeddings. Only those shortlisted entities are serialized into the Prompt View. The full table schema is **never** dumped into an LLM prompt.
+</Observation>
+
+---
+
+## 8. Versioning & Session Isolation
+
+- **Independent Layer Versioning:** `semanticModelVersion` (Semantic + Relationship), `registryVersion` (Entity / Statistics), and `projectionVersion` evolve independently to prevent global cache invalidation.
+- **Strict Session Isolation:** Multi-tenant concurrent sessions are strictly isolated. Session state (conversation history, resolved entity caches) lives 100% outside the stateless read-only registries.
+
+<Tradeoff
+  gain="Zero cross-tenant context leaks. Highly cached, high-throughput projection lookups."
+  cost="Requires explicit sessionId passing across all resolution pipelines."
+/>

@@ -2,6 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import type { MetadataRoute } from "next";
 import { projects } from "@/data/projects";
+import { getAllFieldNotes } from "@/lib/field-notes/loader";
+import { getAllArticles, getAllPublications } from "@/lib/publication/loader";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://agarwal.systems";
@@ -11,8 +13,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "",
     "/about",
     "/systems",
-    "/projects",
-    "/journal",
+    "/works",
+    "/works/publications",
+    "/writing",
+    "/writing/articles",
+    "/writing/field-notes",
     "/systems/workflow-architecture",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
@@ -25,72 +30,80 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const docsDir = path.join(process.cwd(), "content/docs");
   const docRoutes = fs.existsSync(docsDir)
     ? fs
-      .readdirSync(docsDir)
-      .filter((file) => file.endsWith(".md"))
-      .map((file) => {
-        const slug = file.replace(/\.md$/, "");
-        const filePath = path.join(docsDir, file);
-        const stats = fs.statSync(filePath);
-        return {
-          url: `${baseUrl}/systems/${slug}`,
-          lastModified: stats.mtime,
-          changeFrequency: "monthly" as const,
-          priority: 0.7,
-        };
-      })
+        .readdirSync(docsDir)
+        .filter((file) => file.endsWith(".md"))
+        .map((file) => {
+          const slug = file.replace(/\.md$/, "");
+          const filePath = path.join(docsDir, file);
+          const stats = fs.statSync(filePath);
+          return {
+            url: `${baseUrl}/systems/${slug}`,
+            lastModified: stats.mtime,
+            changeFrequency: "monthly" as const,
+            priority: 0.7,
+          };
+        })
     : [];
 
   // Dynamic ADRs (/systems/adr/[slug])
   const adrDir = path.join(process.cwd(), "content/adr");
   const adrRoutes = fs.existsSync(adrDir)
     ? fs
-      .readdirSync(adrDir)
-      .filter((file) => file.endsWith(".md"))
-      .map((file) => {
-        const slug = file.replace(/\.md$/, "");
-        const filePath = path.join(adrDir, file);
-        const stats = fs.statSync(filePath);
-        return {
-          url: `${baseUrl}/systems/adr/${slug}`,
-          lastModified: stats.mtime,
-          changeFrequency: "monthly" as const,
-          priority: 0.6,
-        };
-      })
+        .readdirSync(adrDir)
+        .filter((file) => file.endsWith(".md"))
+        .map((file) => {
+          const slug = file.replace(/\.md$/, "");
+          const filePath = path.join(adrDir, file);
+          const stats = fs.statSync(filePath);
+          return {
+            url: `${baseUrl}/systems/adr/${slug}`,
+            lastModified: stats.mtime,
+            changeFrequency: "monthly" as const,
+            priority: 0.6,
+          };
+        })
     : [];
 
-  // Dynamic journal entries (/journal/[slug])
-  const journalDir = path.join(process.cwd(), "content/journal");
-  const journalRoutes = fs.existsSync(journalDir)
-    ? fs
-      .readdirSync(journalDir)
-      .filter((file) => file.endsWith(".md"))
-      .map((file) => {
-        const slug = file.replace(/\.md$/, "");
-        const filePath = path.join(journalDir, file);
-        const stats = fs.statSync(filePath);
-        return {
-          url: `${baseUrl}/journal/${slug}`,
-          lastModified: stats.mtime,
-          changeFrequency: "monthly" as const,
-          priority: 0.7,
-        };
-      })
-    : [];
+  // Dynamic publications (/works/publications/[id])
+  const publicationRoutes = getAllPublications().map((pub) => ({
+    url: `${baseUrl}/works/publications/${pub.id}`,
+    lastModified: new Date(pub.date),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
 
-  // Dynamic project/case studies (/projects/[id])
+  // Dynamic project/case studies (/works/[id])
   const projectRoutes = projects.map((project) => ({
-    url: `${baseUrl}/projects/${project.id}`,
+    url: `${baseUrl}/works/${project.id}`,
     lastModified: new Date(), // These are defined in code/data
     changeFrequency: "monthly" as const,
     priority: 0.7,
+  }));
+
+  // Dynamic individual articles — each chapter within a series
+  // (/works/publications/[id]/[...slug])
+  const articleRoutes = getAllArticles().map((article) => ({
+    url: `${baseUrl}${article.url}`,
+    lastModified: new Date(article.date),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  // Dynamic field notes (/writing/field-notes/[slug])
+  const fieldNoteRoutes = getAllFieldNotes().map((note) => ({
+    url: `${baseUrl}/writing/field-notes/${note.slug}`,
+    lastModified: new Date(note.date),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
   }));
 
   return [
     ...staticRoutes,
     ...docRoutes,
     ...adrRoutes,
-    ...journalRoutes,
+    ...publicationRoutes,
+    ...articleRoutes,
+    ...fieldNoteRoutes,
     ...projectRoutes,
   ];
 }

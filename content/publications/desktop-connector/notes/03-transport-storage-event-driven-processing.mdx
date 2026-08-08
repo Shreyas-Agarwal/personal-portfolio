@@ -1,0 +1,90 @@
+---
+title: "0003 — Transport, Storage, & Event-Driven Processing"
+description: "Direct-to-object-storage streaming via presigned URLs and server-verified completion."
+date: 2026-08-01
+readingTime: 6 min
+---
+
+# Transport, Storage, & Event-Driven Processing
+
+<Callout type="note">
+  **Scope:** Specifies how extracted data physically moves from the desktop agent to the platform's storage and processing layer, how upload completion is verified, and how downstream processing is triggered.
+</Callout>
+
+## Context
+
+The existing implementation streams each extracted artifact into an intermediate document collaboration platform via vendor APIs. A manifest file summarizing extracted records is uploaded last as a completion signal.
+
+Downstream data processing does not run against the document repository directly. It requires retrieving data from that intermediate location into object storage before transformation begins.
+
+<Observation n={1}>
+  The intermediate document-repository hop creates an unnecessary extra transport stage:
+  
+  `Source System → Desktop Agent → Document Repository → Retrieval Step → Object Storage → Data Pipeline`
+  
+  This introduces a second identity/credential surface, increases latency and failure surface, and creates undetectable retrieval gaps.
+</Observation>
+
+## Decision
+
+<Decision n={1} status="accepted">
+  Stream extracted data directly from the desktop agent to object storage using short-lived presigned `PUT` URLs issued by the platform server per job.
+</Decision>
+
+```typescript filename="presigned-upload-flow.ts"
+interface JobDescriptor {
+  jobId: string;
+  collectionName: string;
+  /** Short-lived presigned PUT URL issued specifically for this object key */
+  uploadUrl: string;
+  /** Expected SHA-256 checksum after streaming */
+  checksumAlgorithm: "sha256";
+}
+```
+
+<Process>
+  <Step n={1} title="Authenticate & Fetch Plan">
+    Desktop agent authenticates via Ed25519 signed request; receives job list with presigned `PUT` URLs.
+  </Step>
+  <Step n={2} title="Extract & Stream Payload">
+    Agent queries local source application and streams HTTP response body directly to presigned `PUT` URL.
+  </Step>
+  <Step n={3} title="Upload Manifest">
+    Agent uploads manifest object last. Object storage `PUT` operations are atomic, preserving race-free completion signals.
+  </Step>
+  <Step n={4} title="Report Completion & Server Verification">
+    Agent sends completion status to server. Server performs `HEAD` request to verify object presence, size, and SHA-256 checksum before advancing the watermark.
+  </Step>
+</Process>
+
+### Presigned URL Trust Model
+
+Presigned URLs are issued per job by the server using temporary, least-privilege credentials tied to the exact destination key.
+
+- **Bounded Expiry:** Presign TTL is constrained by underlying role duration.
+- **Renewal:** The agent can request fresh presigned URLs if transfer rates indicate risk of TTL expiry during large extractions.
+
+### Server-Side Completion Verification
+
+The server does not advance a company's stored watermark based on client self-reporting alone. It independently verifies the uploaded object via a `HEAD` request confirming existence, size, and SHA-256 checksum.
+
+<Observation n={2}>
+  Server-side verification prevents corrupted or truncated uploads from advancing the change-token watermark, guaranteeing data integrity at the ingestion boundary.
+</Observation>
+
+## Consequences
+
+<Tradeoff
+  gain="Eliminates intermediate document-repository hop, credential surfaces, and undetectable retrieval gaps. Enables near-real-time downstream execution."
+  cost="Requires platform cloud account to manage least-privilege presigned URL generation and role session limits."
+/>
+
+- **Direct-to-object-storage streaming eliminates intermediate hops.**
+- **Atomic manifest-last pattern guarantees completeness without complex 2PC protocols.**
+- **Server verification prevents corrupted watermark progression.**
+
+## Alternatives Considered
+
+1. **Continue intermediate repository upload with scheduled retrieval.** *Rejected:* Retains extra hops and credential exposure.
+2. **Scheduled daily bucket polling for manifests.** *Rejected:* Adds 24-hour latency floor and scales poorly.
+3. **Direct object storage streaming with server verification.** *Accepted:* Fast, reliable, least-privilege architecture.

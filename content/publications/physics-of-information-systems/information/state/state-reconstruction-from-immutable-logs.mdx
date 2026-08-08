@@ -1,0 +1,88 @@
+---
+title: "State Reconstruction from Immutable Logs"
+description: "Replay, event sourcing, and deterministic reconstruction. On a centuries-old notation that never stores a single board position, and still never loses one."
+date: "TBD"
+readingTime: "13 min"
+series: "Physics of Information Systems"
+track: "Information"
+monograph: "State"
+order: 3
+coreQuestion: "How can a system reconstruct exactly what happened, using nothing but a log of what changed?"
+---
+
+A recorded chess game looks like this:
+
+```
+1. e4 e5
+2. Nf3 Nc6
+3. Bb5
+```
+
+Look closely at what is, and isn't, written there. There is no board. No diagram of where any piece sits after move one, or move two, or move three. There is only a sequence of moves — a pawn advancing, a knight developing, a bishop stepping out to pin a knight against its king — recorded in the exact order they were played, and nothing else. And yet from these three short lines, and however many more follow them to the end of the game, any chess engine, any human player with a board in front of them, can reconstruct the exact position after any move you name — move 12, move 24, move 37 — with total, unambiguous certainty, simply by starting from the game's known opening position and replaying every recorded move in order, one at a time, up to the point you want to see.
+
+**This is event sourcing, arguably the oldest surviving example of it that most people already know without ever having called it by that name.** The log never stores state directly. It stores the transitions — the events — that produced each successive state, and it works precisely because the rules governing how one board position becomes the next are fixed, known, and deterministic: given any legal position and any legal move, there is exactly one resulting position, never two. That determinism is what lets a bare list of moves substitute, completely, for a bare list of board positions that would otherwise have to be stored explicitly at every single step.
+
+<Callout type="architectural-tension">
+An event log doesn't store less information than a sequence of full snapshots. It stores the same information in a different, and often far more compact, form — on the condition that the rules for turning one event into the next state are fixed and known ahead of time. Without that condition, replay reconstructs nothing at all.
+</Callout>
+
+## Why nobody bothers writing down the board
+
+It's worth asking why chess notation evolved this way at all, rather than recording, say, a full diagram of the board after every move — a perfectly reasonable alternative that some players do use for study purposes. The practical answer is compactness: a move takes a few characters to write; a full board position takes considerably more. But the deeper answer is that the move log carries something the diagram sequence doesn't automatically carry on its own — an explicit record of *why* the position changed, not merely *that* it changed. A sequence of board diagrams shows you the position at move 12 and the position at move 13, but reconstructing which specific move connected them, if you didn't already know, would require comparing the two boards and inferring the move — usually possible, but not free, and occasionally ambiguous if a diagram were corrupted or incomplete. The move log has no such ambiguity. `3. Bb5` is not a description of a resulting position. It is the transition itself, stated directly, and the position is simply whatever that transition, applied to the position before it, deterministically produces.
+
+## When the log has to describe something the recorder can't fully see
+
+The same principle — deterministic replay from an immutable log of what changed — carries directly into engineering domains where the stakes are considerably higher than a game's outcome. Modern aircraft carry flight data recorders logging hundreds to thousands of parameters many times per second: control positions, engine readings, altitude, attitude, dozens of other measurements, continuously, for the duration of every flight. When investigators need to determine exactly what an aircraft's true state was at a given moment — the case, for instance, in the ongoing investigation into Air India Flight AI171 in 2025[^1] — the work is fundamentally the same act as replaying a chess game: taking an immutable, already-recorded log and reconstructing, deterministically, the sequence of states that log implies, moment by moment, up to the instant that matters.
+
+The complication a chess game never has to face is that an aircraft's recorded parameters are not the aircraft's full true state directly — they're indirect readings, each one an imperfect sensor observation of an underlying physical reality investigators are trying to infer. This is precisely the situation a hidden Markov model is built to formalize: a system that has a true, evolving internal state that can't be observed directly, paired with a sequence of observable readings that depend on that hidden state probabilistically rather than perfectly. Investigators aren't simply replaying moves the way a chess engine does; they're using the recorded readings to infer the most probable sequence of underlying aircraft states that would have produced those specific readings — reconstruction, but through inference rather than pure deterministic replay.
+
+A further complication chess never has to face at all: a modern aircraft's many subsystems — engines, hydraulics, avionics, control surfaces — are all evolving concurrently, sometimes influencing each other, sometimes failing independently, and reasoning correctly about how several concurrent processes interact and constrain each other is exactly the problem Petri nets were designed to model, formally representing multiple simultaneous state changes and the dependencies between them, rather than the single, orderly, one-move-at-a-time sequence a chess game always produces.
+
+<Callout type="unresolved">
+Specific details of any ongoing or recent aviation investigation, including AI171, should be treated as provisional and verified against official sources before being cited — the underlying engineering principle of reconstructing state from an immutable recorded log is well established regardless of any individual case's specific findings.
+</Callout>
+
+## What chess gets that harder domains don't
+
+It's worth being honest about why chess notation works as cleanly as it does, because the cleanness is not incidental — it depends on two properties that real-world systems rarely get to enjoy simultaneously. First, the rules are completely known and fixed: there is no ambiguity, ever, about what `Bb5` does to a given position, because the rules of chess don't change and don't have exceptions. Second, the log is complete: every legal move that was played is recorded, with nothing missing. An aircraft's flight data recorder approximates the second property reasonably well but never the first as cleanly — the "rules" governing how a physical aircraft's hidden true state produces its recorded sensor readings are themselves uncertain, approximate, and subject to revision as engineers learn more about the specific failure being investigated. This is the real reason state reconstruction in engineering is fundamentally harder than replaying a chess game, even though both are, at bottom, the identical act: taking an immutable record of what changed and using it to answer, with as much certainty as the log and the rules allow, what the state actually was.
+
+This leaves an important question this chapter has deliberately left for later: an event log like a chess game's move list is one entirely legitimate way to preserve history, but it's not the only one, and the two approaches make genuinely different tradeoffs. The next chapter takes up that comparison directly — an event log that stores every change versus a system that instead stores whole, named snapshots at chosen points in time — using a single, familiar piece of software that, unusually, does honest versions of both at once.
+
+<Figure n={1} title="Chess vs. Flight Data: What the Log Can and Can't Guarantee" caption="Both are immutable logs reconstructing state after the fact. Chess reconstructs with certainty because both of its two required properties hold; a flight data recorder only gets one of them.">
+
+| Property | Chess notation | Flight data recorder |
+| --- | --- | --- |
+| Rules connecting event to state | Fixed, complete, no exceptions | Approximate, physical, uncertain |
+| Log completeness | Every legal move recorded | Every sampled parameter recorded |
+| Reconstruction method | Deterministic replay | Probabilistic inference (HMM) |
+| Result | Exact board position | Most probable state sequence |
+
+</Figure>
+
+<FormalNote>
+Deterministic replay names what chess notation relies on: given a fixed transition function and an
+immutable event log, the state at any point is fully determined by folding the log forward from a
+known start, $S_n = f(S_{n-1}, e_n)$. A hidden Markov model formalizes the harder case a flight data
+recorder faces, where the true state is never observed directly, only through readings that depend on
+it probabilistically — a transition distribution and an emission distribution in place of one fixed
+$f$. Reconstructing the most probable state sequence from recorded readings is inference over those
+two distributions, not the deterministic fold chess allows.
+</FormalNote>
+
+## Elsewhere in this series
+
+<Callout type="note">
+The hidden Markov model's two-distribution structure is the same shape as the Kalman filter's
+predict/correct cycle in
+[Every Observation Is Already History](../../reality/observations/every-observation-is-already-history)
+— both infer a hidden true state from indirect, imperfect readings rather than reading it off
+directly. The "log completeness" property this chapter needs is exactly what
+[Signal Loss Is Permanent](../../reality/signals/signal-loss-is-permanent) shows cannot be recovered
+after the fact if it fails at acquisition. The next chapter,
+[Event Sourcing vs. Temporal Snapshots](./event-sourcing-vs-temporal-snapshots), takes up what
+happens once the log itself gets too long to replay from the beginning every time.
+</Callout>
+
+---
+
+[^1]: Reference to Air India Flight AI171 (2025) is included as a brief, real-world anchor for the general engineering principle being described. Specific investigative details should be verified against official sources before publication, and this should not be read as an account of the incident's causes or findings.

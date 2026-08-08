@@ -1,0 +1,225 @@
+---
+title: "The Hidden Cost of Random UUID Primary Keys"
+date: "2026-07-01"
+---
+
+# The Hidden Cost of Random UUID Primary Keys
+
+In the previous article, **[The 4-Tuple Limit](../infrastructure/the-four-tuple)**, we peeled back another layer of abstraction: applications became sockets, and sockets became operating-system resources. The lesson was simple —
+
+> Every abstraction eventually collides with a physical constraint.
+
+The same principle applies inside databases. Most developers think of records as rows; databases think of them as pages. And once you understand pages, a surprising realization emerges:
+
+> Even your primary keys have physics.
+
+## The Comfortable Illusion
+
+Consider a simple table:
+
+```sql
+CREATE TABLE projects (
+    id UUID PRIMARY KEY,
+    name TEXT
+);
+```
+
+Nothing about this schema appears controversial. In fact, UUIDs have become extremely common: they are globally unique, they eliminate coordination between systems, they work well in distributed environments, and they avoid predictable identifiers. Architecturally, they solve several genuine problems. The issue is not uniqueness. The issue is randomness.
+
+## Databases Do Not Store Rows
+
+Most developers mentally picture a table as something resembling a spreadsheet — rows stacked neatly beneath one another. The reality is more physical: databases store information inside fixed-size pages. PostgreSQL, for example, typically uses:
+
+```text
+8 KB Pages
+```
+
+Each page contains:
+
+```text
++----------------------+
+| Page Header          |
++----------------------+
+| Line Pointers        |
++----------------------+
+| Tuple Data           |
++----------------------+
+| Free Space           |
++----------------------+
+```
+
+Pages are the fundamental unit of storage. Not rows. Not tables. Pages. When the database reads data from disk, it reads pages; when the database writes data to disk, it writes pages. Understanding database performance starts here.
+
+## The Hidden Cost of Alignment
+
+Storage engines also care deeply about memory alignment. Many systems align data according to machine word boundaries — in PostgreSQL this is often enforced through MAXALIGN rules. The result is that tuples are not packed together arbitrarily; padding may be introduced to preserve efficient access patterns, so a row occupying 37 bytes rarely consumes exactly 37 bytes.
+
+Physical layout matters. Small inefficiencies multiplied across millions of records become measurable storage overhead. The database is constantly balancing density against access efficiency.
+
+## Why Indexes Exist
+
+Without indexes, databases would need to scan every page, every query, every time. Indexes exist to avoid that cost. The most common index structure is the B-Tree. Conceptually, a B-Tree allows the database to navigate rapidly toward a target record — rather than reading an entire table, it follows an ordered path through index pages. This is where identifier selection becomes important, because B-Trees depend on order.
+
+## Sequential Identifiers Are Predictable
+
+Imagine inserting records using:
+
+```sql
+BIGSERIAL
+```
+
+The identifiers might look like:
+
+```text
+1001
+1002
+1003
+1004
+1005
+```
+
+Every new record arrives at the end of the index. The storage engine performs relatively little reorganization; pages fill gradually and writes remain predictable. The B-Tree grows in a mostly orderly fashion. The database is happy.
+
+## UUIDv4 Breaks Locality
+
+Now consider UUIDv4:
+
+```text
+5d8d9c4f...
+b124f9e1...
+1c62ab8d...
+f7e991a2...
+```
+
+The identifiers are intentionally random. Every new insert may belong anywhere inside the index — not at the end, not near recent records, anywhere. The storage engine must constantly reorganize pages to maintain index order.
+
+<Observation n={1}>
+  Random UUID inserts cause B-Tree page splits across the entire index tree. Because keys arrive out of order, write operations force random I/O disk page reads and writes, evicting warm pages from memory. The database loses locality: adjacent inserts are no longer adjacent on disk, cache efficiency declines, index maintenance increases, and disk activity increases. The physical cost of randomness begins accumulating.
+</Observation>
+
+## The Page Split Problem
+
+Eventually a page becomes full. A new record arrives. There is no room. The database performs a page split:
+
+```text
+Before
+
+[Page A]
+████████████
+
+After
+
+[Page A]
+██████
+
+[Page B]
+██████
+```
+
+Records are redistributed, pointers are updated, and the B-Tree is modified. A few page splits are normal; millions of random inserts create substantially more work. The database spends increasing effort maintaining the structure rather than storing information. This is why large UUIDv4-heavy systems often experience index bloat over time — the randomness that improved distributed uniqueness degraded storage efficiency.
+
+## B-Tree Page Splits and Write Amplification
+
+B-Trees depend on sequential key ordering. When keys arrive sequentially (`1, 2, 3, 4`), new index entries append cleanly to the rightmost leaf page. When keys arrive randomly via UUIDv4:
+
+1. The database locates the target leaf page somewhere in the middle of the B-Tree.
+2. If the leaf page is full, it must split into two pages, relocating half its entries.
+3. Page splits propagate up the tree, causing write amplification and index bloat.
+
+```text filename="btree-comparison.txt"
+Sequential Keys (auto-increment / UUIDv7):
+[1, 2, 3] -> [4, 5, 6] -> [7, 8, 9] (Clean right-edge appends)
+
+Random Keys (UUIDv4):
+[a7, c3, f1] -> Page Split! -> [a7, b2] | [c3, f1] (Random middle inserts)
+```
+
+## The Industry's False Debate
+
+For years, identifier discussions were framed incorrectly. The debate sounded like:
+
+> Sequential IDs or UUIDs?
+
+That is no longer the most useful question. The real question is:
+
+> How much randomness do we actually need?
+
+Modern systems increasingly recognize that uniqueness and locality are not mutually exclusive.
+
+## Enter UUIDv7 and ULIDs
+
+Newer identifier schemes attempt to preserve the advantages of UUIDs while reducing their storage penalties. ULIDs introduced a timestamp-based prefix combined with randomness. UUIDv7 follows a similar philosophy and has rapidly gained momentum. Instead of being entirely random like UUIDv4, UUIDv7 incorporates time ordering:
+
+```text
+Earlier Records
+      ↓
+Later Records
+```
+
+Identifiers remain globally unique. They remain distributed-friendly. But they also arrive in a mostly sequential order. The B-Tree experiences dramatically less disruption: page splits decrease, cache locality improves, and index growth becomes more predictable. The database performs less housekeeping and more useful work.
+
+## The Solution: Time-Ordered Identifiers (UUIDv7 & TSID)
+
+UUIDv7 combines a 48-bit UNIX timestamp millisecond prefix with 74 bits of randomness.
+
+```typescript filename="uuidv7-structure.ts"
+// UUIDv7 structure: Monotonically increasing prefix + random suffix
+// 018C-3F2A-10B4 - 7D9E - 81F2 - 4390A812E57F
+// [48-bit Timestamp] [Ver] [74-bit Randomness]
+```
+
+Because the timestamp prefix increases monotonically over time:
+
+- Inserts hit the rightmost B-Tree leaf page.
+- Buffer pool cache efficiency increases drastically.
+- Index size stays compact, preventing premature I/O bottlenecks.
+
+<Decision n={1} status="accepted">
+  Standardize on UUIDv7 or ULID/TSID for clustered primary keys in relational databases, reserving UUIDv4 exclusively for non-indexed ephemeral tokens.
+</Decision>
+
+<Tradeoff
+  gain="Restores sequential B-Tree write performance, eliminates page splits, and reduces index bloat by 40-60%."
+  cost="Leaks generation timestamp in the primary key (if timestamp confidentiality is required)."
+/>
+
+## The Physics of Identifier Design
+
+What makes this discussion interesting is that it appears unrelated to performance. Developers choose identifiers for application reasons:
+
+* Security
+* Uniqueness
+* Distributed generation
+* Interoperability
+
+Rarely does anyone ask:
+
+> What will this do to my storage engine?
+
+Yet the storage engine cares. A lot. The identifier influences:
+
+* Index layout
+* Page density
+* Cache locality
+* Write amplification
+* Disk I/O
+
+A software abstraction quietly becomes a physical storage decision.
+
+## A More Important Lesson
+
+This article is not really about UUIDs. Nor is it about PostgreSQL. It is about unintended consequences. Every layer of abstraction hides the mechanics beneath it: a UUID looks like a string, a database sees insertion patterns, a developer sees uniqueness, and a storage engine sees page splits.
+
+<Callout type="important">
+  Neither perspective is wrong. The challenge is understanding both simultaneously. Architecture becomes significantly more effective when decisions are evaluated not only for their logical correctness, but also for their physical consequences.
+</Callout>
+
+## Looking Ahead
+
+So far, this series has followed data all the way down to storage engines and disk structures. We have seen how schemas influence queries, how state influences memory, how transport influences performance, and now, how identifiers influence storage topology.
+
+Next, we return to infrastructure. Because before requests ever reach application code, they encounter another critical component sitting at the edge of the system — a component responsible for routing traffic, terminating TLS, serving static assets, and protecting runtimes from the public Internet. The reverse proxy. And despite being one of the most common pieces of modern infrastructure, many teams only appreciate its importance when it disappears — continue to **[The Reverse Proxy Is Your Real Application Gateway](../infrastructure/the-reverse-proxy)**.
+
+---
+
+*Next in Track 01: **[When Not to Build Gold Tables: The Dashboard-First Anti-Pattern](dashboard-first-anti-pattern)**.*

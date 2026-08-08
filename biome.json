@@ -19,8 +19,14 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "a11y": {
+        "noSvgWithoutTitle": "off",
+        "noStaticElementInteractions": "off",
+        "useKeyWithClickEvents": "off"
+      },
       "suspicious": {
-        "noUnknownAtRules": "off"
+        "noUnknownAtRules": "off",
+        "noCommentText": "off"
       }
     },
     "domains": {

@@ -1,0 +1,107 @@
+---
+title: "The Day WSL Lost My Ubuntu (And Why It Didn't Actually Lose Anything)"
+date: 2026-08-08
+tags: ["debugging", "tooling"]
+excerpt: "A WSL distro went blank after a routine disk move. The fix wasn't a repair — it was refusing to touch anything until 'is the data gone, or does it just look gone' had an answer."
+status: published
+---
+
+Today, Ubuntu booted into what looked like an empty system.
+
+No home directory. No project files. No terminal history, no dotfiles, no evidence I had ever used this machine for anything more demanding than checking the time. Just a clean, freshly-installed-looking Ubuntu, smiling at me like we'd never met.
+
+I want to be clear about the emotional arc here, becuase it happened in about four seconds: mild confusion, then a small cold drop in my stomach, then the specific, very modern panic of *wait, was that all backed up?*
+
+Let me back up further than that, though, becuase the empty boot wasn't the start of this. It was the punishment for a completely reasonable decision I made about twenty minutes earlier.
+
+## Act One: A Very Normal Disk Problem
+
+WSL had been getting slow for a couple of weeks. Not "something is on fire" slow - more the kind of slow you get used to and stop noticing until one day you go looking for the cause. So I looked. My C: drive had 3 GB of free space left. Three. As in, less free space than a single mediocre video game update.
+
+I went hunting for what was eating it, and found the actual body: a single VHD file backing my Ubuntu install, sitting at a cheerful 136 GB.
+
+Which, fair, in a sense. VHDs don't shrink themselves. You delete files inside the Linux subsystem, the space frees up *inside* the disk image, but Windows doesn't know to shrink the image file on its end unless you tell it to. So, my WSL distro had spent months quietly not returning any of the disk it had ever borrowed, like a roommate who "forgot" to give back literally anything.
+
+The fix was almost satisfying in how mechanical it was:
+
+```bash
+fstrim /                                      # inside WSL — mark freed blocks as actually free
+Optimize-VHD -Path <path-to-vhd> -Mode Full   # on the Windows side — actually shrink the file
+```
+136 GB became 37GB. Just under 100GB. WSL got noticeably faster. I did the thing where you lean back in your chair for a second and feel, briefly, like a competent adult.
+
+That feeling lasted about twenty minutes.
+
+## Act Two: The Part Where I Got Cocky
+
+C: was still tighter than I wanted, so I decided to move the now-svelte 37GB VHD to a different drive entirely. Sensible. Efficient. The kind of follow-through that good engineers do and lazy ones skip. (Hopefully)
+
+What I forgot, or more honestly, didn't know to think about, is that WSL doesn't just "know" where a distro lives by vibes. It keeps a registration: a mapping that says *this distro name points to this exact file path.* Move the file without updating the registration, and WSL doesn't throw a helpful error. It just quietly, cheerfully assumes there's nothing there and hands you a brand new empty environment instead.
+
+Which brings us back to the beginning of this story: me, staring at a suspiciously pristine terminal, doing math on how many weeks of work I was about to lose.
+
+## Act Three: "I's Fine, It's All on Github" (Narrator: It Was Not, Immediately, Obviously Fine)
+
+Here's the part I'll admit to because it's honest and slightly embarassing. My very first reaction - the one that arrived before any actual investigation - was relief. *It's fine. It's all on Github.*
+
+Then, about one second later, a much less comforting follow-up thought arrived: *...when did I last push, exactly?*
+
+Becuase it's never *all* on Github, is it? There's the stuff you commited, and then there's the stuff sitting uncommited on a feature branch you were "going to clean it up before pushing," and the half-finished config, and the notes file you were keeping locally becuase it felt too rough to put in the repo yet. Github is a great safety net. It is not, and never has been, a substitute for actually knowing what state your local machine is in.
+
+So the relief lasted about as long as the earlier competence high - which is to say, not long - and I was back to a genuine, un-decorated moment of *okay, how bad is this, actually?*
+
+## The Decision That Actually Mattered
+
+Here's the thing I'm most proud of in this whole story, and it has nothing to do with WSL specifically: I stopped.
+
+The instinct, in that moment, is *to do something.* Reinstall. Restore from some backup you're not sure is current. Google "wsl empty adter moving disk" and start executing the first five Stack Overflow answers (or more recently ChatGPT or Claude responses) in a sequence, hoping one of them fixes a problem you haven't actually diagnosed yet.
+
+I made myself ask one question before touching anything else:
+
+**Is the data itself gone, or does it just look it is gone?**
+
+Those are wildly different problems. One means something is actually gone and I'm now in genuine recovery territory. The other means everything is fine and I'm one wrong move away from turning a non-problem into a real one, for instance, by deleting a "broken" distro that was never broken in the first place.
+
+## Separating "It's Gone" From "I Can't See It"
+
+An empty-looking WSL distro can mean two very different things, and they look identical from the surface:
+
+1. The filesystem inside the disk image is actually damaged or empty — a data problem.
+2. WSL is pointing at the wrong location, or pointing at it incorrectly — a metadata problem.
+
+I stopped treating the distro as "my broken Ubuntu install" and started treating the VHD as exactly what it was: just a disk image, sitting on disk, that I could inspect independently of whatever WSL thought was going on. I mounted it directly, outside of WSL's registration entirely.
+
+`/home/<user>` was right there. Every file. Every directory. The whole thing, completely intact, sitting quietly on disk the entire time, utterly unbothered by my crisis.
+
+The filesystem had never been broken. WSL's pointer to it was broken. I'd been about thirty seconds of panic away from treating a broken signpost like a burned-down building (and actually burning down a perfectly fine building).
+
+## Act Four: The Anticlimactic recovery
+
+Once I actually knew what was wrong, fixing it was almost boring by comparison:
+
+1. Re-register the VHD with WSL, pointin gat its correct new location
+2. Boot it and verufy `home/<user>` and everything else was actually there
+3. *Only then* clean up any leftovers files from the failed move
+
+
+That ordering isn't incidental. Verify before you delete anything, always, even when - especially when - you're fairly confident you already know how the story ends. If the re-registration had somehow gone sideways too, I still would have the old copy to fall back on. Assuming I didn't need it, and being wrong, is exactly the kind of mistake that turns a scary-but-fine incident into an actually bad one. 
+
+## What This Was Actually About
+
+None of this was really about WSL, or `Optimize-VHD`, or virtual disk registrations. It was about a much older skill dressed up in new tooling: don't repair what you haven't diagnosed.
+
+** Diagnose before you touch anything.** The pull toward *doing something* under pressure is strong. The better move is almost always to spend thirty extra seconds figuring out what's actually broken, because a wrong diagnosis turns every next action into a coin flip.
+
+**A broken pointer is not broken data.** They present identically. They are not remotely the same problem, and confusing them is how people delete or overwrite things that were never actually at risk.
+
+**"It's on GitHub" is a claim, not a fact, until you check.** Relief is not the same thing as verification. Ask what state your local machine was actually in before you let yourself relax.
+
+**Work from a copy, or read-only, when you're not sure.** Investigating the VHD independently of WSL's own (already unreliable) registration meant I couldn't make the real problem worse while I was still figuring out what it was.
+
+**Treat recovery as an experiment, not a sequence of guesses.** Every step should be testing something specific, and preferably reversable. "Does the data exist?" has a clean, checkable answer. "Let me just try this and see" does not; it's motion dressed up as progress.
+
+Data recovery isn't magic, and most of the time it isn't really about data recovery tools either. It's hypothesis testing, done under time pressure, usually with your own dumb luck from twenty minutes ago as the reason you're in this position at all.
+
+---
+
+*Have your own "wait, was that actually backed up" moment? I'd genuinely like to hear it — mine clearly wasn't my last.*

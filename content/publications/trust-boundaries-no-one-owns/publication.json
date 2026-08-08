@@ -1,0 +1,51 @@
+{
+  "id": "trust-boundaries-no-one-owns",
+  "type": "research-series",
+  "title": "Trust Boundaries Nobody Owns",
+  "subtitle": "A six-part series on the browser security model, read as organizational trust decisions nobody was assigned to own.",
+  "abstract": "SSRF, CSRF, SameSite cookies, CORS, clickjacking, and CSP are usually written up as six unrelated exploits, each with its own header or check that prevents it. Read together, they are six instances of the same organizational failure: an implicit trust boundary, set once by whoever was unblocking an adjacent problem, that nobody was ever assigned to keep calibrated as the system around it changed.",
+  "volume": "Volume I",
+  "revision": "Revision 01",
+  "date": "2026-08-06",
+  "program": "Process & Practice",
+  "author": "Shreyas Agarwal",
+  "domains": ["Application Security", "Systems Architecture", "Organizational Theory"],
+  "status": "published",
+  "sections": [
+    {
+      "id": "index",
+      "title": "Overview",
+      "href": ""
+    },
+    {
+      "id": "ssrf",
+      "title": "1. SSRF",
+      "href": "01-ssrf"
+    },
+    {
+      "id": "csrf",
+      "title": "2. CSRF",
+      "href": "02-csrf"
+    },
+    {
+      "id": "samesite-cookies",
+      "title": "3. SameSite Cookies",
+      "href": "03-samesite-cookies"
+    },
+    {
+      "id": "cors",
+      "title": "4. CORS",
+      "href": "04-cors"
+    },
+    {
+      "id": "clickjacking",
+      "title": "5. Clickjacking",
+      "href": "05-clickjacking"
+    },
+    {
+      "id": "csp",
+      "title": "6. CSP",
+      "href": "06-csp"
+    }
+  ]
+}

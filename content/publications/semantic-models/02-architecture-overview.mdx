@@ -1,0 +1,101 @@
+---
+title: "02 — Architecture Overview: Semantic Layer"
+description: "High-level architecture, component responsibilities, and compiled projection views."
+date: 2026-08-04
+readingTime: 7 min
+---
+
+# Shared Semantic Layer — Solution Overview
+
+<Callout type="note">
+  **Audience:** Senior & Systems Engineers. Explains component responsibilities, compiler pipelines, and execution surfaces. For field-level schemas and discriminated unions, see the [Technical Specification](03-technical-specification).
+</Callout>
+
+## 1. Context
+
+Every feature built on top of analytical data — dashboards (via shared runtimes), reports, filters, and AI capabilities — currently interprets data independently. Each feature decides for itself what a column means, how to search it, and which date column is canonical.
+
+The shared semantic layer replaces per-feature interpretation with a single, compiled business model that every feature consumes.
+
+## 2. Core Architectural Principles
+
+<Process>
+  <Step n={1} title="Model Concepts, Not Columns">
+    "Customer", "Revenue", or "Transaction Date" is a stable business concept. The underlying physical column name is a temporary implementation detail. A column rename updates 1 row in a mapping table, zero downstream consumers.
+  </Step>
+  <Step n={2} title="Separate Authoring from Delivery">
+    Rich, fully-detailed concept definitions are authored once and compiled into thin, purpose-built projections (Prompt View, Planner View, Resolver View, Tool Registry). Raw objects are never shipped to models.
+  </Step>
+</Process>
+
+## 3. Component Map
+
+| Component | Responsibility | Analogy |
+| :--- | :--- | :--- |
+| **Semantic Registry** | Holds concepts, physical mappings, identity, hierarchy, and capability bounds. | Dictionary of concepts |
+| **Relationship Registry** | Holds table relationships, foreign keys, cardinality, and chasm-trap guards. | Map of table joins |
+| **Entity Registry** | Holds real-world value aliases and phonetic fuzzy-match indices. | Real-world lookup table |
+| **Statistics Registry** | Holds live profile metrics (min/max, null rates, top values). | Health snapshot |
+| **Compiler** | Reads four registries; emits read-only, pre-computed projection views. | Cheat-sheet compiler |
+
+<Observation n={1}>
+  **Query Planner & Shared Runtime Unity:** The Query Planner has two entry points: dashboard chart subscriptions on one side, AI tool calls on the other. Both resolve through identical compiled Planner Views against Gold data.
+</Observation>
+
+## 4. Why Four Registries, Not One?
+
+| Registry | Rate of Change | Validation Mechanism | Isolation Risk |
+| :--- | :--- | :--- | :--- |
+| **Semantic Registry** | Rarely (Schema changes) | CI-gated PR review | Routine alias fixes shouldn't trigger business model reviews. |
+| **Relationship Registry** | Rarely (Migrations) | CI-gated PR review | Join changes isolated from value mapping. |
+| **Entity Registry** | Continuously (New vendors/typos) | Lighter, semi-automated | Prevents heavy review on routine value additions. |
+| **Statistics Registry** | Automated refresh cadence | Automated freshness checks | Statistics updates won't trigger model re-validation. |
+
+## 5. The Compiler & Projection Views
+
+The compiler takes raw registries as input and outputs four purpose-built projection views:
+
+<Process>
+  <Step n={1} title="Prompt View (Thin Natural-Language Slice)">
+    Minified NL descriptions, synonyms, and negative examples for model prompt contexts.
+  </Step>
+  <Step n={2} title="Planner View (Structural Slice)">
+    Complete physical mapping, cardinality, join paths, and capability flags consumed by the Query Planner.
+  </Step>
+  <Step n={3} title="Resolver View (Value-Matching Slice)">
+    Phonetic indices, alias maps, and embeddings for row-level value resolution.
+  </Step>
+  <Step n={4} title="Tool Definitions (Codegen)">
+    Auto-generated callable tool definitions derived directly from concept capabilities.
+  </Step>
+</Process>
+
+## 6. Execution Runtime & Session Isolation
+
+```typescript filename="query-resolution-pipeline.ts"
+// High-level query planning pipeline
+interface ExecutionPipeline {
+  sessionId: string; // Isolated per user session
+  userQuery: string;
+  
+  // Step 1: Disambiguate concepts using Prompt View
+  resolveConcepts(query: string): Promise<SemanticConcept[]>;
+  
+  // Step 2: Build deterministic SQL via Planner View
+  buildExecutableQuery(concepts: SemanticConcept[]): Promise<ExecutableQuery>;
+}
+```
+
+<Tradeoff
+  gain="Decouples UI dashboards, AI agents, and reporting APIs from raw database schemas. Zero prompt bloat."
+  cost="Requires maintaining a multi-registry compiler pipeline."
+/>
+
+## 7. Responsibilities Summary
+
+- **Semantic Registry:** Concept definitions & capabilities.
+- **Relationship Registry:** Joins, cardinality, fact/dimension roles.
+- **Entity Registry:** Real-world name/value matching.
+- **Statistics Registry:** Live profile metrics.
+- **Compiler:** Emits purpose-built read-only views.
+- **Query Planner:** Resolves chart subscriptions & AI tool calls to SQL.

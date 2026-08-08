@@ -15,15 +15,15 @@ export function ArchitectureModelHeader() {
 
       <div className="max-w-md md:pt-5">
         <p className="text-sm leading-relaxed text-white/42">
-          This architectural case study models a reference distributed system: a federated
-          execution plane separating governance, execution, tenancy, and event orchestration
-          into independently scalable, decoupled layers.
+          This architectural case study models a reference distributed system: a federated execution
+          plane separating governance, execution, tenancy, and event orchestration into
+          independently scalable, decoupled layers.
         </p>
 
         <div className="mt-6 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
           <p className="text-xs leading-relaxed text-white/40">
-            This model serves as a case study in federated systems design, demonstrating 
-            patterns for workload isolation and cross-cluster coordination.
+            This model serves as a case study in federated systems design, demonstrating patterns
+            for workload isolation and cross-cluster coordination.
           </p>
         </div>
       </div>

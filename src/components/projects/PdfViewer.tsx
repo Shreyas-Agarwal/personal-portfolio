@@ -86,9 +86,7 @@ export function PdfViewer({ url, title, projectId }: PdfViewerProps) {
         {/* Decorative corner indicators */}
         <div className="absolute bottom-4 left-4 z-20 flex items-center gap-1.5 rounded-sm bg-black/60 px-2.5 py-1.5 border border-white/[0.05] backdrop-blur-sm pointer-events-none">
           <FileText className="h-3.5 w-3.5 text-white/40" />
-          <span className="font-mono text-[9px] tracking-wider text-white/55">
-            {badgeLabel}
-          </span>
+          <span className="font-mono text-[9px] tracking-wider text-white/55">{badgeLabel}</span>
         </div>
       </div>
     </div>

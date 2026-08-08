@@ -1,0 +1,211 @@
+---
+title: "History Is a First-Class Feature"
+date: "2026-07-01"
+---
+
+# History Is a First-Class Feature
+
+In the previous article, **[The High Structural Cost of Generic Relationship Graphs](generic-relationship-cost)**, we explored how excessive flexibility eventually collides with physical limits. Generic relationship models promise adaptability, but over time they obscure business structure, complicate query execution, and increase computational cost. Yet even perfectly modeled data contains another limitation — one most operational systems never attempt to solve: time. More specifically, the difference between knowing what exists and knowing what changed.
+
+---
+
+## The Question Most Systems Cannot Answer
+
+Imagine a project management platform. A project exists, and its status is currently:
+
+```text filename="status.txt"
+Delayed
+```
+
+That answer is easy to retrieve — the database simply returns the current value. But now consider a different question:
+
+> When did the project become delayed?
+
+A slightly harder question:
+
+> How many times has it entered a delayed state?
+
+And a significantly more interesting question:
+
+> Which projects spent more than 20% of their lifecycle in a delayed state?
+
+Suddenly the current value becomes almost irrelevant. What matters is the journey, not the destination. Many operational systems were never designed to preserve that journey.
+
+---
+
+## The Tyranny of the UPDATE Statement
+
+Most application databases optimize for the present. A user changes a value, the row is updated, and the previous value disappears. Consider a project status change in a standard operational table:
+
+```sql filename="update-mutation.sql"
+-- Destructive UPDATE: Replaces current status, erasing when & why it changed
+UPDATE projects
+SET status = 'DELAYED', updated_at = NOW()
+WHERE project_id = 'p-10492';
+```
+
+The operation is efficient. The application behaves correctly. The business continues operating. But something was lost — the system no longer knows:
+
+* What the previous value was
+* When it changed
+* Why it changed
+* How long it remained in that state
+
+The update solved an operational problem. It destroyed analytical context.
+
+<Observation n={1}>
+  An UPDATE statement is destructive mutation. It replaces truth with current truth, destroying the historical context required to analyze trends, latency, and system evolution over time.
+</Observation>
+
+When an executive later asks *"Which projects spent more than 20% of their lifecycle in a delayed state?"*, the current-state table cannot answer. The past has been overwritten.
+
+---
+
+## Operational Truth Versus Historical Truth
+
+This distinction mirrors a pattern we have seen repeatedly throughout this series. Operational systems optimize for action; analytical systems optimize for understanding. An operational platform needs to know:
+
+> What is the project status right now?
+
+An analytical platform often needs to know:
+
+> How has project status evolved over time?
+
+Both questions are valid. Neither system is wrong. They are solving different problems. The difficulty begins when organizations attempt to answer analytical questions using data structures designed exclusively for operational workflows.
+
+<Callout type="note">
+  Operational and analytical truth are not competing definitions of correctness — they are answers to different questions, asked by different systems, at different points in time.
+</Callout>
+
+---
+
+## The Moment Leadership Changes the Question
+
+Most reporting initiatives begin with current-state visibility. Executives ask:
+
+* How many projects are active?
+* How many issues are open?
+* How many schedules are delayed?
+
+These are straightforward questions. Then maturity increases, and the questions evolve. Leadership starts asking:
+
+* Which projects are becoming delayed more frequently?
+* Are schedule recoveries improving over time?
+* How long does a critical issue remain unresolved?
+* Which regions are improving year-over-year?
+
+These questions require memory. Not human memory. System memory. The architecture must remember what reality looked like yesterday, the day before, and six months before that.
+
+---
+
+## History Is Not Free
+
+The most common misconception about historical analytics is that history already exists somewhere. Usually it does not. If a row is continuously updated, history is continuously erased.
+
+Capturing history requires deliberate architectural decisions. Every change must be preserved. Every transition must be recorded. Every version must remain accessible. The platform begins accumulating not only data, but time itself.
+
+<Callout type="warning">
+  This changes everything. Storage grows, processing grows, and query complexity grows — but the value of the platform grows as well.
+</Callout>
+
+---
+
+## Slowly Changing Dimensions
+
+One of the most influential concepts in analytical systems is the Slowly Changing Dimension, often abbreviated SCD. Several variations exist. The most widely adopted is SCD Type 2. The idea is deceptively simple: instead of replacing historical records, create a new version.
+
+<Figure n={1} title="SCD Type 2 Versioning" caption="Each change to Project A creates a new version rather than overwriting the last.">
+
+| Version | Status | Valid From | Valid To |
+|---|---|---|---|
+| 1 | Active | Jan 1 | Mar 15 |
+| 2 | Delayed | Mar 15 | Jun 1 |
+| 3 | Recovered | Jun 1 | Present |
+
+</Figure>
+
+```sql filename="scd2.sql"
+SELECT
+    project_id,
+    status,
+    valid_from,
+    valid_to,
+    (valid_to IS NULL) AS is_current
+FROM dim_projects_scd2
+WHERE project_id = 'p-10492'
+ORDER BY valid_from ASC;
+```
+
+Nothing is overwritten. Reality becomes a timeline rather than a snapshot. The analytical platform gains the ability to reconstruct the past at any point in time.
+
+---
+
+## Append-Only Thinking
+
+SCD Type 2 introduces a broader architectural idea: append-only systems. Instead of modifying history, new events are appended. The existing record remains untouched.
+
+This approach appears wasteful at first — why store multiple versions of the same object? Because information about change is often more valuable than information about state. A current snapshot tells us where we are. A timeline tells us how we arrived here. The latter is usually far more useful.
+
+In practice, this pattern often takes the shape of event sourcing / change-data-capture (CDC): immutable state-change events (such as `ProjectStatusChanged`) are appended to an append-only log, and current state becomes a derived projection computed by replaying those events rather than the primary store of truth.
+
+<Decision n={1} status="accepted">
+  Model core state transitions as append-only event streams or SCD2 tables. Treat current state as a materialized projection rather than the primary store of truth.
+</Decision>
+
+<Tradeoff
+  gain="Enables point-in-time historical reporting, auditability, and time-series analysis."
+  cost="Increases storage footprint and requires range-based join conditions during querying."
+/>
+
+---
+
+## The Birth of Temporal Analytics
+
+Once historical state becomes available, entirely new categories of analysis emerge. Organizations can begin asking:
+
+* What changed?
+* How quickly did it change?
+* How often does it change?
+* What usually happens before it changes?
+
+The focus shifts from reporting to behavior. From measurement to understanding. This transition is subtle. It is also where many analytics platforms begin creating genuine business value. Current-state dashboards explain today. Temporal systems explain why today happened.
+
+---
+
+## The Cost of Remembering
+
+There is, of course, a trade-off. Every version increases storage requirements. Every change increases transaction volume. Every timeline increases payload density. The platform now stores not only the current state of the business, but every meaningful transition that led there.
+
+Data volumes grow dramatically. Query patterns become more complex. Infrastructure requirements increase.
+
+<Callout type="constraint">
+  History is valuable. History is expensive. This is one of the recurring lessons of systems architecture: useful information rarely arrives without cost.
+</Callout>
+
+---
+
+## A More Important Lesson
+
+This article is not really about SCD Type 2. Nor is it about data warehousing. It is about perspective.
+
+Most software systems view data as a snapshot — a frozen representation of the present. Most analytical systems eventually discover that snapshots are insufficient. Reality is not static. Businesses evolve. Customers evolve. Projects evolve. Systems evolve. Understanding those changes requires architectures capable of preserving time.
+
+<Callout type="important">
+  History is not an implementation detail. History is a feature. And like every other feature, it must be deliberately designed.
+</Callout>
+
+---
+
+## Looking Ahead
+
+Capturing historical state solves one important problem: the platform can now explain how reality evolves. But another challenge emerges immediately — all of that historical information has to live somewhere. And modern infrastructure introduces an uncomfortable constraint: application runtimes do not scale particularly well when they carry state. As systems grow, memory becomes increasingly precious.
+
+The next architectural question becomes:
+
+> Where should state live when compute itself must remain disposable?
+
+That challenge leads directly into one of the most important ideas in modern infrastructure design: the hidden cost of session state — continue to **[Session State Has a Cost](../infrastructure/session-state-has-a-cost)**.
+
+---
+
+*Next in Track 01: **[The Hidden Cost of Moving Data](cost-of-moving-data)**.*
